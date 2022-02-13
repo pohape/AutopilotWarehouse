@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
         final Button buttonForward = findViewById(R.id.buttonForward);
         buttonForward.setEnabled(false);
 
+        final Button buttonBack = findViewById(R.id.buttonBack);
+        buttonBack.setEnabled(false);
+
         // UI Initialization
         final Button buttonConnect = findViewById(R.id.buttonConnect);
         final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -85,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                                 progressBarConnecting.setVisibility(View.GONE);
                                 buttonConnect.setEnabled(true);
                                 buttonForward.setEnabled(true);
+                                buttonBack.setEnabled(true);
                                 break;
                             case -1:
                                 toolbar.setSubtitle("Device fails to connect");
@@ -118,23 +122,11 @@ public class MainActivity extends AppCompatActivity {
 
         // buttons on click
         buttonForward.setOnClickListener(view -> {
-            String cmdText = null;
-            String btnState = buttonForward.getText().toString().toLowerCase();
-            switch (btnState) {
-                case "turn on":
-                    buttonForward.setText("Turn Off");
-                    // Command to turn on LED on Arduino. Must match with the command in Arduino code
-                    cmdText = "<turn on>";
-                    break;
-                case "turn off":
-                    buttonForward.setText("Turn On");
-                    // Command to turn off LED on Arduino. Must match with the command in Arduino code
-                    cmdText = "<turn off>";
-                    break;
-            }
-            // Send command to Arduino board
-            assert cmdText != null;
-            connectedThread.write(cmdText);
+            connectedThread.write("<turn on>");
+        });
+
+        buttonForward.setOnClickListener(view -> {
+            connectedThread.write("<turn off>");
         });
     }
 
