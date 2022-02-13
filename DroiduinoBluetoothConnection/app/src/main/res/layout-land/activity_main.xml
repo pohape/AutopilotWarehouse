@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+@+id/toolbar: здесь появляется информация о соединении по Bluetooth (не могу соединится, могу соединится и т.д.)
+
+@+id/buttonConnect: кнопка для подключения по Bluetooth к Ардуино
+
+@+id/progressBarConnecting: появляется когда происходит процесс подключения по Bluetooth
+
+@+id/textViewArduinoMessages: сообщения, полученные от платы Ардуино
+-->
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,6 +19,7 @@
     android:background="@android:color/background_light"
     tools:context=".MainActivity">
 
+    <!--здесь появляется информация о соединении по Bluetooth (не могу соединится, могу соединится и т.д.)-->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -22,47 +34,35 @@
         app:title="Bluetooth Connection"
         app:titleTextColor="@android:color/background_light" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="81dp"
-        android:layout_height="92dp"
-        android:layout_marginTop="24dp"
-        android:background="@color/colorOff"
-        android:contentDescription="Visual LED"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:srcCompat="@drawable/ic_bulb_light"
-        tools:ignore="VectorDrawableCompat" />
-
+    <!--кнопка для подключения по Bluetooth к Ардуино-->
     <Button
         android:id="@+id/buttonConnect"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connect"
+        android:text="@string/connect"
         android:textColor="@android:color/background_light"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="@+id/toolbar"
         app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
     <Button
-        android:id="@+id/buttonToggle"
+        android:id="@+id/buttonForward"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="268dp"
-        android:text="Turn On"
+        android:text="Forward"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.499"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Появляется когда происходит процесс подключения по Bluetooth -->
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:visibility="gone"
+        android:id="@+id/progressBarConnecting"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -72,8 +72,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Сообщения, полученные от платы Ардуино -->
     <TextView
-        android:id="@+id/textViewInfo"
+        android:id="@+id/textViewArduinoMessages"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -84,7 +85,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonToggle" />
-
-
+        app:layout_constraintTop_toBottomOf="@+id/buttonForward" />
 </androidx.constraintlayout.widget.ConstraintLayout>

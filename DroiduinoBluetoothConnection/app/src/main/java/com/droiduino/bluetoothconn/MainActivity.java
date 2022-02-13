@@ -13,7 +13,6 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -42,16 +41,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // buttons
+        final Button buttonForward = findViewById(R.id.buttonForward);
+        buttonForward.setEnabled(false);
+
         // UI Initialization
         final Button buttonConnect = findViewById(R.id.buttonConnect);
         final Toolbar toolbar = findViewById(R.id.toolbar);
-        final ProgressBar progressBar = findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
-        final TextView textViewInfo = findViewById(R.id.textViewInfo);
-        final Button buttonToggle = findViewById(R.id.buttonToggle);
-        buttonToggle.setEnabled(false);
-        final ImageView imageView = findViewById(R.id.imageView);
-        imageView.setBackgroundColor(getResources().getColor(R.color.colorOff));
+        final ProgressBar progressBarConnecting = findViewById(R.id.progressBarConnecting);
+        final TextView textViewArduinoMessages = findViewById(R.id.textViewArduinoMessages);
 
         // If a bluetooth device has been selected from SelectDeviceActivity
         deviceName = getIntent().getStringExtra("deviceName");
@@ -60,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             String deviceAddress = getIntent().getStringExtra("deviceAddress");
             // Show progress and connection status
             toolbar.setSubtitle("Connecting to " + deviceName + "...");
-            progressBar.setVisibility(View.VISIBLE);
+            progressBarConnecting.setVisibility(View.VISIBLE);
             buttonConnect.setEnabled(false);
 
             /*
@@ -84,13 +82,13 @@ public class MainActivity extends AppCompatActivity {
                         switch (msg.arg1) {
                             case 1:
                                 toolbar.setSubtitle("Connected to " + deviceName);
-                                progressBar.setVisibility(View.GONE);
+                                progressBarConnecting.setVisibility(View.GONE);
                                 buttonConnect.setEnabled(true);
-                                buttonToggle.setEnabled(true);
+                                buttonForward.setEnabled(true);
                                 break;
                             case -1:
                                 toolbar.setSubtitle("Device fails to connect");
-                                progressBar.setVisibility(View.GONE);
+                                progressBarConnecting.setVisibility(View.GONE);
                                 buttonConnect.setEnabled(true);
                                 break;
                         }
@@ -100,12 +98,10 @@ public class MainActivity extends AppCompatActivity {
                         String arduinoMsg = msg.obj.toString(); // Read message from Arduino
                         switch (arduinoMsg.toLowerCase()) {
                             case "led is turned on":
-                                imageView.setBackgroundColor(getResources().getColor(R.color.colorOn));
-                                textViewInfo.setText("Arduino Message : " + arduinoMsg);
+                                textViewArduinoMessages.setText("Arduino Message : " + arduinoMsg);
                                 break;
                             case "led is turned off":
-                                imageView.setBackgroundColor(getResources().getColor(R.color.colorOff));
-                                textViewInfo.setText("Arduino Message : " + arduinoMsg);
+                                textViewArduinoMessages.setText("Arduino Message : " + arduinoMsg);
                                 break;
                         }
                         break;
@@ -120,18 +116,18 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Button to ON/OFF LED on Arduino Board
-        buttonToggle.setOnClickListener(view -> {
+        // buttons on click
+        buttonForward.setOnClickListener(view -> {
             String cmdText = null;
-            String btnState = buttonToggle.getText().toString().toLowerCase();
+            String btnState = buttonForward.getText().toString().toLowerCase();
             switch (btnState) {
                 case "turn on":
-                    buttonToggle.setText("Turn Off");
+                    buttonForward.setText("Turn Off");
                     // Command to turn on LED on Arduino. Must match with the command in Arduino code
                     cmdText = "<turn on>";
                     break;
                 case "turn off":
-                    buttonToggle.setText("Turn On");
+                    buttonForward.setText("Turn On");
                     // Command to turn off LED on Arduino. Must match with the command in Arduino code
                     cmdText = "<turn off>";
                     break;
