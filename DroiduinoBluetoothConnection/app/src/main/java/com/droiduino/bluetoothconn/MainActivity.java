@@ -164,11 +164,35 @@ public class MainActivity extends AppCompatActivity {
 
         // buttons on click
         buttonForward.setOnClickListener(view -> {
-            connectedThread.write("<turn on>");
+            connectedThread.write("F");
         });
 
-        buttonForward.setOnClickListener(view -> {
-            connectedThread.write("<turn off>");
+        buttonBack.setOnClickListener(view -> {
+            connectedThread.write("B");
+        });
+
+        buttonDown.setOnClickListener(view -> {
+            connectedThread.write("D");
+        });
+
+        buttonOpen.setOnClickListener(view -> {
+            connectedThread.write("O");
+        });
+
+        buttonUp.setOnClickListener(view -> {
+            connectedThread.write("U");
+        });
+
+        buttonLeft.setOnClickListener(view -> {
+            connectedThread.write("L");
+        });
+
+        buttonRight.setOnClickListener(view -> {
+            connectedThread.write("R");
+        });
+
+        buttonClose.setOnClickListener(view -> {
+            connectedThread.write("C");
         });
     }
 
@@ -224,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
             connectedThread = new ConnectedThread(mmSocket);
-            connectedThread.run();
+            connectedThread.start();
         }
 
         // Closes the client socket and causes the thread to finish.
@@ -292,6 +316,7 @@ public class MainActivity extends AppCompatActivity {
             byte[] bytes = input.getBytes(); //converts entered String into bytes
             try {
                 mmOutStream.write(bytes);
+                mmOutStream.flush();
             } catch (IOException e) {
                 Log.e("Send Error", "Unable to send message", e);
             }
