@@ -48,6 +48,24 @@ public class MainActivity extends AppCompatActivity {
         final Button buttonBack = findViewById(R.id.buttonBack);
         buttonBack.setEnabled(false);
 
+        final Button buttonLeft = findViewById(R.id.buttonLeft);
+        buttonLeft.setEnabled(false);
+
+        final Button buttonRight = findViewById(R.id.buttonRight);
+        buttonRight.setEnabled(false);
+
+        final Button buttonUp = findViewById(R.id.buttonUp);
+        buttonUp.setEnabled(false);
+
+        final Button buttonDown = findViewById(R.id.buttonDown);
+        buttonDown.setEnabled(false);
+
+        final Button buttonOpen = findViewById(R.id.buttonOpen);
+        buttonOpen.setEnabled(false);
+
+        final Button buttonClose = findViewById(R.id.buttonClose);
+        buttonClose.setEnabled(false);
+
         // UI Initialization
         final Button buttonConnect = findViewById(R.id.buttonConnect);
         final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -86,14 +104,38 @@ public class MainActivity extends AppCompatActivity {
                             case 1:
                                 toolbar.setSubtitle("Connected to " + deviceName);
                                 progressBarConnecting.setVisibility(View.GONE);
+
                                 buttonConnect.setEnabled(true);
+
                                 buttonForward.setEnabled(true);
                                 buttonBack.setEnabled(true);
+
+                                buttonRight.setEnabled(true);
+                                buttonLeft.setEnabled(true);
+
+                                buttonUp.setEnabled(true);
+                                buttonDown.setEnabled(true);
+
+                                buttonOpen.setEnabled(true);
+                                buttonClose.setEnabled(true);
+
                                 break;
                             case -1:
                                 toolbar.setSubtitle("Device fails to connect");
                                 progressBarConnecting.setVisibility(View.GONE);
-                                buttonConnect.setEnabled(true);
+
+                                buttonForward.setEnabled(false);
+                                buttonBack.setEnabled(false);
+
+                                buttonRight.setEnabled(false);
+                                buttonLeft.setEnabled(false);
+
+                                buttonUp.setEnabled(false);
+                                buttonDown.setEnabled(false);
+
+                                buttonOpen.setEnabled(false);
+                                buttonClose.setEnabled(false);
+
                                 break;
                         }
                         break;
