@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Droiduino Bluetooth Connection</string>
     <string name="connect">Connect</string>
-
+    <string name="up">UP</string>
+    <string name="forward">FORW</string>
+    <string name="open">OPEN</string>
+    <string name="close">CLOSE</string>
+    <string name="left">LEFT</string>
+    <string name="right">RIGHT</string>
+    <string name="down">DOWN</string>
+    <string name="back">BACK</string>
 </resources>
