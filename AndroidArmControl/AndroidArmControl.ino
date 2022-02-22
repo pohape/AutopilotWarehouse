@@ -113,43 +113,70 @@ void liftDown() {
 
 
 void loop() {
-  turnRight();
-  openClaw();
+  if (Serial.available() > 0){ // Check if there is data coming
+    msg = Serial.readString(); // Read the message as String
+    Serial.println("Android Command: " + msg);
   
-  // right servo rotates to 100 degrees
-  for(posRight;posRight>50;posRight--)
-  {
-    servoRight.write(posRight);
-    delay(5);
+    if (msg == "U"){
+  
+    } else if (msg == "D"){
+  
+    } else if (msg == "O"){
+      openClaw();
+    } else if (msg == "C"){
+      closeClaw();
+    } else if (msg == "F"){
+  
+    } else if (msg == "R"){
+      turnRight();
+    } else if (msg == "L"){
+      turnLeft();
+    } else if (msg == "B"){
+  
+    } 
+  
+    
   }
+
+  msg = ""; // reset command
   
-  // left servo rotates to 5 degrees
-  Serial.println("left servo rotates to 5 degrees\n");
-  for(posLeft;posLeft>50;posLeft--)
-  {
-    servoLeft.write(posLeft);
-    delay(5);
-  }
-  delay(1500);
+  //turnRight();
+  //openClaw();
   
-  closeClaw();
+//  // right servo rotates to 100 degrees
+//  for(posRight;posRight>50;posRight--)
+//  {
+//    servoRight.write(posRight);
+//    delay(5);
+//  }
+//  
+//  // left servo rotates to 5 degrees
+//  Serial.println("left servo rotates to 5 degrees\n");
+//  for(posLeft;posLeft>50;posLeft--)
+//  {
+//    servoLeft.write(posLeft);
+//    delay(5);
+//  }
+//  delay(1500);
   
-  // left servo rotates to100 degrees, rocker arm lifts.
-  Serial.println("left servo rotates to100 degrees, rocker arm lifts\n");
-  for(posLeft;posLeft<120;posLeft++)
-  {
-    servoLeft.write(posLeft);
-    delay(5);
-  }
-  delay(1000);
+  //closeClaw();
+  
+//  // left servo rotates to100 degrees, rocker arm lifts.
+//  Serial.println("left servo rotates to100 degrees, rocker arm lifts\n");
+//  for(posLeft;posLeft<120;posLeft++)
+//  {
+//    servoLeft.write(posLeft);
+//    delay(5);
+//  }
+//  delay(1000);
 
-  turnLeft();
+  //turnLeft();
 
-  liftDown();
+  //liftDown();
 
-  openClaw();
+  //openClaw();
 
-  liftUp();
+  //liftUp();
 
-  closeClaw();
+  //closeClaw();
 }
