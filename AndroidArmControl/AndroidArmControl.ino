@@ -1,9 +1,9 @@
 #include <Servo.h>
-Servo myservo1;  // create servo object to control a servo
-Servo myservo2;
-Servo myservo3;
+Servo servoMain;  // create servo object to control a servo
+Servo servoRight;
+Servo servoLeft;
 Servo servoClaw;
-int pos1=80, pos2=60, pos3=130, posClaw=0;
+int posMain=80, posRight=60, posLeft=130, posClaw=0;
 
 const int ledPin = 13; // Built in LED in Arduino board
 String msg,cmd;
@@ -18,15 +18,15 @@ void setup()
   Serial.begin(9600); // Communication rate of the Bluetooth Module
   msg = "";
   
-  myservo1.attach(A1);  // attaches the servo on pin 9 to the servo object
-  myservo2.attach(A0);
-  myservo3.attach(6);
+  servoMain.attach(A1);  // attaches the servo on pin 9 to the servo object
+  servoRight.attach(A0);
+  servoLeft.attach(6);
   servoClaw.attach(9);
   
-  myservo1.write(pos1);
+  servoMain.write(posMain);
   delay(1000);
-  myservo2.write(pos2);
-  myservo3.write(pos3);
+  servoRight.write(posRight);
+  servoLeft.write(posLeft);
   servoClaw.write(posClaw);
   delay(1500);
 }
@@ -45,9 +45,9 @@ void blinking(int count)
 void turnRight() {
   Serial.println("Turn right\n");
   
-  for(pos1;pos1>0;pos1--)
+  for(posMain;posMain>0;posMain--)
   {
-    myservo1.write(pos1);
+    servoMain.write(posMain);
     delay(5);      // delay 5ms（used to adjust the servo speed）
   }
 
@@ -57,9 +57,9 @@ void turnRight() {
 void turnLeft() {
   Serial.println("Turn right\n");
   
-  for(pos1;pos1<180;pos1++)
+  for(posMain;posMain<180;posMain++)
   {
-    myservo1.write(pos1);
+    servoMain.write(posMain);
     delay(5);
   }
   
@@ -91,9 +91,9 @@ void closeClaw() {
 void liftUp(){
   Serial.println("Lift up\n");
   
-  for(pos3;pos3<120;pos3++)
+  for(posLeft;posLeft<120;posLeft++)
   {
-    myservo3.write(pos3);
+    servoLeft.write(posLeft);
     delay(5);
   }
   
@@ -103,9 +103,9 @@ void liftUp(){
 void liftDown() {
   Serial.println("Lift down\n");
   
-  for(pos3;pos3>50;pos3--)
+  for(posLeft;posLeft>50;posLeft--)
   {
-    myservo3.write(pos3);
+    servoLeft.write(posLeft);
     delay(5);
   }
   delay(1000);
@@ -117,16 +117,17 @@ void loop() {
   openClaw();
   
   // right servo rotates to 100 degrees
-  for(pos2;pos2>50;pos2--)
+  for(posRight;posRight>50;posRight--)
   {
-    myservo2.write(pos2);
+    servoRight.write(posRight);
     delay(5);
   }
+  
   // left servo rotates to 5 degrees
   Serial.println("left servo rotates to 5 degrees\n");
-  for(pos3;pos3>50;pos3--)
+  for(posLeft;posLeft>50;posLeft--)
   {
-    myservo3.write(pos3);
+    servoLeft.write(posLeft);
     delay(5);
   }
   delay(1500);
@@ -135,9 +136,9 @@ void loop() {
   
   // left servo rotates to100 degrees, rocker arm lifts.
   Serial.println("left servo rotates to100 degrees, rocker arm lifts\n");
-  for(pos3;pos3<120;pos3++)
+  for(posLeft;posLeft<120;posLeft++)
   {
-    myservo3.write(pos3);
+    servoLeft.write(posLeft);
     delay(5);
   }
   delay(1000);
