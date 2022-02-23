@@ -44,8 +44,9 @@ void blinking(int count)
 
 void turnRight() {
   Serial.println("Turn right\n");
+  int targetPos = posMain - 90;
   
-  for(posMain;posMain>0;posMain--)
+  for(posMain;posMain>targetPos;posMain--)
   {
     servoMain.write(posMain);
     delay(5);      // delay 5ms（used to adjust the servo speed）
@@ -56,8 +57,9 @@ void turnRight() {
 
 void turnLeft() {
   Serial.println("Turn right\n");
-  
-  for(posMain;posMain<180;posMain++)
+  int targetPos = posMain + 90;
+
+  for(posMain;posMain<targetPos;posMain++)
   {
     servoMain.write(posMain);
     delay(5);
@@ -171,30 +173,4 @@ void loop() {
   }
 
   msg = ""; // reset command
-  
-  //turnRight();
-  //openClaw();
-//  rightServo100();
-//  leftServo5();
-  
-  //closeClaw();
-  
-//  // left servo rotates to100 degrees, rocker arm lifts.
-//  Serial.println("left servo rotates to100 degrees, rocker arm lifts\n");
-//  for(posLeft;posLeft<120;posLeft++)
-//  {
-//    servoLeft.write(posLeft);
-//    delay(5);
-//  }
-//  delay(1000);
-
-  //turnLeft();
-
-  //liftDown();
-
-  //openClaw();
-
-  //liftUp();
-
-  //closeClaw();
 }
