@@ -111,6 +111,28 @@ void liftDown() {
   delay(1000);
 }
 
+void leftServo5(){
+  // left servo rotates to 5 degrees
+  Serial.println("left servo rotates to 5 degrees\n");
+  
+  for(posLeft;posLeft>50;posLeft--)
+  {
+    servoLeft.write(posLeft);
+    delay(5);
+  }
+  
+  delay(1500);
+}
+
+void rightServo100(){
+    // right servo rotates to 100 degrees
+  for(posRight;posRight>50;posRight--)
+  {
+    servoRight.write(posRight);
+    delay(5);
+  }
+}
+
 
 void loop() {
   if (Serial.available() > 0){ // Check if there is data coming
@@ -126,38 +148,23 @@ void loop() {
     } else if (msg == "C"){
       closeClaw();
     } else if (msg == "F"){
-  
+      rightServo100();
+      leftServo5();
     } else if (msg == "R"){
       turnRight();
     } else if (msg == "L"){
       turnLeft();
     } else if (msg == "B"){
-  
+      
     } 
-  
-    
   }
 
   msg = ""; // reset command
   
   //turnRight();
   //openClaw();
-  
-//  // right servo rotates to 100 degrees
-//  for(posRight;posRight>50;posRight--)
-//  {
-//    servoRight.write(posRight);
-//    delay(5);
-//  }
-//  
-//  // left servo rotates to 5 degrees
-//  Serial.println("left servo rotates to 5 degrees\n");
-//  for(posLeft;posLeft>50;posLeft--)
-//  {
-//    servoLeft.write(posLeft);
-//    delay(5);
-//  }
-//  delay(1500);
+//  rightServo100();
+//  leftServo5();
   
   //closeClaw();
   
