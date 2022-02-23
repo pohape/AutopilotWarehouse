@@ -133,6 +133,17 @@ void rightServo100(){
   }
 }
 
+void leftServo120(){
+// left servo rotates to100 degrees, rocker arm lifts.
+  Serial.println("left servo rotates to100 degrees, rocker arm lifts\n");
+  for(posLeft;posLeft<120;posLeft++)
+  {
+    servoLeft.write(posLeft);
+    delay(5);
+  }
+  delay(1000);
+}
+
 
 void loop() {
   if (Serial.available() > 0){ // Check if there is data coming
@@ -155,7 +166,7 @@ void loop() {
     } else if (msg == "L"){
       turnLeft();
     } else if (msg == "B"){
-      
+      leftServo120();
     } 
   }
 
