@@ -1,4 +1,3 @@
-
 #include <Servo.h>
 #include "SR04.h"
 
@@ -21,65 +20,52 @@ int pos = 90;    // variable to store the servo position
 
 void setup() {
   Serial.begin(9600); // speed for console
-  
+
   myservo.attach(SERVO_PIN);  // attaches the servo on pin 9 to the servo object
   myservo.write(pos);
-  delay(500); 
+  delay(500);
+}
+
+void moveFromTo(int from, int to){
+
+  pos = from;
+
+  while (pos != to) { // пока текущая позиция не ровна целевой позиции, то продолжаем цикл
+    // передаем серво позицию, которую надо выставить
+    myservo.write(pos);
+
+    // на каждый десятый градус измеряем значение
+    int ostatDelen = pos % 10;
+
+    if (ostatDelen == 0){
+      checkDistance();
+    } else{
+      delay(15);
+    }
+
+    // решаем прибавить или уменьшить градус поворота головы
+    if (from < to) {
+      pos += 1;
+    } else {
+      pos -= 1;
+    }
+  }
 }
 
 void goFromRigthToCenter() {
-  for (pos = RIGHT_POS; pos <= CENTER_POS; pos += 1) { 
-    // in steps of 1 degree
-    myservo.write(pos);
-    int ostatDelen = pos % 10;
-
-    if(ostatDelen == 0){
-      checkDistance(); 
-    } else{              
-      delay(15);
-    }                
-  }
+ moveFromTo(RIGHT_POS, CENTER_POS);
 }
 
 void goFromCenterToLeft() {
-  for (pos = CENTER_POS; pos <= LEFT_POS; pos += 1) { 
-    // in steps of 1 degree
-    myservo.write(pos);
-    int ostatDelen = pos % 10;
-
-    if(ostatDelen == 0){
-      checkDistance(); 
-    } else{              
-      delay(15);
-    }                         
-  }
+ moveFromTo(CENTER_POS, LEFT_POS);
 }
 
 void goFromLeftToCenter() {
-  for (pos = LEFT_POS; pos >= CENTER_POS; pos -= 1) { 
-    myservo.write(pos);
-    int ostatDelen = pos % 10;
-
-    if(ostatDelen == 0){
-      checkDistance(); 
-    }else{              
-      delay(15);
-    }                        
-  }
+  moveFromTo(LEFT_POS, CENTER_POS);
 }
 
 void goFromCenterToRight() {
-  for (pos = CENTER_POS; pos >= RIGHT_POS; pos -= 1) {
-    myservo.write(pos);
-
-    int ostatDelen = pos % 10;
-
-    if(ostatDelen == 0){
-      checkDistance(); 
-    }else{              
-      delay(15);
-    }                       
-  }
+  moveFromTo(CENTER_POS, RIGHT_POS);
 }
 
 void checkDistance(){
@@ -88,7 +74,7 @@ void checkDistance(){
   Serial.println("cm");
 }
 
-void loop() {  
+void loop() {
   goFromCenterToLeft();
   goFromLeftToCenter();
   delay(100);
