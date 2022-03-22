@@ -121,5 +121,7 @@ void loop() {
     }
 
     irrecv.resume(); // Receive the next value
+  } else if (random(1, 1001) == 39) {
+    checkDistance();
   }
 }
