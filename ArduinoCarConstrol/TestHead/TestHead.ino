@@ -5,8 +5,8 @@ Servo myservo;  // create servo object to control a servo
 // twelve servo objects can be created on most boards
 
 // ultrasonic block
-const int TRIG_PIN = 8;
-const int ECHO_PIN = 7;
+const int TRIG_PIN = A1;
+const int ECHO_PIN = A0;
 SR04 sr04 = SR04(ECHO_PIN,TRIG_PIN);
 
 
