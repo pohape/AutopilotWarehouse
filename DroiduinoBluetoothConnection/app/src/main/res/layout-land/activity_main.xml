@@ -62,6 +62,7 @@
                 android:layout_height="match_parent">
 
                 <Button
+                    android:visibility="invisible"
                     android:id="@+id/buttonUp"
                     android:text="@string/up"
                     android:width="100dp"
@@ -166,6 +167,7 @@
                 android:layout_height="match_parent">
 
                 <Button
+                    android:visibility="invisible"
                     android:id="@+id/buttonDown"
                     android:text="@string/down"
                     android:width="100dp"
