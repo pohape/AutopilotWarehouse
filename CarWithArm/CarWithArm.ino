@@ -195,7 +195,6 @@ void processIrButtons() {
 }
 
 
-
 void leftForward(int miliseconds) {
   digitalWrite(IN2,LOW);
   
