@@ -1,6 +1,6 @@
-const int tracingPinRight = 4;
-const int tracingPinCenter = 5;
-const int tracingPinLeft = 6;
+const int tracingPinRight = A2;
+const int tracingPinCenter = A0;
+const int tracingPinLeft = A1;
 const int ledPin = 13;
 
 void setup() {
@@ -11,22 +11,17 @@ void setup() {
 }
 
 void readPinAndControlLed(int tracingPin){
-
   int val = digitalRead(tracingPin);
   
-  if(val == HIGH){   
+  if (val == HIGH){   
       digitalWrite(ledPin, HIGH);
-  }
-  else {
+  } else {
       digitalWrite(ledPin, LOW);
   }
-  
 }
 
 void loop() {
-
   readPinAndControlLed(tracingPinRight);
   readPinAndControlLed(tracingPinCenter);
   readPinAndControlLed(tracingPinLeft);
-  
 }
