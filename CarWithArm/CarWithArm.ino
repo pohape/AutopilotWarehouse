@@ -9,6 +9,14 @@ int RECV_PIN = 11;
 IRrecv irrecv(RECV_PIN);
 decode_results results;
 
+const int tracingPinRight = A2;
+const int tracingPinCenter = A0;
+const int tracingPinLeft = A1;
+
+int trackingSensorLeftData = 0;
+int trackingSensorCenterData = 0;
+int trackingSensorRightData = 0;
+
 // posLeft: 0 - вытянута, 140 - втянута
 // posRight: 20 - поднята, 80 - опущена
 // posClaw: 0 - закрыто, 100 - открыто
@@ -40,7 +48,10 @@ String right = "16734885";
 
 String codeButtonPushed;
 String lastButtonPushedSymbol;
- 
+
+int wheelsSpeed = 100; // from 0 to 255;
+int enA = 10;
+int enB = 12;
 int IN1=5;
 int IN2=6;
 int IN3=7;
@@ -70,12 +81,21 @@ bool rightCurrentlyMovingBack = false;
 // <<< Keeping the current state of the wheels
 
 
+// 1 = manual
+// 2 = follow the line
+int mode = 1;
 
 void setup()
 {
   Serial.begin(9600);
   irrecv.enableIRIn(); // Start the receiver
-  
+
+  pinMode(tracingPinRight, INPUT);
+  pinMode(tracingPinCenter, INPUT);
+  pinMode(tracingPinLeft, INPUT);
+
+  pinMode(enA, OUTPUT);
+  pinMode(enB, OUTPUT);
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
   pinMode(IN3, OUTPUT);
@@ -98,7 +118,37 @@ void setup()
 void loop()
 {
   processIrButtons();
+  processFollowLine();
   manageStateOfWheels();
+}
+
+void processFollowLine(){
+  if (mode == 2) {
+    // найти черную линию
+    // проехать вперед долю секунды
+    bothStop();
+    digitalWrite(ledPin, HIGH);
+
+    if (digitalRead(tracingPinCenter) == HIGH) {
+      rightForwardStart();
+      leftForwardStart();
+
+      delay(15);
+    } else {  
+      int right = digitalRead(tracingPinRight);
+      int left = digitalRead(tracingPinLeft);
+      
+      if (right == HIGH && left == LOW) {
+        leftForwardStart();
+      } else if (left == HIGH && right == LOW) {
+        rightForwardStart();
+      } else {
+        digitalWrite(ledPin, LOW);
+      }
+
+      delay(8);
+    }
+  }  
 }
 
 void processIrButtons() {
@@ -107,57 +157,71 @@ void processIrButtons() {
 
     Serial.println(codeButtonPushed);
 
-    if (codeButtonPushed == one) {
+    if (mode == 1 && codeButtonPushed == one) {
         lastButtonPushedSymbol = one;
         
         rightForwardStart();
-    } else if (codeButtonPushed == two) {
+    } else if (mode == 1 && codeButtonPushed == two) {
         lastButtonPushedSymbol = two;
         
         rightForwardStart();
         leftForwardStart();
-    } else if (codeButtonPushed == three) {
+    } else if (mode == 1 && codeButtonPushed == three) {
         lastButtonPushedSymbol = three;
         
         leftForwardStart();
-    } else if (codeButtonPushed == seven) {
+    } 
+    else if (codeButtonPushed == five) {
+      lastButtonPushedSymbol = five;
+      
+      if (mode == 1) {
+        mode = 2;
+      } else {
+        mode = 1;
+      }
+
+      Serial.println("mode " + String(mode));
+      
+      //startFollowLine();
+    } 
+    else if (mode == 1 && codeButtonPushed == seven) {
         lastButtonPushedSymbol = seven;
         
         rightBackStart();
-    } else if (codeButtonPushed == eight) {
+    } else if (mode == 1 && codeButtonPushed == eight) {
         lastButtonPushedSymbol = eight;
         
         rightBackStart();
         leftBackStart();
-    } else if (codeButtonPushed == nine) {
+    } else if (mode == 1 && codeButtonPushed == nine) {
         lastButtonPushedSymbol = nine;
         
         leftBackStart();
-    } else if (codeButtonPushed == left) {
+    } else if (mode == 1 && codeButtonPushed == left) {
         lastButtonPushedSymbol = left;
         
         armTurnLeft();
-    } else if (codeButtonPushed == right) {
+    } else if (mode == 1 && codeButtonPushed == right) {
         lastButtonPushedSymbol = right;
 
         armTurnRight();
-    } else if (codeButtonPushed == up) {
+    } else if (mode == 1 && codeButtonPushed == up) {
         lastButtonPushedSymbol = up;
 
         armForward();
-    } else if (codeButtonPushed == down) {
+    } else if (mode == 1 && codeButtonPushed == down) {
         lastButtonPushedSymbol = down;
 
         armBack();
-    } else if (codeButtonPushed == star) {
+    } else if (mode == 1 && codeButtonPushed == star) {
         lastButtonPushedSymbol = star;
 
         armUp();
-    } else if (codeButtonPushed == grid) {
+    } else if (mode == 1 && codeButtonPushed == grid) {
         lastButtonPushedSymbol = grid;
 
         armDown();
-    } else if (codeButtonPushed == ok) {
+    } else if (mode == 1 && codeButtonPushed == ok) {
         lastButtonPushedSymbol = ok;
 
         if (posClaw == 0) {
@@ -241,29 +305,6 @@ void rightBack(int miliseconds) {
 
 
 
-
-
-void bothForwardStart() {
-  leftForwardStart();
-  rightForwardStart();
-}
-
-
-
-
-
-void bothBackStart() {
-  leftBackStart();
-  rightBackStart();
-}
-
-
-
-
-
-
-
-
 void manageStateOfWheels() {
   unsigned long currentMillis = millis();
   
@@ -309,6 +350,7 @@ void rightForwardStart() {
   
   digitalWrite(IN4,LOW);
   digitalWrite(IN3,HIGH);
+  analogWrite(enA, wheelsSpeed);
 }
 
 void rightBackStart() {
@@ -322,6 +364,7 @@ void rightBackStart() {
   
   digitalWrite(IN3,LOW);
   digitalWrite(IN4,HIGH);
+  analogWrite(enA, wheelsSpeed);
 }
 
 void leftForwardStart() {
@@ -334,6 +377,7 @@ void leftForwardStart() {
   
   digitalWrite(IN2,LOW);
   digitalWrite(IN1,HIGH);
+  analogWrite(enB, wheelsSpeed);
 }
 
 void leftBackStart() {
@@ -347,6 +391,7 @@ void leftBackStart() {
   
   digitalWrite(IN1,LOW);
   digitalWrite(IN2,HIGH);
+  analogWrite(enB, wheelsSpeed);
 }
 
 void leftStop() {
@@ -366,7 +411,8 @@ void leftStop() {
   
   leftCurrentlyMovingForward = false;
   leftCurrentlyMovingBack = false;
-  
+
+  analogWrite(enB, 0);
   digitalWrite(IN1,LOW);
   digitalWrite(IN2,LOW);
   
@@ -390,7 +436,8 @@ void rightStop() {
   
   rightCurrentlyMovingForward = false;
   rightCurrentlyMovingBack = false;
-  
+
+  analogWrite(enA, 0);
   digitalWrite(IN3,LOW);
   digitalWrite(IN4,LOW);
 
@@ -398,6 +445,8 @@ void rightStop() {
 }
 
 void bothStop() {
+  analogWrite(enA, 0);
+  analogWrite(enB, 0);
   digitalWrite(IN1,LOW);
   digitalWrite(IN2,LOW);
   digitalWrite(IN3,LOW);
@@ -464,7 +513,7 @@ void armTurnLeft() {
 void openClaw() {
   Serial.println("Open claw\n");
   
-  for (posClaw; posClaw<100; posClaw++)
+  for (posClaw; posClaw<50; posClaw++)
   {
     servoClaw.write(posClaw);
   }
@@ -625,3 +674,23 @@ void armDown() {
 
 
 // <<< Arm functions
+
+
+
+// Line tracking functions >>>
+
+void startFollowLine() {
+  Serial.println("Sensors data:");
+  readTrackingSensors();
+  Serial.println("Left: " + String(trackingSensorLeftData));
+  Serial.println("Center: " + String(trackingSensorCenterData));
+  Serial.println("Right: " + String(trackingSensorRightData));
+}
+
+void readTrackingSensors() {
+  trackingSensorLeftData = digitalRead(tracingPinLeft);
+  //trackingSensorCenterData = digitalRead(tracingPinCenter);
+  trackingSensorRightData = digitalRead(tracingPinRight);
+}
+
+// <<< Line tracking functions
