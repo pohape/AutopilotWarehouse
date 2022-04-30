@@ -58,6 +58,15 @@ int IN4 = 8;
 int oneMoveBothMs = 130;
 int oneMoveSingleMs = 150;
 
+// 0 - empty
+// 1 - forward left
+// 2 - forward
+// 3 - forward right
+// 7 - back left
+// 8 - back
+// 9 - back right
+int lastFollowLineMoves[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
 // Keeping the current state of the wheels >>>
 unsigned long leftForwardStarted = 0;
 unsigned long leftForwardStopped = 0;
@@ -118,6 +127,61 @@ void loop() {
   manageStateOfWheels();
 }
 
+void addMoveToLastMovesArray(int move) {
+  if (lastFollowLineMoves[0] != move) { 
+    lastFollowLineMoves[14] = lastFollowLineMoves[13];
+    lastFollowLineMoves[13] = lastFollowLineMoves[12];
+    lastFollowLineMoves[12] = lastFollowLineMoves[11];
+    lastFollowLineMoves[11] = lastFollowLineMoves[10];
+    lastFollowLineMoves[10] = lastFollowLineMoves[9];
+    lastFollowLineMoves[9] = lastFollowLineMoves[8];
+    lastFollowLineMoves[8] = lastFollowLineMoves[7];
+    lastFollowLineMoves[7] = lastFollowLineMoves[6];
+    lastFollowLineMoves[6] = lastFollowLineMoves[5];
+    lastFollowLineMoves[5] = lastFollowLineMoves[4];
+    lastFollowLineMoves[4] = lastFollowLineMoves[3];
+    lastFollowLineMoves[3] = lastFollowLineMoves[2];
+    lastFollowLineMoves[2] = lastFollowLineMoves[1];
+    lastFollowLineMoves[1] = lastFollowLineMoves[0];
+    lastFollowLineMoves[0] = move;
+
+    Serial.println(lastFollowLineMoves[0]);
+    Serial.println(lastFollowLineMoves[1]);
+    Serial.println(lastFollowLineMoves[2]);
+    Serial.println(lastFollowLineMoves[3]);
+    Serial.println(lastFollowLineMoves[4]);
+    Serial.println(lastFollowLineMoves[5]);
+    Serial.println(lastFollowLineMoves[6]);
+    Serial.println(lastFollowLineMoves[7]);
+    Serial.println(lastFollowLineMoves[8]);
+    Serial.println(lastFollowLineMoves[9]);
+    
+    
+    Serial.println();
+  }
+}
+
+void followLineCheckAndStop() {
+  if ((lastFollowLineMoves[0] == 2 && lastFollowLineMoves[1] == 8 && lastFollowLineMoves[2] == 2 && lastFollowLineMoves[3] == 8 && lastFollowLineMoves[4] == 2 && lastFollowLineMoves[5] == 8 && lastFollowLineMoves[6] == 2 && lastFollowLineMoves[7] == 8 && lastFollowLineMoves[8] == 2 && lastFollowLineMoves[9] == 8 && lastFollowLineMoves[10] == 2 && lastFollowLineMoves[11] == 8 && lastFollowLineMoves[12] == 2 && lastFollowLineMoves[13] == 8 && lastFollowLineMoves[14] == 2) || (lastFollowLineMoves[0] == 8 && lastFollowLineMoves[1] == 2 && lastFollowLineMoves[2] == 8 && lastFollowLineMoves[3] == 2 && lastFollowLineMoves[4] == 8 && lastFollowLineMoves[5] == 2 && lastFollowLineMoves[6] == 8 && lastFollowLineMoves[7] == 2 && lastFollowLineMoves[8] == 8 && lastFollowLineMoves[9] == 2 && lastFollowLineMoves[10] == 8 && lastFollowLineMoves[11] == 2 && lastFollowLineMoves[12] == 8 && lastFollowLineMoves[13] == 2 && lastFollowLineMoves[14] == 8)) {
+    mode = 1;
+    lastFollowLineMoves[0] = 0;
+    lastFollowLineMoves[1] = 0;
+    lastFollowLineMoves[2] = 0;
+    lastFollowLineMoves[3] = 0;
+    lastFollowLineMoves[4] = 0;
+    lastFollowLineMoves[5] = 0;
+    lastFollowLineMoves[6] = 0;
+    lastFollowLineMoves[7] = 0;
+    lastFollowLineMoves[8] = 0;
+    lastFollowLineMoves[9] = 0;
+    lastFollowLineMoves[10] = 0;
+    lastFollowLineMoves[11] = 0;
+    lastFollowLineMoves[12] = 0;
+    lastFollowLineMoves[13] = 0;
+    lastFollowLineMoves[14] = 0;
+  }
+}
+
 void processFollowLine() {
   if (mode == 2) {
     // найти черную линию
@@ -127,6 +191,7 @@ void processFollowLine() {
     int center = digitalRead(tracingPinCenter);
 
     if (center == HIGH) {
+      addMoveToLastMovesArray(2);
       rightForwardStart();
       leftForwardStart();
     } else {
@@ -136,12 +201,15 @@ void processFollowLine() {
       int left = digitalRead(tracingPinLeft);
 
       if (right == HIGH && left == LOW) {
+        addMoveToLastMovesArray(1);
         leftForwardStart();
         delay(40);
       } else if (left == HIGH && right == LOW) {
+        addMoveToLastMovesArray(3);
         rightForwardStart();
         delay(40);
       } else if (left == LOW && right == LOW) {
+        addMoveToLastMovesArray(8);
         leftBackStart();
         rightBackStart();
         delay(50);
@@ -151,6 +219,8 @@ void processFollowLine() {
         return;
       }
     }
+
+    followLineCheckAndStop();
   }
 }
 
