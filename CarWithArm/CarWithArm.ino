@@ -15,8 +15,6 @@ const int tracingPinRight = A2;
 const int tracingPinCenter = A0;
 const int tracingPinLeft = A1;
 
-int followLineLastCenter = 0;
-
 // posLeft: 0 - вытянута, 140 - втянута
 // posRight: 20 - поднята, 80 - опущена
 // posClaw: 0 - закрыто, 100 - открыто
@@ -49,7 +47,7 @@ String right = "16734885";
 String codeButtonPushed;
 String lastButtonPushedSymbol;
 
-int wheelsSpeed = 115; // from 0 to 255;
+int wheelsSpeed = 108; // from 0 to 255;
 int enA = 5;
 int enB = 6;
 int IN1 = A4;
@@ -138,35 +136,20 @@ void processFollowLine() {
       int left = digitalRead(tracingPinLeft);
 
       if (right == HIGH && left == LOW) {
-        followLineLastCenter = 0;
         leftForwardStart();
         delay(40);
       } else if (left == HIGH && right == LOW) {
-        followLineLastCenter = 0;
         rightForwardStart();
         delay(40);
       } else if (left == LOW && right == LOW) {
-        if (followLineLastCenter > 5 && followLineLastCenter < 10) {
-          mode = 1;
-
-          return;
-        }
-
         leftBackStart();
         rightBackStart();
         delay(50);
-
-        followLineLastCenter = 0;
       } else {
         digitalWrite(ledPin, LOW);
-        mode = 1;
 
         return;
       }
-    }
-
-    if (center == HIGH) {
-      followLineLastCenter++;
     }
   }
 }
