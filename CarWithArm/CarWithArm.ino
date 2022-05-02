@@ -1,6 +1,11 @@
 #include <IRremote.h>
-
+//#include "SR04.h"
 #include <Servo.h>
+
+// ultrasonic block
+const int TRIG_PIN = A1;
+const int ECHO_PIN = A0;
+//SR04 sr04 = SR04(ECHO_PIN,TRIG_PIN);
 
 Servo servoMain; // create servo object to control a servo
 Servo servoRight;
@@ -12,8 +17,8 @@ IRrecv irrecv(RECV_PIN);
 decode_results results;
 
 const int tracingPinRight = A2;
-const int tracingPinCenter = A0;
-const int tracingPinLeft = A1;
+const int tracingPinCenter = 10;
+const int tracingPinLeft = A5;
 
 // posLeft: 0 - вытянута, 140 - втянута
 // posRight: 20 - поднята, 80 - опущена
@@ -90,8 +95,8 @@ bool rightCurrentlyMovingBack = false;
 int mode = 1;
 
 void setup() {
-  Serial.begin(9600);
-  irrecv.enableIRIn(); // Start the receiver
+  Serial.begin(9600);  // speed for the console
+  irrecv.enableIRIn(); // Start the infrared receiver
 
   pinMode(tracingPinRight, INPUT);
   pinMode(tracingPinCenter, INPUT);
@@ -122,6 +127,7 @@ void setup() {
 }
 
 void loop() {
+  //checkDistance();
   processIrButtons();
   processFollowLine();
   manageStateOfWheels();
@@ -160,6 +166,12 @@ void addMoveToLastMovesArray(int move) {
     Serial.println();
   }
 }
+
+//void checkDistance() {
+//  long distance = sr04.Distance();
+//  Serial.print(distance);
+//  Serial.println("cm");
+//}
 
 void followLineCheckAndStop() {
   if ((lastFollowLineMoves[0] == 2 && lastFollowLineMoves[1] == 8 && lastFollowLineMoves[2] == 2 && lastFollowLineMoves[3] == 8 && lastFollowLineMoves[4] == 2 && lastFollowLineMoves[5] == 8 && lastFollowLineMoves[6] == 2 && lastFollowLineMoves[7] == 8 && lastFollowLineMoves[8] == 2 && lastFollowLineMoves[9] == 8 && lastFollowLineMoves[10] == 2 && lastFollowLineMoves[11] == 8 && lastFollowLineMoves[12] == 2 && lastFollowLineMoves[13] == 8 && lastFollowLineMoves[14] == 2) || (lastFollowLineMoves[0] == 8 && lastFollowLineMoves[1] == 2 && lastFollowLineMoves[2] == 8 && lastFollowLineMoves[3] == 2 && lastFollowLineMoves[4] == 8 && lastFollowLineMoves[5] == 2 && lastFollowLineMoves[6] == 8 && lastFollowLineMoves[7] == 2 && lastFollowLineMoves[8] == 8 && lastFollowLineMoves[9] == 2 && lastFollowLineMoves[10] == 8 && lastFollowLineMoves[11] == 2 && lastFollowLineMoves[12] == 8 && lastFollowLineMoves[13] == 2 && lastFollowLineMoves[14] == 8)) {
