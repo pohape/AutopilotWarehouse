@@ -24,6 +24,7 @@ const int tracingPinLeft = A5;
 // posRight: 20 - поднята, 80 - опущена
 // posClaw: 0 - закрыто, 100 - открыто
 int posMain = 80, posRight = 60, posLeft = 140, posClaw = 0;
+int posMainCorrection = -8;
 
 const int ledPin = 13; // Built in LED in Arduino board
 String msg, cmd;
@@ -117,7 +118,7 @@ void setup() {
   servoLeft.attach(9);
   servoClaw.attach(3);
 
-  servoMain.write(posMain);
+  servoMain.write(posMain + posMainCorrection);
   delay(100);
   servoLeft.write(posLeft);
   delay(100);
@@ -459,7 +460,7 @@ void armTurnRight() {
   Serial.println("Turn right\n");
 
   int minPos = 35;
-  int targetPos = posMain - 45;
+  int targetPos = posMain + posMainCorrection - 45;
 
   if (targetPos < minPos) {
     targetPos = minPos;
@@ -477,7 +478,7 @@ void armTurnLeft() {
   Serial.println("Turn left\n");
 
   int maxPos = 125;
-  int targetPos = posMain + 45;
+  int targetPos = posMain + posMainCorrection + 45;
 
   if (targetPos > maxPos) {
     targetPos = maxPos;
