@@ -4,6 +4,8 @@
 
 // PINs >>>
 
+const int PIN_LED = 13; // Built in LED in Arduino board
+
 // ultrasonic
 const int ULTRASONIC_TRIG_PIN = A1;
 const int ULTRASONIC_ECHO_PIN = A0;
@@ -16,8 +18,15 @@ const int PIN_TRACING_LEFT = A5;
 // infrared
 const int PIN_INFRARED = 11;
 
-// <<< PINs
+// wheels
+int PIN_WHEELS_ENA = 5;
+int PIN_WHEELS_ENB = 6;
+int PIN_WHEELS_IN1 = A4;
+int PIN_WHEELS_IN2 = A3;
+int PIN_WHEELS_IN3 = 7;
+int PIN_WHEELS_IN4 = 8;
 
+// <<< PINs
 
 // ultrasonic block >>>
 //SR04 ultrasonic = SR04(ULTRASONIC_ECHO_PIN, ULTRASONIC_TRIG_PIN);
@@ -28,24 +37,19 @@ IRrecv infrared(PIN_INFRARED);
 decode_results infraredResults;
 // <<< infrared block
 
-Servo servoMain; // create servo object to control a servo
-Servo servoRight;
-Servo servoLeft;
-Servo servoClaw;
+// arm block >>>
+Servo armServoMain;
+Servo armServoRight;
+Servo armServoLeft;
+Servo armServoClaw;
 
+int armPositionMain = 80; // 80 - center
+int armPositionMainCorrection = -8;
 
-
-
-
-
-// posLeft: 0 - вытянута, 140 - втянута
-// posRight: 20 - поднята, 80 - опущена
-// posClaw: 0 - закрыто, 100 - открыто
-int posMain = 80, posRight = 60, posLeft = 140, posClaw = 0;
-int posMainCorrection = -8;
-
-const int ledPin = 13; // Built in LED in Arduino board
-String msg, cmd;
+int armPositionRight = 60; // 20 - поднята, 80 - опущена
+int armPositionLeft = 140; // 0 - вытянута, 140 - втянута
+int armPositionClaw = 0; // 0 - закрыто, 100 - открыто
+// <<< arm block
 
 String codeHold = "4294967295";
 String one = "16753245";
@@ -72,12 +76,7 @@ String codeButtonPushed;
 String lastButtonPushedSymbol;
 
 int wheelsSpeed = 108; // from 0 to 255;
-int enA = 5;
-int enB = 6;
-int IN1 = A4;
-int IN2 = A3;
-int IN3 = 7;
-int IN4 = 8;
+
 
 int oneMoveBothMs = 130;
 int oneMoveSingleMs = 150;
@@ -121,28 +120,28 @@ void setup() {
   pinMode(PIN_TRACING_CENTER, INPUT);
   pinMode(PIN_TRACING_LEFT, INPUT);
 
-  pinMode(enA, OUTPUT);
-  pinMode(enB, OUTPUT);
-  analogWrite(enA, wheelsSpeed);
-  analogWrite(enB, wheelsSpeed);
+  pinMode(PIN_WHEELS_ENA, OUTPUT);
+  pinMode(PIN_WHEELS_ENB, OUTPUT);
+  analogWrite(PIN_WHEELS_ENA, wheelsSpeed);
+  analogWrite(PIN_WHEELS_ENB, wheelsSpeed);
 
-  pinMode(IN1, OUTPUT);
-  pinMode(IN2, OUTPUT);
-  pinMode(IN3, OUTPUT);
-  pinMode(IN4, OUTPUT);
+  pinMode(PIN_WHEELS_IN1, OUTPUT);
+  pinMode(PIN_WHEELS_IN2, OUTPUT);
+  pinMode(PIN_WHEELS_IN3, OUTPUT);
+  pinMode(PIN_WHEELS_IN4, OUTPUT);
 
-  servoMain.attach(4); // attaches the servo on pin 9 to the servo object
-  servoRight.attach(2);
-  servoLeft.attach(9);
-  servoClaw.attach(3);
+  armServoMain.attach(4); // attaches the servo on pin 9 to the servo object
+  armServoRight.attach(2);
+  armServoLeft.attach(9);
+  armServoClaw.attach(3);
 
-  servoMain.write(posMain + posMainCorrection);
+  armServoMain.write(armPositionMain + armPositionMainCorrection);
   delay(100);
-  servoLeft.write(posLeft);
+  armServoLeft.write(armPositionLeft);
   delay(100);
-  servoRight.write(posRight);
+  armServoRight.write(armPositionRight);
   delay(100);
-  servoClaw.write(posClaw);
+  armServoClaw.write(armPositionClaw);
 }
 
 void loop() {
@@ -217,7 +216,6 @@ void processFollowLine() {
   if (mode == 2) {
     // найти черную линию
     // проехать вперед долю секунды
-    digitalWrite(ledPin, HIGH);
 
     int center = digitalRead(PIN_TRACING_CENTER);
 
@@ -245,8 +243,6 @@ void processFollowLine() {
         rightBackStart();
         delay(50);
       } else {
-        digitalWrite(ledPin, LOW);
-
         return;
       }
     }
@@ -324,7 +320,7 @@ void processIrButtons() {
     } else if (mode == 1 && codeButtonPushed == ok) {
       lastButtonPushedSymbol = ok;
 
-      if (posClaw == 0) {
+      if (armPositionClaw == 0) {
         openClaw();
       } else {
         closeClaw();
@@ -394,8 +390,8 @@ void rightForwardStart() {
   rightCurrentlyMovingForward = true;
   rightCurrentlyMovingBack = false;
 
-  digitalWrite(IN4, LOW);
-  digitalWrite(IN3, HIGH);
+  digitalWrite(PIN_WHEELS_IN4, LOW);
+  digitalWrite(PIN_WHEELS_IN3, HIGH);
 }
 
 void rightBackStart() {
@@ -407,8 +403,8 @@ void rightBackStart() {
   rightCurrentlyMovingForward = false;
   rightCurrentlyMovingBack = true;
 
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, HIGH);
+  digitalWrite(PIN_WHEELS_IN3, LOW);
+  digitalWrite(PIN_WHEELS_IN4, HIGH);
 }
 
 void leftForwardStart() {
@@ -419,8 +415,8 @@ void leftForwardStart() {
   leftForwardStopped = 0;
   leftCurrentlyMovingForward = true;
 
-  digitalWrite(IN2, LOW);
-  digitalWrite(IN1, HIGH);
+  digitalWrite(PIN_WHEELS_IN2, LOW);
+  digitalWrite(PIN_WHEELS_IN1, HIGH);
 }
 
 void leftBackStart() {
@@ -432,16 +428,16 @@ void leftBackStart() {
   leftCurrentlyMovingForward = false;
   leftCurrentlyMovingBack = true;
 
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
+  digitalWrite(PIN_WHEELS_IN1, LOW);
+  digitalWrite(PIN_WHEELS_IN2, HIGH);
 }
 
 void leftStop() {
   leftCurrentlyMovingForward = false;
   leftCurrentlyMovingBack = false;
 
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, LOW);
+  digitalWrite(PIN_WHEELS_IN1, LOW);
+  digitalWrite(PIN_WHEELS_IN2, LOW);
 
   Serial.println(String(millis()) + ": Left stopped");
 }
@@ -450,17 +446,17 @@ void rightStop() {
   rightCurrentlyMovingForward = false;
   rightCurrentlyMovingBack = false;
 
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, LOW);
+  digitalWrite(PIN_WHEELS_IN3, LOW);
+  digitalWrite(PIN_WHEELS_IN4, LOW);
 
   Serial.println(String(millis()) + ": Right stopped");
 }
 
 void bothStop() {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, LOW);
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, LOW);
+  digitalWrite(PIN_WHEELS_IN1, LOW);
+  digitalWrite(PIN_WHEELS_IN2, LOW);
+  digitalWrite(PIN_WHEELS_IN3, LOW);
+  digitalWrite(PIN_WHEELS_IN4, LOW);
 
   rightCurrentlyMovingForward = false;
   rightCurrentlyMovingBack = false;
@@ -478,14 +474,14 @@ void armTurnRight() {
   Serial.println("Turn right\n");
 
   int minPos = 35;
-  int targetPos = posMain + posMainCorrection - 45;
+  int targetPos = armPositionMain + armPositionMainCorrection - 45;
 
   if (targetPos < minPos) {
     targetPos = minPos;
   }
 
-  for (posMain; posMain > targetPos; posMain--) {
-    servoMain.write(posMain);
+  for (armPositionMain; armPositionMain > targetPos; armPositionMain--) {
+    armServoMain.write(armPositionMain);
     delay(5); // delay 5ms（used to adjust the servo speed）
   }
 
@@ -496,14 +492,14 @@ void armTurnLeft() {
   Serial.println("Turn left\n");
 
   int maxPos = 125;
-  int targetPos = posMain + posMainCorrection + 45;
+  int targetPos = armPositionMain + armPositionMainCorrection + 45;
 
   if (targetPos > maxPos) {
     targetPos = maxPos;
   }
 
-  for (posMain; posMain < targetPos; posMain++) {
-    servoMain.write(posMain);
+  for (armPositionMain; armPositionMain < targetPos; armPositionMain++) {
+    armServoMain.write(armPositionMain);
     delay(5);
   }
 
@@ -513,8 +509,8 @@ void armTurnLeft() {
 void openClaw() {
   Serial.println("Open claw\n");
 
-  for (posClaw; posClaw < 50; posClaw++) {
-    servoClaw.write(posClaw);
+  for (armPositionClaw; armPositionClaw < 50; armPositionClaw++) {
+    armServoClaw.write(armPositionClaw);
   }
 
   delay(100);
@@ -523,8 +519,8 @@ void openClaw() {
 void closeClaw() {
   Serial.println("Close claw\n");
 
-  for (posClaw; posClaw > 0; posClaw--) {
-    servoClaw.write(posClaw);
+  for (armPositionClaw; armPositionClaw > 0; armPositionClaw--) {
+    armServoClaw.write(armPositionClaw);
   }
 
   delay(100);
@@ -533,8 +529,8 @@ void closeClaw() {
 void liftUp() {
   Serial.println("Lift up\n");
 
-  for (posLeft; posLeft < 120; posLeft++) {
-    servoLeft.write(posLeft);
+  for (armPositionLeft; armPositionLeft < 120; armPositionLeft++) {
+    armServoLeft.write(armPositionLeft);
     delay(5);
   }
 
@@ -544,8 +540,8 @@ void liftUp() {
 void liftDown() {
   Serial.println("Lift down\n");
 
-  for (posLeft; posLeft > 50; posLeft--) {
-    servoLeft.write(posLeft);
+  for (armPositionLeft; armPositionLeft > 50; armPositionLeft--) {
+    armServoLeft.write(armPositionLeft);
     delay(5);
   }
 
@@ -556,8 +552,8 @@ void leftServo5() {
   // left servo rotates to 5 degrees
   Serial.println("left servo rotates to 5 degrees\n");
 
-  for (posLeft; posLeft > 50; posLeft--) {
-    servoLeft.write(posLeft);
+  for (armPositionLeft; armPositionLeft > 50; armPositionLeft--) {
+    armServoLeft.write(armPositionLeft);
     delay(5);
   }
 
@@ -566,8 +562,8 @@ void leftServo5() {
 
 void rightServo100() {
   // right servo rotates to 100 degrees
-  for (posRight; posRight > 50; posRight--) {
-    servoRight.write(posRight);
+  for (armPositionRight; armPositionRight > 50; armPositionRight--) {
+    armServoRight.write(armPositionRight);
     delay(5);
   }
 }
@@ -575,27 +571,27 @@ void rightServo100() {
 void leftServo120() {
   // left servo rotates to100 degrees, rocker arm lifts.
   Serial.println("left servo rotates to100 degrees, rocker arm lifts\n");
-  for (posLeft; posLeft < 120; posLeft++) {
-    servoLeft.write(posLeft);
+  for (armPositionLeft; armPositionLeft < 120; armPositionLeft++) {
+    armServoLeft.write(armPositionLeft);
     delay(5);
   }
 
   delay(1000);
 }
 
-// posLeft: 0 - вытянута, 140 - втянута
+// armPositionLeft: 0 - вытянута, 140 - втянута
 void armForward() {
   Serial.println("Arm forward\n");
 
   int minPos = 0;
-  int targetPos = posLeft - 46;
+  int targetPos = armPositionLeft - 46;
 
   if (targetPos < minPos) {
     targetPos = minPos;
   }
 
-  for (posLeft; posLeft > targetPos; posLeft--) {
-    servoLeft.write(posLeft);
+  for (armPositionLeft; armPositionLeft > targetPos; armPositionLeft--) {
+    armServoLeft.write(armPositionLeft);
     delay(5); // delay 5ms（used to adjust the servo speed）
   }
 
@@ -606,26 +602,26 @@ void armBack() {
   Serial.println("Arm back\n");
 
   int maxPos = 140;
-  int targetPos = posLeft + 46;
+  int targetPos = armPositionLeft + 46;
 
   if (targetPos > maxPos) {
     targetPos = maxPos;
   }
 
-  for (posLeft; posLeft < targetPos; posLeft++) {
-    servoLeft.write(posLeft);
+  for (armPositionLeft; armPositionLeft < targetPos; armPositionLeft++) {
+    armServoLeft.write(armPositionLeft);
     delay(5); // delay 5ms（used to adjust the servo speed）
   }
 
   delay(100);
 }
 
-// posRight: 20 - поднята, 80 - опущена
+// armPositionRight: 20 - поднята, 80 - опущена
 void armUp() {
   Serial.println("Arm up\n");
 
   int minPos = 20;
-  int targetPos = posRight - 40;
+  int targetPos = armPositionRight - 40;
 
   if (targetPos < minPos) {
     targetPos = minPos;
@@ -633,9 +629,9 @@ void armUp() {
 
   Serial.println("Arm up to " + String(targetPos));
 
-  for (posRight; posRight > targetPos; posRight--) {
-    Serial.println("Arm right " + String(posRight));
-    servoRight.write(posRight);
+  for (armPositionRight; armPositionRight > targetPos; armPositionRight--) {
+    Serial.println("Arm right " + String(armPositionRight));
+    armServoRight.write(armPositionRight);
     delay(5); // delay 5ms（used to adjust the servo speed）
   }
 
@@ -646,7 +642,7 @@ void armDown() {
   Serial.println("Arm down\n");
 
   int maxPos = 80;
-  int targetPos = posRight + 40;
+  int targetPos = armPositionRight + 40;
 
   if (targetPos > maxPos) {
     targetPos = maxPos;
@@ -654,9 +650,9 @@ void armDown() {
 
   Serial.println("Arm down to " + String(targetPos));
 
-  for (posRight; posRight < targetPos; posRight++) {
-    Serial.println("Arm right " + String(posRight));
-    servoRight.write(posRight);
+  for (armPositionRight; armPositionRight < targetPos; armPositionRight++) {
+    Serial.println("Arm right " + String(armPositionRight));
+    armServoRight.write(armPositionRight);
     delay(5); // delay 5ms（used to adjust the servo speed）
   }
 
