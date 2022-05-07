@@ -2,23 +2,41 @@
 //#include "SR04.h"
 #include <Servo.h>
 
-// ultrasonic block
-const int TRIG_PIN = A1;
-const int ECHO_PIN = A0;
-//SR04 sr04 = SR04(ECHO_PIN,TRIG_PIN);
+// PINs >>>
+
+// ultrasonic
+const int ULTRASONIC_TRIG_PIN = A1;
+const int ULTRASONIC_ECHO_PIN = A0;
+
+// tracing
+const int PIN_TRACING_RIGHT = A2;
+const int PIN_TRACING_CENTER = 10;
+const int PIN_TRACING_LEFT = A5;
+
+// infrared
+const int PIN_INFRARED = 11;
+
+// <<< PINs
+
+
+// ultrasonic block >>>
+//SR04 ultrasonic = SR04(ULTRASONIC_ECHO_PIN, ULTRASONIC_TRIG_PIN);
+// <<< ultrasonic block
+
+// infrared block >>>
+IRrecv infrared(PIN_INFRARED);
+decode_results infraredResults;
+// <<< infrared block
 
 Servo servoMain; // create servo object to control a servo
 Servo servoRight;
 Servo servoLeft;
 Servo servoClaw;
 
-int RECV_PIN = 11;
-IRrecv irrecv(RECV_PIN);
-decode_results results;
 
-const int tracingPinRight = A2;
-const int tracingPinCenter = 10;
-const int tracingPinLeft = A5;
+
+
+
 
 // posLeft: 0 - вытянута, 140 - втянута
 // posRight: 20 - поднята, 80 - опущена
@@ -97,11 +115,11 @@ int mode = 1;
 
 void setup() {
   Serial.begin(9600);  // speed for the console
-  irrecv.enableIRIn(); // Start the infrared receiver
+  infrared.enableIRIn(); // Start the infrared receiver
 
-  pinMode(tracingPinRight, INPUT);
-  pinMode(tracingPinCenter, INPUT);
-  pinMode(tracingPinLeft, INPUT);
+  pinMode(PIN_TRACING_RIGHT, INPUT);
+  pinMode(PIN_TRACING_CENTER, INPUT);
+  pinMode(PIN_TRACING_LEFT, INPUT);
 
   pinMode(enA, OUTPUT);
   pinMode(enB, OUTPUT);
@@ -169,7 +187,7 @@ void addMoveToLastMovesArray(int move) {
 }
 
 //void checkDistance() {
-//  long distance = sr04.Distance();
+//  long distance = ultrasonic.Distance();
 //  Serial.print(distance);
 //  Serial.println("cm");
 //}
@@ -201,7 +219,7 @@ void processFollowLine() {
     // проехать вперед долю секунды
     digitalWrite(ledPin, HIGH);
 
-    int center = digitalRead(tracingPinCenter);
+    int center = digitalRead(PIN_TRACING_CENTER);
 
     if (center == HIGH) {
       addMoveToLastMovesArray(2);
@@ -210,8 +228,8 @@ void processFollowLine() {
     } else {
       bothStop();
 
-      int right = digitalRead(tracingPinRight);
-      int left = digitalRead(tracingPinLeft);
+      int right = digitalRead(PIN_TRACING_RIGHT);
+      int left = digitalRead(PIN_TRACING_LEFT);
 
       if (right == HIGH && left == LOW) {
         addMoveToLastMovesArray(1);
@@ -238,8 +256,8 @@ void processFollowLine() {
 }
 
 void processIrButtons() {
-  if (irrecv.decode( & results)) {
-    codeButtonPushed = String(results.value);
+  if (infrared.decode( & infraredResults)) {
+    codeButtonPushed = String(infraredResults.value);
 
     Serial.println(codeButtonPushed);
 
@@ -335,7 +353,7 @@ void processIrButtons() {
       Serial.println(String(millis()) + ": pushed " + lastButtonPushedSymbol);
     }
 
-    irrecv.resume(); // Receive the next value
+    infrared.resume(); // Receive the next value
   }
 }
 
