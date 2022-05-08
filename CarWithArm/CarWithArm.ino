@@ -1,5 +1,5 @@
 #include <IRremote.h>
-//#include "SR04.h"
+#include "SR04.h"
 #include <Servo.h>
 
 // PINs >>>
@@ -33,7 +33,7 @@ const int PIN_ARM_CLAW = 3;
 // <<< PINs
 
 // ultrasonic block >>>
-//SR04 ultrasonic = SR04(ULTRASONIC_ECHO_PIN, ULTRASONIC_TRIG_PIN);
+SR04 ultrasonic = SR04(ULTRASONIC_ECHO_PIN, ULTRASONIC_TRIG_PIN);
 // <<< ultrasonic block
 
 // infrared block >>>
@@ -154,9 +154,16 @@ void setup() {
   armServoClaw.write(armPositionClaw);
 }
 
+void checkDistance() {
+  long distance = ultrasonic.Distance();
+  Serial.print(distance);
+  Serial.println("cm");
+}
+
 void loop() {
-  //checkDistance();
-  processIrButtons();
-  processFollowLine();
-  manageStateOfWheels();
+  checkDistance();
+  delay(100);
+  //processIrButtons();
+  //processFollowLine();
+  //manageStateOfWheels();
 }
