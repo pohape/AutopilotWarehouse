@@ -4,8 +4,6 @@
 
 // PINs >>>
 
-const int PIN_LED = 13; // Built in LED in Arduino board
-
 // ultrasonic
 const int ULTRASONIC_TRIG_PIN = A1;
 const int ULTRASONIC_ECHO_PIN = A0;
@@ -19,12 +17,18 @@ const int PIN_TRACING_LEFT = A5;
 const int PIN_INFRARED = 11;
 
 // wheels
-int PIN_WHEELS_ENA = 5;
-int PIN_WHEELS_ENB = 6;
-int PIN_WHEELS_IN1 = A4;
-int PIN_WHEELS_IN2 = A3;
-int PIN_WHEELS_IN3 = 7;
-int PIN_WHEELS_IN4 = 8;
+const int PIN_WHEELS_ENA = 5;
+const int PIN_WHEELS_ENB = 6;
+const int PIN_WHEELS_IN1 = A4;
+const int PIN_WHEELS_IN2 = A3;
+const int PIN_WHEELS_IN3 = 7;
+const int PIN_WHEELS_IN4 = 8;
+
+// arm
+const int PIN_ARM_MAIN = 4;
+const int PIN_ARM_LEFT = 9;
+const int PIN_ARM_RIGHT = 2;
+const int PIN_ARM_CLAW = 3;
 
 // <<< PINs
 
@@ -132,10 +136,10 @@ void setup() {
   pinMode(PIN_WHEELS_IN3, OUTPUT);
   pinMode(PIN_WHEELS_IN4, OUTPUT);
 
-  armServoMain.attach(4); // attaches the servo on pin 9 to the servo object
-  armServoRight.attach(2);
-  armServoLeft.attach(9);
-  armServoClaw.attach(3);
+  armServoMain.attach(PIN_ARM_MAIN);
+//  armServoRight.attach(PIN_ARM_RIGHT);
+//  armServoLeft.attach(PIN_ARM_LEFT);
+//  armServoClaw.attach(PIN_ARM_CLAW);
 
   armServoMain.write(armPositionMain + armPositionMainCorrection);
   delay(100);

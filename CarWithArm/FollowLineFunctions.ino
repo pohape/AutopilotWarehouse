@@ -1,8 +1,6 @@
 // follow line functions >>>
 void addMoveToLastMovesArray(int move) {
   if (lastFollowLineMoves[0] != move) { 
-    lastFollowLineMoves[14] = lastFollowLineMoves[13];
-    lastFollowLineMoves[13] = lastFollowLineMoves[12];
     lastFollowLineMoves[12] = lastFollowLineMoves[11];
     lastFollowLineMoves[11] = lastFollowLineMoves[10];
     lastFollowLineMoves[10] = lastFollowLineMoves[9];
@@ -20,24 +18,50 @@ void addMoveToLastMovesArray(int move) {
 }
 
 void followLineCheckAndStop() {
-  if ((lastFollowLineMoves[0] == 2 && lastFollowLineMoves[1] == 8 && lastFollowLineMoves[2] == 2 && lastFollowLineMoves[3] == 8 && lastFollowLineMoves[4] == 2 && lastFollowLineMoves[5] == 8 && lastFollowLineMoves[6] == 2 && lastFollowLineMoves[7] == 8 && lastFollowLineMoves[8] == 2 && lastFollowLineMoves[9] == 8 && lastFollowLineMoves[10] == 2 && lastFollowLineMoves[11] == 8 && lastFollowLineMoves[12] == 2 && lastFollowLineMoves[13] == 8 && lastFollowLineMoves[14] == 2) || (lastFollowLineMoves[0] == 8 && lastFollowLineMoves[1] == 2 && lastFollowLineMoves[2] == 8 && lastFollowLineMoves[3] == 2 && lastFollowLineMoves[4] == 8 && lastFollowLineMoves[5] == 2 && lastFollowLineMoves[6] == 8 && lastFollowLineMoves[7] == 2 && lastFollowLineMoves[8] == 8 && lastFollowLineMoves[9] == 2 && lastFollowLineMoves[10] == 8 && lastFollowLineMoves[11] == 2 && lastFollowLineMoves[12] == 8 && lastFollowLineMoves[13] == 2 && lastFollowLineMoves[14] == 8)) {
-    mode = 1;
-    lastFollowLineMoves[0] = 0;
-    lastFollowLineMoves[1] = 0;
-    lastFollowLineMoves[2] = 0;
-    lastFollowLineMoves[3] = 0;
-    lastFollowLineMoves[4] = 0;
-    lastFollowLineMoves[5] = 0;
-    lastFollowLineMoves[6] = 0;
-    lastFollowLineMoves[7] = 0;
-    lastFollowLineMoves[8] = 0;
-    lastFollowLineMoves[9] = 0;
-    lastFollowLineMoves[10] = 0;
-    lastFollowLineMoves[11] = 0;
-    lastFollowLineMoves[12] = 0;
-    lastFollowLineMoves[13] = 0;
-    lastFollowLineMoves[14] = 0;
+//  if (lastFollowLineMoves[0] != 0 && lastFollowLineMoves[1] != 0 && lastFollowLineMoves[2] != 0 && lastFollowLineMoves[3] != 0 && lastFollowLineMoves[4] != 0 && lastFollowLineMoves[5] != 0 && lastFollowLineMoves[6] != 0 && lastFollowLineMoves[7] != 0 && lastFollowLineMoves[8] != 0 && lastFollowLineMoves[9] != 0) {
+//    for(int i = 0; i < 13; i++)
+//    {
+//      Serial.println(lastFollowLineMoves[i]);
+//    }
+//
+//    Serial.println();
+//  }
+
+  int last = 0;
+  int otherCount = 0;
+
+  for (int i = 0; i < 13; i++)
+  {
+    if (last == lastFollowLineMoves[i]) {
+      //Serial.println("BAD last == last");
+      return;
+    } else if (lastFollowLineMoves[i] != 2 && lastFollowLineMoves[i] != 8) {
+      otherCount++;
+
+      if (otherCount > 3) {
+        //Serial.println("BAD otherCount == 3");
+        return;
+      }
+    }
+
+    last = lastFollowLineMoves[i];
   }
+
+  //Serial.println("Follow line STOP");
+  mode = 1;
+  lastFollowLineMoves[0] = 0;
+  lastFollowLineMoves[1] = 0;
+  lastFollowLineMoves[2] = 0;
+  lastFollowLineMoves[3] = 0;
+  lastFollowLineMoves[4] = 0;
+  lastFollowLineMoves[5] = 0;
+  lastFollowLineMoves[6] = 0;
+  lastFollowLineMoves[7] = 0;
+  lastFollowLineMoves[8] = 0;
+  lastFollowLineMoves[9] = 0;
+  lastFollowLineMoves[10] = 0;
+  lastFollowLineMoves[11] = 0;
+  lastFollowLineMoves[12] = 0;
 }
 
 void processFollowLine() {

@@ -7,19 +7,19 @@ void manageStateOfWheels() {
   } else if (leftCurrentlyMovingBack && rightCurrentlyMovingBack && (currentMillis - leftBackStarted) > oneMoveBothMs && (currentMillis - rightBackStarted) > oneMoveBothMs) {
     bothStop();
   } else if (leftCurrentlyMovingForward && (currentMillis - leftForwardStarted) > oneMoveSingleMs) {
-    Serial.println(String(currentMillis) + ": leftCurrentlyMovingForward && leftForwardStarted " + String(leftForwardStarted) + "; oneMoveMs " + String(oneMoveSingleMs) + "; working for " + String(currentMillis - leftForwardStarted));
+    //Serial.println(String(currentMillis) + ": leftCurrentlyMovingForward && leftForwardStarted " + String(leftForwardStarted) + "; oneMoveMs " + String(oneMoveSingleMs) + "; working for " + String(currentMillis - leftForwardStarted));
 
     leftStop();
   } else if (rightCurrentlyMovingForward && (currentMillis - rightForwardStarted) > oneMoveSingleMs) {
-    Serial.println(String(currentMillis) + ": rightCurrentlyMovingForward && rightForwardStarted " + String(rightForwardStarted) + "; oneMoveMs " + String(oneMoveSingleMs) + "; working for " + String(currentMillis - rightForwardStarted));
+    //Serial.println(String(currentMillis) + ": rightCurrentlyMovingForward && rightForwardStarted " + String(rightForwardStarted) + "; oneMoveMs " + String(oneMoveSingleMs) + "; working for " + String(currentMillis - rightForwardStarted));
 
     rightStop();
   } else if (leftCurrentlyMovingBack && (currentMillis - leftBackStarted) > oneMoveSingleMs) {
-    Serial.println(String(currentMillis) + ": leftCurrentlyMovingBack && leftBackStarted " + String(leftBackStarted) + "; oneMoveMs " + String(oneMoveSingleMs) + "; working for " + String(currentMillis - leftBackStarted));
+    //Serial.println(String(currentMillis) + ": leftCurrentlyMovingBack && leftBackStarted " + String(leftBackStarted) + "; oneMoveMs " + String(oneMoveSingleMs) + "; working for " + String(currentMillis - leftBackStarted));
 
     leftStop();
   } else if (rightCurrentlyMovingBack && (currentMillis - rightBackStarted) > oneMoveSingleMs) {
-    Serial.println(String(currentMillis) + ": rightCurrentlyMovingBack && rightBackStarted " + String(rightBackStarted) + "; oneMoveMs " + String(oneMoveSingleMs) + "; working for " + String(currentMillis - rightBackStarted));
+    //Serial.println(String(currentMillis) + ": rightCurrentlyMovingBack && rightBackStarted " + String(rightBackStarted) + "; oneMoveMs " + String(oneMoveSingleMs) + "; working for " + String(currentMillis - rightBackStarted));
 
     rightStop();
   }
@@ -29,7 +29,7 @@ void manageStateOfWheels() {
 void rightForwardStart() {
   unsigned long currentMillis = millis();
 
-  Serial.println(String(currentMillis) + ": Right forward start");
+  //Serial.println(String(currentMillis) + ": Right forward start");
   rightForwardStarted = currentMillis;
   rightForwardStopped = 0;
   rightCurrentlyMovingForward = true;
@@ -42,7 +42,7 @@ void rightForwardStart() {
 void rightBackStart() {
   unsigned long currentMillis = millis();
 
-  Serial.println(String(currentMillis) + ": Right back start");
+  //Serial.println(String(currentMillis) + ": Right back start");
   rightBackStarted = currentMillis;
   rightBackStopped = 0;
   rightCurrentlyMovingForward = false;
@@ -55,7 +55,7 @@ void rightBackStart() {
 void leftForwardStart() {
   unsigned long currentMillis = millis();
 
-  Serial.println(String(currentMillis) + ": Left forward start");
+  //Serial.println(String(currentMillis) + ": Left forward start");
   leftForwardStarted = currentMillis;
   leftForwardStopped = 0;
   leftCurrentlyMovingForward = true;
@@ -67,7 +67,7 @@ void leftForwardStart() {
 void leftBackStart() {
   unsigned long currentMillis = millis();
 
-  Serial.println(String(currentMillis) + ": Left back start");
+  //Serial.println(String(currentMillis) + ": Left back start");
   leftBackStarted = currentMillis;
   leftBackStopped = 0;
   leftCurrentlyMovingForward = false;
@@ -84,7 +84,7 @@ void leftStop() {
   digitalWrite(PIN_WHEELS_IN1, LOW);
   digitalWrite(PIN_WHEELS_IN2, LOW);
 
-  Serial.println(String(millis()) + ": Left stopped");
+  //Serial.println(String(millis()) + ": Left stopped");
 }
 
 void rightStop() {
@@ -108,7 +108,7 @@ void bothStop() {
   leftCurrentlyMovingForward = false;
   leftCurrentlyMovingBack = false;
 
-  Serial.println(String(millis()) + ": Both stopped");
+  //Serial.println(String(millis()) + ": Both stopped");
 }
 
 // <<< Wheels left/right start/stop functions
