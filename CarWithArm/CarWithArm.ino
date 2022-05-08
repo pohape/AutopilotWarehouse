@@ -71,8 +71,10 @@ Servo armServoRight;
 Servo armServoLeft;
 Servo armServoClaw;
 
-int armPositionMain = 80; // 80 - center
-int armPositionMainCorrection = -8;
+const int armPositionMainCenter = 72; // 80 - center, correction is -8
+const int armPositionMainMin = 27; // 35, with correction is 27
+const int armPositionMainMax = 117; // 125, with correction is 117
+int armPositionMain = 0; // unknown at start
 
 int armPositionRight = 60; // 20 - поднята, 80 - опущена
 int armPositionLeft = 140; // 0 - вытянута, 140 - втянута
@@ -141,8 +143,10 @@ void setup() {
 //  armServoLeft.attach(PIN_ARM_LEFT);
 //  armServoClaw.attach(PIN_ARM_CLAW);
 
-  armServoMain.write(armPositionMain + armPositionMainCorrection);
+  armServoMain.write(armPositionMainCenter);
+  armPositionMain = armPositionMainCenter;
   delay(100);
+  
   armServoLeft.write(armPositionLeft);
   delay(100);
   armServoRight.write(armPositionRight);

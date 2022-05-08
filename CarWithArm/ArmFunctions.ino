@@ -1,13 +1,12 @@
 // Arm functions >>>
 
 void armTurnRight() {
-  Serial.println("Turn right\n");
+  //Serial.println("Turn right\n");
 
-  int minPos = 35;
-  int targetPos = armPositionMain + armPositionMainCorrection - 45;
+  int targetPos = armPositionMain - 45;
 
-  if (targetPos < minPos) {
-    targetPos = minPos;
+  if (targetPos < armPositionMainMin) {
+    targetPos = armPositionMainMin;
   }
 
   for (armPositionMain; armPositionMain > targetPos; armPositionMain--) {
@@ -19,13 +18,12 @@ void armTurnRight() {
 }
 
 void armTurnLeft() {
-  Serial.println("Turn left\n");
+  //Serial.println("Turn left\n");
 
-  int maxPos = 125;
-  int targetPos = armPositionMain + armPositionMainCorrection + 45;
+  int targetPos = armPositionMain + 45;
 
-  if (targetPos > maxPos) {
-    targetPos = maxPos;
+  if (targetPos > armPositionMainMax) {
+    targetPos = armPositionMainMax;
   }
 
   for (armPositionMain; armPositionMain < targetPos; armPositionMain++) {
@@ -37,7 +35,7 @@ void armTurnLeft() {
 }
 
 void openClaw() {
-  Serial.println("Open claw\n");
+  //Serial.println("Open claw\n");
 
   for (armPositionClaw; armPositionClaw < 50; armPositionClaw++) {
     armServoClaw.write(armPositionClaw);
@@ -47,7 +45,7 @@ void openClaw() {
 }
 
 void closeClaw() {
-  Serial.println("Close claw\n");
+  //Serial.println("Close claw\n");
 
   for (armPositionClaw; armPositionClaw > 0; armPositionClaw--) {
     armServoClaw.write(armPositionClaw);
@@ -57,7 +55,7 @@ void closeClaw() {
 }
 
 void liftUp() {
-  Serial.println("Lift up\n");
+  //Serial.println("Lift up\n");
 
   for (armPositionLeft; armPositionLeft < 120; armPositionLeft++) {
     armServoLeft.write(armPositionLeft);
@@ -68,7 +66,7 @@ void liftUp() {
 }
 
 void liftDown() {
-  Serial.println("Lift down\n");
+  //Serial.println("Lift down\n");
 
   for (armPositionLeft; armPositionLeft > 50; armPositionLeft--) {
     armServoLeft.write(armPositionLeft);
@@ -79,8 +77,7 @@ void liftDown() {
 }
 
 void leftServo5() {
-  // left servo rotates to 5 degrees
-  Serial.println("left servo rotates to 5 degrees\n");
+  //Serial.println("left servo rotates to 5 degrees\n");
 
   for (armPositionLeft; armPositionLeft > 50; armPositionLeft--) {
     armServoLeft.write(armPositionLeft);
@@ -99,8 +96,7 @@ void rightServo100() {
 }
 
 void leftServo120() {
-  // left servo rotates to100 degrees, rocker arm lifts.
-  Serial.println("left servo rotates to100 degrees, rocker arm lifts\n");
+  //Serial.println("left servo rotates to 100 degrees, rocker arm lifts\n");
   for (armPositionLeft; armPositionLeft < 120; armPositionLeft++) {
     armServoLeft.write(armPositionLeft);
     delay(5);
@@ -111,7 +107,7 @@ void leftServo120() {
 
 // armPositionLeft: 0 - вытянута, 140 - втянута
 void armForward() {
-  Serial.println("Arm forward\n");
+  //Serial.println("Arm forward\n");
 
   int minPos = 0;
   int targetPos = armPositionLeft - 46;
@@ -129,7 +125,7 @@ void armForward() {
 }
 
 void armBack() {
-  Serial.println("Arm back\n");
+  //Serial.println("Arm back\n");
 
   int maxPos = 140;
   int targetPos = armPositionLeft + 46;
@@ -148,7 +144,7 @@ void armBack() {
 
 // armPositionRight: 20 - поднята, 80 - опущена
 void armUp() {
-  Serial.println("Arm up\n");
+  //Serial.println("Arm up\n");
 
   int minPos = 20;
   int targetPos = armPositionRight - 40;
@@ -157,10 +153,10 @@ void armUp() {
     targetPos = minPos;
   }
 
-  Serial.println("Arm up to " + String(targetPos));
+  //Serial.println("Arm up to " + String(targetPos));
 
   for (armPositionRight; armPositionRight > targetPos; armPositionRight--) {
-    Serial.println("Arm right " + String(armPositionRight));
+    //Serial.println("Arm right " + String(armPositionRight));
     armServoRight.write(armPositionRight);
     delay(5); // delay 5ms（used to adjust the servo speed）
   }
@@ -169,7 +165,7 @@ void armUp() {
 }
 
 void armDown() {
-  Serial.println("Arm down\n");
+  //Serial.println("Arm down\n");
 
   int maxPos = 80;
   int targetPos = armPositionRight + 40;
@@ -178,7 +174,7 @@ void armDown() {
     targetPos = maxPos;
   }
 
-  Serial.println("Arm down to " + String(targetPos));
+  //Serial.println("Arm down to " + String(targetPos));
 
   for (armPositionRight; armPositionRight < targetPos; armPositionRight++) {
     Serial.println("Arm right " + String(armPositionRight));
