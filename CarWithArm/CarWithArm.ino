@@ -72,8 +72,8 @@ Servo armServoLeft;
 Servo armServoClaw;
 
 const int armPositionMainCenter = 72; // 80 - center, correction is -8
-const int armPositionMainMin = 27; // 35, with correction is 27
-const int armPositionMainMax = 117; // 125, with correction is 117
+const int armPositionMainMin = 2; // 10, with correction is 2
+const int armPositionMainMax = 137; // 145, with correction is 137
 int armPositionMain = 0; // unknown at start
 
 int armPositionRight = 60; // 20 - поднята, 80 - опущена
@@ -154,16 +154,8 @@ void setup() {
   armServoClaw.write(armPositionClaw);
 }
 
-void checkDistance() {
-  long distance = ultrasonic.Distance();
-  Serial.print(distance);
-  Serial.println("cm");
-}
-
 void loop() {
-  checkDistance();
-  delay(100);
-  //processIrButtons();
-  //processFollowLine();
-  //manageStateOfWheels();
+  processIrButtons();
+  processFollowLine();
+  manageStateOfWheels();
 }

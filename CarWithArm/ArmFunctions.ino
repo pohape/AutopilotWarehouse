@@ -3,7 +3,7 @@
 void armTurnRight() {
   //Serial.println("Turn right\n");
 
-  int targetPos = armPositionMain - 45;
+  int targetPos = armPositionMain - 10;
 
   if (targetPos < armPositionMainMin) {
     targetPos = armPositionMainMin;
@@ -20,7 +20,7 @@ void armTurnRight() {
 void armTurnLeft() {
   //Serial.println("Turn left\n");
 
-  int targetPos = armPositionMain + 45;
+  int targetPos = armPositionMain + 10;
 
   if (targetPos > armPositionMainMax) {
     targetPos = armPositionMainMax;

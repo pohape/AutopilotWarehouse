@@ -91,6 +91,10 @@ void processIrButtons() {
         rightBackStart();
       } else if (remoteLastPushed == nine) {
         leftBackStart();
+      } else if (remoteLastPushed == left) {
+        armTurnLeft();
+      } else if (remoteLastPushed == right) {
+        armTurnRight();
       }
     } else {
       Serial.println(String(millis()) + ": pushed " + remoteLastPushed);
