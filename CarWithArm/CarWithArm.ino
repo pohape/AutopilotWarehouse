@@ -95,9 +95,9 @@ int lastFollowLineMoves[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 // <<< tracing block
 
 // wheels block >>>
-int wheelsSpeed = 108; // from 0 to 255;
-int oneMoveBothMs = 130;
-int oneMoveSingleMs = 150;
+const int wheelsSpeedDefault = 108; // from 0 to 255;
+const int oneMoveBothMs = 130;
+const int oneMoveSingleMs = 150;
 
 // keeping the current state of the wheels >>
 unsigned long leftForwardStarted = 0;
@@ -132,8 +132,8 @@ void setup() {
 
   pinMode(PIN_WHEELS_ENA, OUTPUT);
   pinMode(PIN_WHEELS_ENB, OUTPUT);
-  analogWrite(PIN_WHEELS_ENA, wheelsSpeed);
-  analogWrite(PIN_WHEELS_ENB, wheelsSpeed);
+  analogWrite(PIN_WHEELS_ENA, wheelsSpeedDefault);
+  analogWrite(PIN_WHEELS_ENB, wheelsSpeedDefault);
 
   pinMode(PIN_WHEELS_IN1, OUTPUT);
   pinMode(PIN_WHEELS_IN2, OUTPUT);

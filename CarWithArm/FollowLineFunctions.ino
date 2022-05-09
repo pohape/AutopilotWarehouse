@@ -18,33 +18,35 @@ void addMoveToLastMovesArray(int move) {
 }
 
 void followLineCheckAndStop() {
-//  if (lastFollowLineMoves[0] != 0 && lastFollowLineMoves[1] != 0 && lastFollowLineMoves[2] != 0 && lastFollowLineMoves[3] != 0 && lastFollowLineMoves[4] != 0 && lastFollowLineMoves[5] != 0 && lastFollowLineMoves[6] != 0 && lastFollowLineMoves[7] != 0 && lastFollowLineMoves[8] != 0 && lastFollowLineMoves[9] != 0) {
-//    for(int i = 0; i < 13; i++)
-//    {
-//      Serial.println(lastFollowLineMoves[i]);
-//    }
-//
-//    Serial.println();
-//  }
-
-  int last = 0;
-  int otherCount = 0;
-
-  for (int i = 0; i < 13; i++)
-  {
-    if (last == lastFollowLineMoves[i]) {
-      //Serial.println("BAD last == last");
-      return;
-    } else if (lastFollowLineMoves[i] != 2 && lastFollowLineMoves[i] != 8) {
-      otherCount++;
-
-      if (otherCount > 3) {
-        //Serial.println("BAD otherCount == 3");
-        return;
-      }
+  if (lastFollowLineMoves[0] != 0 && lastFollowLineMoves[1] != 0 && lastFollowLineMoves[2] != 0 && lastFollowLineMoves[3] != 0 && lastFollowLineMoves[4] != 0 && lastFollowLineMoves[5] != 0 && lastFollowLineMoves[6] != 0 && lastFollowLineMoves[7] != 0 && lastFollowLineMoves[8] != 0 && lastFollowLineMoves[9] != 0) {
+    for(int i = 0; i < 13; i++)
+    {
+      Serial.println(lastFollowLineMoves[i]);
     }
 
-    last = lastFollowLineMoves[i];
+    Serial.println();
+  }
+
+  if (lastFollowLineMoves[0] != 8 || lastFollowLineMoves[1] != 8 || lastFollowLineMoves[2] != 8 || lastFollowLineMoves[3] != 8 || lastFollowLineMoves[4] != 8 || lastFollowLineMoves[5] != 8 || lastFollowLineMoves[6] != 8 || lastFollowLineMoves[7] != 8 || lastFollowLineMoves[8] != 8 || lastFollowLineMoves[9] != 8 || lastFollowLineMoves[10] != 8 || lastFollowLineMoves[11] != 8 || lastFollowLineMoves[12] != 8) {
+    int last = 0;
+    int otherCount = 0;
+    
+    for (int i = 0; i < 13; i++)
+    {
+      if (last == lastFollowLineMoves[i]) {
+        //Serial.println("BAD last == last");
+        return;
+      } else if (lastFollowLineMoves[i] != 2 && lastFollowLineMoves[i] != 8) {
+        otherCount++;
+    
+        if (otherCount > 3) {
+          //Serial.println("BAD otherCount == 3");
+          return;
+        }
+      }
+    
+      last = lastFollowLineMoves[i];
+    }
   }
 
   //Serial.println("Follow line STOP");
@@ -67,8 +69,8 @@ void followLineCheckAndStop() {
 void processFollowLine() {
   if (mode == 2) {
     processMode2();
-  //} else if (mode == 3) {
-    //processMode3();
+  } else if (mode == 3) {
+    processMode3();
   }
 }
 
@@ -109,6 +111,32 @@ bool mode3TurnUltrasonicLeftToObstruction() {
   return false;
 }
 
+void processMode3() {
+  rightForwardStart();
+  leftForwardStart();
+  
+  int center = digitalRead(PIN_TRACING_CENTER) == HIGH ? 1 : 0;
+  int right = digitalRead(PIN_TRACING_RIGHT) == HIGH ? 1 : 0;
+  int left = digitalRead(PIN_TRACING_LEFT) == HIGH ? 1 : 0;
+
+  if ((center + right + left) >= 2) {
+    bothStop();
+    armTurnCenter();
+    
+    analogWrite(PIN_WHEELS_ENA, wheelsSpeedDefault);
+    analogWrite(PIN_WHEELS_ENB, wheelsSpeedDefault);
+    
+    leftForwardStart();
+    delay(700);
+
+    rightForwardStart();
+    delay(300);
+    
+    bothStop();
+    mode = 2;
+  }
+}
+
 void initMode3() {
   mode = 3;
   bothStop();
@@ -122,84 +150,53 @@ void initMode3() {
   leftForwardStart();
   delay(500);
 
-  int center;
-  int right;
-  int left;
-  
-  bool lastMoveLeft = true;
+  analogWrite(PIN_WHEELS_ENA, wheelsSpeedDefault - 30);
+  analogWrite(PIN_WHEELS_ENB, wheelsSpeedDefault + 40);
 
-  do {
-    addMoveToLastMovesArray(1);
-    rightForwardStart();
-
-    if (lastMoveLeft) {
-      lastMoveLeft = false;
-      delay(80);
-    } else {
-      addMoveToLastMovesArray(2);
-      leftForwardStart();
-      lastMoveLeft = true;
-      delay(50);
-    }
-    
-    bothStop();
-    
-    center = digitalRead(PIN_TRACING_CENTER) == HIGH ? 1 : 0;
-    right = digitalRead(PIN_TRACING_RIGHT) == HIGH ? 1 : 0;
-    left = digitalRead(PIN_TRACING_LEFT) == HIGH ? 1 : 0;
-  } while ((center + right + left) < 2);
-
-  armTurnCenter();
-
-  addMoveToLastMovesArray(2);
+  rightForwardStart();
   leftForwardStart();
-  delay(1000);
-  
-  mode = 2;
 }
 
 void processMode2() {
-  if (mode == 2) {
-    // найти черную линию
-    // проехать вперед долю секунды
+  // найти черную линию
+  // проехать вперед долю секунды
 
-    int center = digitalRead(PIN_TRACING_CENTER);
+  int center = digitalRead(PIN_TRACING_CENTER);
 
-    if (center == HIGH) {
-      long distance = ultrasonic.Distance();
-      
-      if (distance < distanceWarning) {
-        initMode3();
-      } else {      
-        addMoveToLastMovesArray(2);
-        rightForwardStart();
-        leftForwardStart();
-      }
-    } else {
-      bothStop();
-
-      int right = digitalRead(PIN_TRACING_RIGHT);
-      int left = digitalRead(PIN_TRACING_LEFT);
-
-      if (right == HIGH && left == LOW) {
-        addMoveToLastMovesArray(1);
-        leftForwardStart();
-        delay(40);
-      } else if (left == HIGH && right == LOW) {
-        addMoveToLastMovesArray(3);
-        rightForwardStart();
-        delay(40);
-      } else if (left == LOW && right == LOW) {
-        addMoveToLastMovesArray(8);
-        leftBackStart();
-        rightBackStart();
-        delay(50);
-      } else {
-        return;
-      }
+  if (center == HIGH) {
+    long distance = ultrasonic.Distance();
+    
+    if (distance < distanceWarning) {
+      initMode3();
+    } else {      
+      addMoveToLastMovesArray(2);
+      rightForwardStart();
+      leftForwardStart();
     }
+  } else {
+    bothStop();
 
-    followLineCheckAndStop();
+    int right = digitalRead(PIN_TRACING_RIGHT);
+    int left = digitalRead(PIN_TRACING_LEFT);
+
+    if (right == HIGH && left == LOW) {
+      addMoveToLastMovesArray(1);
+      leftForwardStart();
+      delay(40);
+    } else if (left == HIGH && right == LOW) {
+      addMoveToLastMovesArray(3);
+      rightForwardStart();
+      delay(40);
+    } else if (left == LOW && right == LOW) {
+      addMoveToLastMovesArray(8);
+      leftBackStart();
+      rightBackStart();
+      delay(50);
+    } else {
+      return;
+    }
   }
+
+  followLineCheckAndStop();
 }
 // <<< follow line functions
