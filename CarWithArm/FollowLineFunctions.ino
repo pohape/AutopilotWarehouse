@@ -67,7 +67,7 @@ void followLineCheckAndStop() {
 void processFollowLine() {
   if (mode == 2) {
     processMode2();
-  } else if (mode == 3) {
+  //} else if (mode == 3) {
     //processMode3();
   }
 }
@@ -117,9 +117,45 @@ void initMode3() {
     mode3TurnRightFromObstruction();
   } while (mode3TurnUltrasonicLeftToObstruction());
 
-  bothStop();
-  mode = 1;
-  Serial.println("EXIT");
+  addMoveToLastMovesArray(1);
+  rightForwardStart();
+  leftForwardStart();
+  delay(500);
+
+  int center;
+  int right;
+  int left;
+  
+  bool lastMoveLeft = true;
+
+  do {
+    addMoveToLastMovesArray(1);
+    rightForwardStart();
+
+    if (lastMoveLeft) {
+      lastMoveLeft = false;
+      delay(80);
+    } else {
+      addMoveToLastMovesArray(2);
+      leftForwardStart();
+      lastMoveLeft = true;
+      delay(50);
+    }
+    
+    bothStop();
+    
+    center = digitalRead(PIN_TRACING_CENTER) == HIGH ? 1 : 0;
+    right = digitalRead(PIN_TRACING_RIGHT) == HIGH ? 1 : 0;
+    left = digitalRead(PIN_TRACING_LEFT) == HIGH ? 1 : 0;
+  } while ((center + right + left) < 2);
+
+  armTurnCenter();
+
+  addMoveToLastMovesArray(2);
+  leftForwardStart();
+  delay(1000);
+  
+  mode = 2;
 }
 
 void processMode2() {

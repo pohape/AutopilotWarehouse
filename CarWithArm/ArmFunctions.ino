@@ -34,6 +34,16 @@ void armTurnLeft() {
   delay(100);
 }
 
+void armTurnCenter() {
+  while (armPositionMain < armPositionMainCenter) {
+    armTurnLeft();
+  }
+
+  while (armPositionMain > armPositionMainCenter) {
+    armTurnRight();
+  }
+}
+
 void openClaw() {
   //Serial.println("Open claw\n");
 
