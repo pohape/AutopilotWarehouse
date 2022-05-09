@@ -34,6 +34,8 @@ const int PIN_ARM_CLAW = 3;
 
 // ultrasonic block >>>
 SR04 ultrasonic = SR04(ULTRASONIC_ECHO_PIN, ULTRASONIC_TRIG_PIN);
+const int distanceWarning = 20;
+int distance = 0;
 // <<< ultrasonic block
 
 // infrared block >>>

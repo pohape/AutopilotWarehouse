@@ -66,15 +66,79 @@ void followLineCheckAndStop() {
 
 void processFollowLine() {
   if (mode == 2) {
+    processMode2();
+  } else if (mode == 3) {
+    //processMode3();
+  }
+}
+
+void mode3TurnRightFromObstruction() {
+  do {
+    leftForwardStart();
+    delay(200);
+    bothStop();
+    distance = ultrasonic.Distance();
+
+    if (distance < distanceWarning) {
+      Serial.println("2. I SEE IT " + String(distance));
+    } else {
+      Serial.println("2. I DON'T SEE IT " + String(distance));
+    }
+  } while (distance < distanceWarning);
+
+  Serial.println("mode3TurnRightFromObstruction done " + String(distance));
+  delay(100);
+}
+
+bool mode3TurnUltrasonicLeftToObstruction() {
+  do {
+    armTurnLeft();
+    distance = ultrasonic.Distance();
+
+    if (distance < distanceWarning) {
+      Serial.println("1. I SEE IT " + String(distance));
+      return true;
+    } else {
+      Serial.println("1. I DON'T SEE IT " + String(distance));
+    }
+  } while (armPositionMain < armPositionMainMax);
+
+  Serial.println("mode3TurnUltrasonicLeftToObstruction done " + String(distance));
+  delay(100);
+  
+  return false;
+}
+
+void initMode3() {
+  mode = 3;
+  bothStop();
+
+  do {
+    mode3TurnRightFromObstruction();
+  } while (mode3TurnUltrasonicLeftToObstruction());
+
+  bothStop();
+  mode = 1;
+  Serial.println("EXIT");
+}
+
+void processMode2() {
+  if (mode == 2) {
     // найти черную линию
     // проехать вперед долю секунды
 
     int center = digitalRead(PIN_TRACING_CENTER);
 
     if (center == HIGH) {
-      addMoveToLastMovesArray(2);
-      rightForwardStart();
-      leftForwardStart();
+      long distance = ultrasonic.Distance();
+      
+      if (distance < distanceWarning) {
+        initMode3();
+      } else {      
+        addMoveToLastMovesArray(2);
+        rightForwardStart();
+        leftForwardStart();
+      }
     } else {
       bothStop();
 
