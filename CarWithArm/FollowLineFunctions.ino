@@ -1,5 +1,11 @@
 // follow line functions >>>
 void addMoveToLastMovesArray(int move) {
+  if (move == 8) {
+    backInRowCount++;
+  } else {
+    backInRowCount = 0;
+  }
+  
   if (lastFollowLineMoves[0] != move) { 
     lastFollowLineMoves[12] = lastFollowLineMoves[11];
     lastFollowLineMoves[11] = lastFollowLineMoves[10];
@@ -18,16 +24,7 @@ void addMoveToLastMovesArray(int move) {
 }
 
 void followLineCheckAndStop() {
-  if (lastFollowLineMoves[0] != 0 && lastFollowLineMoves[1] != 0 && lastFollowLineMoves[2] != 0 && lastFollowLineMoves[3] != 0 && lastFollowLineMoves[4] != 0 && lastFollowLineMoves[5] != 0 && lastFollowLineMoves[6] != 0 && lastFollowLineMoves[7] != 0 && lastFollowLineMoves[8] != 0 && lastFollowLineMoves[9] != 0) {
-    for(int i = 0; i < 13; i++)
-    {
-      Serial.println(lastFollowLineMoves[i]);
-    }
-
-    Serial.println();
-  }
-
-  if (lastFollowLineMoves[0] != 8 || lastFollowLineMoves[1] != 8 || lastFollowLineMoves[2] != 8 || lastFollowLineMoves[3] != 8 || lastFollowLineMoves[4] != 8 || lastFollowLineMoves[5] != 8 || lastFollowLineMoves[6] != 8 || lastFollowLineMoves[7] != 8 || lastFollowLineMoves[8] != 8 || lastFollowLineMoves[9] != 8 || lastFollowLineMoves[10] != 8 || lastFollowLineMoves[11] != 8 || lastFollowLineMoves[12] != 8) {
+  if (backInRowCount < 30) {
     int last = 0;
     int otherCount = 0;
     
@@ -76,10 +73,14 @@ void processFollowLine() {
 
 void mode3TurnRightFromObstruction() {
   do {
+    analogWrite(PIN_WHEELS_ENA, wheelsSpeedDefault);
+    analogWrite(PIN_WHEELS_ENB, wheelsSpeedDefault);
     leftForwardStart();
-    delay(200);
+    
+    delay(300);
     bothStop();
-    distance = ultrasonic.Distance();
+    
+    updateDistanceCm();
 
     if (distance < distanceWarning) {
       Serial.println("2. I SEE IT " + String(distance));
@@ -95,12 +96,13 @@ void mode3TurnRightFromObstruction() {
 bool mode3TurnUltrasonicLeftToObstruction() {
   do {
     armTurnLeft();
-    distance = ultrasonic.Distance();
+    updateDistanceCm();
 
     if (distance < distanceWarning) {
       Serial.println("1. I SEE IT " + String(distance));
       return true;
-    } else {
+    } 
+    else {
       Serial.println("1. I DON'T SEE IT " + String(distance));
     }
   } while (armPositionMain < armPositionMainMax);
@@ -139,6 +141,9 @@ void processMode3() {
 
 void initMode3() {
   mode = 3;
+  rightBackStart();
+  leftBackStart();
+  delay(300);
   bothStop();
 
   do {
@@ -164,11 +169,11 @@ void processMode2() {
   int center = digitalRead(PIN_TRACING_CENTER);
 
   if (center == HIGH) {
-    long distance = ultrasonic.Distance();
+    updateDistanceCm();
     
     if (distance < distanceWarning) {
       initMode3();
-    } else {      
+    } else {
       addMoveToLastMovesArray(2);
       rightForwardStart();
       leftForwardStart();
@@ -198,5 +203,43 @@ void processMode2() {
   }
 
   followLineCheckAndStop();
+}
+
+void updateDistanceCm() {
+  int distanceNew = ultrasonic.Distance();
+  int distanceMin = distance * 0.9;
+  int distanceMax = distance * 1.1;
+  
+  if (distanceNew >= distanceMin && distanceNew <= distanceMax) {
+    distance = distanceNew;
+  } else {
+    delay(5);
+    int distanceNew2 = ultrasonic.Distance();
+    //Serial.println("distance try 2, old was " + String(distance) + "; new is " + String(distanceNew) + " and newest is " + String(distanceNew2));
+  
+    if (distanceNew >= distanceMin && distanceNew <= distanceMax) {
+      distance = distanceNew2;
+    } else {
+      delay(5);
+      int distanceNew3 = ultrasonic.Distance();
+      //Serial.println("distance try 3: " + String(distanceNew3));
+
+      float diff1 = float(distanceNew) / float(distance) - 1;
+      float diff2 = float(distanceNew2) / float(distance) - 1;
+      float diff3 = float(distanceNew3) / float(distance) - 1;
+
+      diff1 = diff1 < 0 ? diff1 * -1 : diff1;
+      diff2 = diff2 < 0 ? diff2 * -1 : diff2;
+      diff3 = diff3 < 0 ? diff3 * -1 : diff3;
+
+      if (diff1 <= diff2 && diff1 <= diff3) {
+        distance = distanceNew;
+      } else if (diff2 <= diff1 && diff2 <= diff3) {
+        distance = distanceNew2;
+      } else {
+        distance = distanceNew3;
+      }
+    }
+  }
 }
 // <<< follow line functions

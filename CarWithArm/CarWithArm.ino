@@ -34,7 +34,7 @@ const int PIN_ARM_CLAW = 3;
 
 // ultrasonic block >>>
 SR04 ultrasonic = SR04(ULTRASONIC_ECHO_PIN, ULTRASONIC_TRIG_PIN);
-const int distanceWarning = 20;
+const int distanceWarning = 25;
 int distance = 0;
 // <<< ultrasonic block
 
@@ -115,6 +115,8 @@ bool rightCurrentlyMovingForward = false;
 unsigned long rightBackStarted = 0;
 unsigned long rightBackStopped = 0;
 bool rightCurrentlyMovingBack = false;
+
+int backInRowCount = 0;
 // << keeping the current state of the wheels
 // <<< wheels block
 
