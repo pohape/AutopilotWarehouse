@@ -78,8 +78,14 @@ const int armPositionMainMin = 2; // 10, with correction is 2
 const int armPositionMainMax = 137; // 145, with correction is 137
 int armPositionMain = 0; // unknown at start
 
+const int armPositionRightMin = 0;
+const int armPositionRightMax = 80;
 int armPositionRight = 60; // 20 - поднята, 80 - опущена
+
+const int armPositionLeftMin = 0;
+const int armPositionLeftMax = 170;
 int armPositionLeft = 140; // 0 - вытянута, 140 - втянута
+
 int armPositionClaw = 0; // 0 - закрыто, 100 - открыто
 // <<< arm block
 
