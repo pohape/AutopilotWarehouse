@@ -48,6 +48,8 @@ void followLineCheckAndStop() {
 
   //Serial.println("Follow line STOP");
   mode = 1;
+  
+  backInRowCount = 0;
   lastFollowLineMoves[0] = 0;
   lastFollowLineMoves[1] = 0;
   lastFollowLineMoves[2] = 0;

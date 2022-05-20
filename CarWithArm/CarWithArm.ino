@@ -9,26 +9,26 @@ const int ULTRASONIC_TRIG_PIN = A1;
 const int ULTRASONIC_ECHO_PIN = A0;
 
 // tracing
-const int PIN_TRACING_RIGHT = A2;
-const int PIN_TRACING_CENTER = 10;
-const int PIN_TRACING_LEFT = A5;
+const int PIN_TRACING_RIGHT = A2; // S = black, G - brown, V - white
+const int PIN_TRACING_CENTER = A3; // S = black, G - brown, V - white
+const int PIN_TRACING_LEFT = A4; // S = black, G - brown, V - white
 
 // infrared
-const int PIN_INFRARED = 11;
+const int PIN_INFRARED = A5;
 
 // wheels
-const int PIN_WHEELS_ENA = 5;
-const int PIN_WHEELS_ENB = 6;
-const int PIN_WHEELS_IN1 = A4;
-const int PIN_WHEELS_IN2 = A3;
-const int PIN_WHEELS_IN3 = 7;
-const int PIN_WHEELS_IN4 = 8;
+const int PIN_WHEELS_ENA = 6; // green, first (left)
+const int PIN_WHEELS_ENB = 7; // red, last (right)
+const int PIN_WHEELS_IN1 = 8; // yellow, second from left
+const int PIN_WHEELS_IN2 = 9; // brown, 3rd from left
+const int PIN_WHEELS_IN3 = 10; // blue, 4th from left
+const int PIN_WHEELS_IN4 = 11; // black, 5th from left
 
 // arm
-const int PIN_ARM_MAIN = 4;
-const int PIN_ARM_LEFT = 9;
-const int PIN_ARM_RIGHT = 2;
-const int PIN_ARM_CLAW = 3;
+const int PIN_ARM_MAIN = 3;
+const int PIN_ARM_LEFT = 4;
+const int PIN_ARM_RIGHT = 5;
+const int PIN_ARM_CLAW = 53;
 
 // <<< PINs
 
@@ -143,9 +143,9 @@ void setup() {
   pinMode(PIN_WHEELS_IN4, OUTPUT);
 
   armServoMain.attach(PIN_ARM_MAIN);
-//  armServoRight.attach(PIN_ARM_RIGHT);
-//  armServoLeft.attach(PIN_ARM_LEFT);
-//  armServoClaw.attach(PIN_ARM_CLAW);
+  armServoRight.attach(PIN_ARM_RIGHT);
+  armServoLeft.attach(PIN_ARM_LEFT);
+  armServoClaw.attach(PIN_ARM_CLAW);
 
   armServoMain.write(armPositionMainCenter);
   armPositionMain = armPositionMainCenter;
