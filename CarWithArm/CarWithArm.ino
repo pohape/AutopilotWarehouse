@@ -78,6 +78,8 @@ struct ServoPositions {
    int armClaw;
 };
 
+const int ARM_SERVOS_STEP = 5;
+
 const int ARM_POSITION_MAIN_DEFAULT = 72; // 80 - center, correction is -8
 const int ARM_POSITION_MAIN_MIN = 2; // 10, with correction is 2
 const int ARM_POSITION_MAIN_MAX = 137; // 145, with correction is 137

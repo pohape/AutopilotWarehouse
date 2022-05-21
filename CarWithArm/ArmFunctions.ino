@@ -66,7 +66,7 @@ void armServoClawRotateToPosition(String caller) {
 }
 
 void armTurnRight() {
-  servoPositions.armMain -= 5;
+  servoPositions.armMain -= ARM_SERVOS_STEP;
 
   if (servoPositions.armMain < ARM_POSITION_MAIN_MIN) {
     servoPositions.armMain = ARM_POSITION_MAIN_MIN;
@@ -76,7 +76,7 @@ void armTurnRight() {
 }
 
 void armTurnLeft() {
-  servoPositions.armMain += 5;
+  servoPositions.armMain += ARM_SERVOS_STEP;
 
   if (servoPositions.armMain > ARM_POSITION_MAIN_MAX) {
     servoPositions.armMain = ARM_POSITION_MAIN_MAX;
@@ -136,7 +136,7 @@ bool armConditionsCheck() {
 
 // armPositionLeft: 0 - вытянута, 140 - втянута
 void armForward() {
-  servoPositions.armLeft -= 5;
+  servoPositions.armLeft -= ARM_SERVOS_STEP;
   
   if (servoPositions.armLeft < ARM_POSITION_LEFT_MIN) {
     servoPositions.armLeft = ARM_POSITION_LEFT_MIN;
@@ -152,7 +152,7 @@ void armForward() {
 }
 
 void armBack() {
-  servoPositions.armLeft += 5;
+  servoPositions.armLeft += ARM_SERVOS_STEP;
   
   if (servoPositions.armLeft > ARM_POSITION_LEFT_MAX) {
     servoPositions.armLeft = ARM_POSITION_LEFT_MAX;
@@ -169,7 +169,7 @@ void armBack() {
 
 // armPositionRight: 20 - поднята, 80 - опущена
 void armUp() {
-  servoPositions.armRight -= 5;
+  servoPositions.armRight -= ARM_SERVOS_STEP;
   
   if (servoPositions.armRight < ARM_POSITION_RIGHT_MIN) {
     servoPositions.armRight = ARM_POSITION_RIGHT_MIN;
@@ -185,7 +185,7 @@ void armUp() {
 }
 
 void armDown() {
-  servoPositions.armRight += 5;
+  servoPositions.armRight += ARM_SERVOS_STEP;
   
   armServoRightRotateToPosition("armDown");
 
