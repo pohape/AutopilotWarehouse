@@ -66,33 +66,23 @@ void armServoClawRotateToPosition(String caller) {
 }
 
 void armTurnRight() {
-  //Serial.println("Turn right\n");
+  servoPositions.armMain -= 5;
 
-  int targetPos = servoPositions.armMain - 10;
-
-  if (targetPos < armPositionMainMin) {
-    targetPos = armPositionMainMin;
+  if (servoPositions.armMain < armPositionMainMin) {
+    servoPositions.armMain = armPositionMainMin;
   }
 
-  for (servoPositions.armMain; servoPositions.armMain > targetPos; servoPositions.armMain--) {
-    armServoMainRotateToPosition("armTurnRight");
-    delay(5); // delay 5ms（used to adjust the servo speed）
-  }
+  armServoMainRotateToPosition("armTurnRight");
 }
 
 void armTurnLeft() {
-  //Serial.println("Turn left\n");
+  servoPositions.armMain += 5;
 
-  int targetPos = servoPositions.armMain + 10;
-
-  if (targetPos > armPositionMainMax) {
-    targetPos = armPositionMainMax;
+  if (servoPositions.armMain > armPositionMainMax) {
+    servoPositions.armMain = armPositionMainMax;
   }
 
-  for (servoPositions.armMain; servoPositions.armMain < targetPos; servoPositions.armMain++) {
-    armServoMainRotateToPosition("armTurnLeft");
-    delay(5);
-  }
+  armServoMainRotateToPosition("armTurnLeft");
 }
 
 void armTurnCenter() {
@@ -146,78 +136,62 @@ bool armConditionsCheck() {
 
 // armPositionLeft: 0 - вытянута, 140 - втянута
 void armForward() {
-  int targetPos = servoPositions.armLeft - 10;
+  servoPositions.armLeft -= 5;
   
-  if (targetPos < armPositionLeftMin) {
-    targetPos = armPositionLeftMin;
+  if (servoPositions.armLeft < armPositionLeftMin) {
+    servoPositions.armLeft = armPositionLeftMin;
   }
 
-  for (servoPositions.armLeft; servoPositions.armLeft > targetPos; servoPositions.armLeft--) {
-    armServoLeftRotateToPosition("armForward");
-    delay(5);
+  armServoLeftRotateToPosition("armForward");
 
-    if (!armConditionsCheck()) {
-      break;
-    }
-  }
+//  if (!armConditionsCheck()) {
+//    break;
+//  }
 
   Serial.println("Left: " + String(servoPositions.armLeft) + "; Right: " + String(servoPositions.armRight));
 }
 
 void armBack() {
-  int targetPos = servoPositions.armLeft + 10;
+  servoPositions.armLeft += 5;
   
-  if (targetPos > armPositionLeftMax) {
-    targetPos = armPositionLeftMax;
+  if (servoPositions.armLeft > armPositionLeftMax) {
+    servoPositions.armLeft = armPositionLeftMax;
   }
 
-  for (servoPositions.armLeft; servoPositions.armLeft < targetPos; servoPositions.armLeft++) {
-    armServoLeftRotateToPosition("armBack");
-    delay(5);
+  armServoLeftRotateToPosition("armBack");
 
-    if (!armConditionsCheck()) {
-      break;
-    }
-  }
+//  if (!armConditionsCheck()) {
+//    break;
+//  }
 
   Serial.println("Left: " + String(servoPositions.armLeft) + "; Right: " + String(servoPositions.armRight));
 }
 
 // armPositionRight: 20 - поднята, 80 - опущена
 void armUp() {
-  int targetPos = servoPositions.armRight - 10;
+  servoPositions.armRight -= 5;
   
-  if (targetPos < armPositionRightMin) {
-    targetPos = armPositionRightMin;
+  if (servoPositions.armRight < armPositionRightMin) {
+    servoPositions.armRight = armPositionRightMin;
   }
 
-  for (servoPositions.armRight; servoPositions.armRight > targetPos; servoPositions.armRight--) {
-    armServoRightRotateToPosition("armUp");
-    delay(5);
-    
-    if (!armConditionsCheck()) {
-      break;
-    }
-  }
+  armServoRightRotateToPosition("armUp");
+  
+//  if (!armConditionsCheck()) {
+//    break;
+//  }
 
   Serial.println("Left: " + String(servoPositions.armLeft) + "; Right: " + String(servoPositions.armRight));
 }
 
 void armDown() {
-  int targetPos = servoPositions.armRight + 10;
+  servoPositions.armRight += 5;
   
-  if (targetPos > armPositionRightMax) {
-    targetPos = armPositionRightMax;
-  }
+  armServoRightRotateToPosition("armDown");
 
-  for (servoPositions.armRight; servoPositions.armRight < targetPos; servoPositions.armRight++) {
-    armServoRightRotateToPosition("armDown");
-    delay(5);
-
-    if (!armConditionsCheck()) {
-      break;
-    }
-  }
+//  if (!armConditionsCheck()) {
+//    break;
+//  }
 
   Serial.println("Left: " + String(servoPositions.armLeft) + "; Right: " + String(servoPositions.armRight));
 }

@@ -95,6 +95,14 @@ void processIrButtons() {
         armTurnLeft();
       } else if (remoteLastPushed == right) {
         armTurnRight();
+      } else if (remoteLastPushed == up) {
+        armForward();
+      } else if (remoteLastPushed == down) {
+        armBack();
+      } else if (remoteLastPushed == grid) {
+        armDown();
+      } else if (remoteLastPushed == star) {
+        armUp();
       }
     } else {
       Serial.println(String(millis()) + ": pushed " + remoteLastPushed);
