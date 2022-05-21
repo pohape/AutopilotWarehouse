@@ -105,93 +105,137 @@ void closeClaw() {
   armServoClawRotateToPosition("closeClaw");
 }
 
-bool armConditionsCheck() {
+bool armConditionsCheck(int left, int right) {
+  if (left <= 20 && right < 40) {
+    Serial.println("left <= 20 && right < 40");
+    buzzWarning();
+    
+    return false;
+  } else if (left <= 30 && right < 30) {
+    Serial.println("left <= 30 && right < 30");
+    buzzWarning();
+    
+    return false;
+  } else if (left >= 150 && right > 30) {
+    Serial.println("left >= 150 && right > 30");
+    buzzWarning();
+    
+    return false;
+  } else if (left >= 100 && right >= 70) {
+    Serial.println("left >= 150 && right > 30");
+    buzzWarning();
+    
+    return false;
+  } 
+  else if (left >= 130 && left <= 150 && right > 35) {
+    Serial.println("left >= 130 && left <= 150 && right > 35");
+    buzzWarning();
+    
+    return false;
+  }
+  else if (left >= 150 && right != 0) {
+    Serial.println("left >= 150 && right != 0");
+    buzzWarning();
+    
+    return false;
+  }
+
   return true;
-//  if (servoPositions.armLeft <= 20 && servoPositions.servoPositions.armRight < 40) {
-//    Serial.println("armPositionLeft <= 20 && armPositionRight < 40");
-//    
-//    return false;
-//  } else if (servoPositions.armLeft <= 30 && servoPositions.armRight < 30) {
-//    Serial.println("armPositionLeft <= 30 && armPositionRight < 30");
-//    
-//    return false;
-//  } else if (servoPositions.armLeft >= 150 && servoPositions.armRight > 30) {
-//    Serial.println("armPositionLeft >= 150 && armPositionRight > 30");
-//    
-//    return false;
-//  } 
-////  else if (armPositionLeft >= 130 && armPositionLeft <= 150 && armPositionRight > 50) {
-////    Serial.println("armPositionLeft >= 130 && armPositionLeft <= 150 && armPositionRight > 50");
-////    
-////    return false;
-////  }
-//  else if (armPositionLeft >= 150 && armPositionRight != 0) {
-//    Serial.println("armPositionLeft >= 150 && armPositionRight != 0");
-//    
-//    return false;
-//  }
+}
+
+void buzzWarning() {
+  //tone(PIN_BUZZER, 550, 100);
+
+//  buzzer.begin(0);
 //
-//  return true;
+//  buzzer.distortion(NOTE_C3, NOTE_C5);
+//  buzzer.distortion(NOTE_C5, NOTE_C3);
+//
+//  buzzer.end(1000);
+
+//  tone(PIN_BUZZER, 1000); // Send 1KHz sound signal...
+//  delay(1000);        // ...for 1 sec
+//  noTone(PIN_BUZZER);     // Stop sound...
 }
 
 // armPositionLeft: 0 - вытянута, 140 - втянута
 void armForward() {
-  servoPositions.armLeft -= ARM_SERVOS_STEP;
-  
-  if (servoPositions.armLeft < ARM_POSITION_LEFT_MIN) {
-    servoPositions.armLeft = ARM_POSITION_LEFT_MIN;
+  int newLeft = servoPositions.armLeft - ARM_SERVOS_STEP;
+
+  if (newLeft < ARM_POSITION_LEFT_MIN) {
+    newLeft = ARM_POSITION_LEFT_MIN;
   }
 
-  armServoLeftRotateToPosition("armForward");
-
-//  if (!armConditionsCheck()) {
-//    break;
-//  }
+  if (armConditionsCheck(newLeft, servoPositions.armRight)) {
+    servoPositions.armLeft = newLeft;
+    armServoLeftRotateToPosition("armForward");
+  } else {
+    Serial.println("Not allowed!");
+  }
 
   Serial.println("Left: " + String(servoPositions.armLeft) + "; Right: " + String(servoPositions.armRight));
 }
 
 void armBack() {
-  servoPositions.armLeft += ARM_SERVOS_STEP;
-  
-  if (servoPositions.armLeft > ARM_POSITION_LEFT_MAX) {
-    servoPositions.armLeft = ARM_POSITION_LEFT_MAX;
+  int newLeft = servoPositions.armLeft + ARM_SERVOS_STEP;
+
+  if (newLeft > ARM_POSITION_LEFT_MAX) {
+    newLeft = ARM_POSITION_LEFT_MAX;
   }
-
-  armServoLeftRotateToPosition("armBack");
-
-//  if (!armConditionsCheck()) {
-//    break;
-//  }
+  
+  if (armConditionsCheck(newLeft, servoPositions.armRight)) {
+    servoPositions.armLeft = newLeft;
+    armServoLeftRotateToPosition("armBack");
+  } else {
+    Serial.println("Not allowed!");
+  }
 
   Serial.println("Left: " + String(servoPositions.armLeft) + "; Right: " + String(servoPositions.armRight));
 }
 
 // armPositionRight: 20 - поднята, 80 - опущена
 void armUp() {
-  servoPositions.armRight -= ARM_SERVOS_STEP;
   
-  if (servoPositions.armRight < ARM_POSITION_RIGHT_MIN) {
-    servoPositions.armRight = ARM_POSITION_RIGHT_MIN;
+  int newRight = servoPositions.armRight - ARM_SERVOS_STEP;
+  Serial.println("armUp");
+  Serial.println("old right: " + String(servoPositions.armRight));
+  Serial.println("new right: " + String(newRight));
+
+  if (newRight < ARM_POSITION_RIGHT_MIN) {
+    newRight = ARM_POSITION_RIGHT_MIN;
   }
 
-  armServoRightRotateToPosition("armUp");
-  
-//  if (!armConditionsCheck()) {
-//    break;
-//  }
+  Serial.println("new right2: " + String(newRight));
+
+  if (armConditionsCheck(servoPositions.armLeft, newRight)) {
+    servoPositions.armRight = newRight;
+    armServoRightRotateToPosition("armUp");
+  } else {
+    Serial.println("Not allowed!");
+  }
 
   Serial.println("Left: " + String(servoPositions.armLeft) + "; Right: " + String(servoPositions.armRight));
 }
 
 void armDown() {
-  servoPositions.armRight += ARM_SERVOS_STEP;
-  
-  armServoRightRotateToPosition("armDown");
+  int newRight = servoPositions.armRight + ARM_SERVOS_STEP;
 
-//  if (!armConditionsCheck()) {
-//    break;
-//  }
+  Serial.println("armUp");
+  Serial.println("old right: " + String(servoPositions.armRight));
+  Serial.println("new right: " + String(newRight));
+  
+  if (newRight > ARM_POSITION_RIGHT_MAX) {
+    newRight = ARM_POSITION_RIGHT_MAX;
+  }
+
+  Serial.println("new right2: " + String(newRight));
+  
+  if (armConditionsCheck(servoPositions.armLeft, newRight)) {
+    servoPositions.armRight = newRight;
+    armServoRightRotateToPosition("armDown");
+  } else {
+    Serial.println("Not allowed!");
+  }
 
   Serial.println("Left: " + String(servoPositions.armLeft) + "; Right: " + String(servoPositions.armRight));
 }
