@@ -43,29 +43,26 @@ int distance = 0;
 IRrecv infrared(PIN_INFRARED);
 decode_results infraredResults;
 
-String codeHold = "4294967295";
-String one = "16753245";
+uint32_t one = 0xBA45FF00;
+uint32_t two = 0xB946FF00;
+uint32_t three = 0xB847FF00;
+uint32_t four = 0xBB44FF00;
+uint32_t five = 0xBF40FF00;
+uint32_t six = 0xBC43FF00;
+uint32_t seven = 0xF807FF00;
+uint32_t eight = 0xEA15FF00;
+uint32_t nine = 0xF609FF00;
+uint32_t zero = 0xE619FF00;
 
-String two = "16736925";
-String three = "16769565";
-String four = "16720605";
-String five = "16712445";
-String six = "16761405";
-String seven = "16769055";
-String eight = "16754775";
-String nine = "16748655";
-String zero = "16750695";
+uint32_t star = 0xE916FF00;
+uint32_t grid = 0xE916FF00;
+uint32_t ok = 0xE31CFF00;
+uint32_t up = 0xE718FF00;
+uint32_t down = 0xAD52FF00;
+uint32_t left = 0xF708FF00;
+uint32_t right = 0xA55AFF00;
 
-String star = "16738455";
-String grid = "16756815";
-String ok = "16726215";
-String up = "16718055";
-String down = "16730805";
-String left = "16716015";
-String right = "16734885";
-
-String remotePushed;
-String remoteLastPushed;
+uint32_t remoteLastPushed;
 // <<< infrared block
 
 // arm block >>>
