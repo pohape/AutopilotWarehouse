@@ -62,11 +62,9 @@ void processIrButtons() {
         armBack();
       } else if (mode == 1 && IrReceiver.decodedIRData.decodedRawData == star) {
         remoteLastPushed = star;
-
         armUp();
       } else if (mode == 1 && IrReceiver.decodedIRData.decodedRawData == grid) {
         remoteLastPushed = grid;
-
         armDown();
       } else if (mode == 1 && IrReceiver.decodedIRData.decodedRawData == ok) {
         remoteLastPushed = ok;
@@ -76,11 +74,7 @@ void processIrButtons() {
         } else {
           closeClaw();
         }
-      }
-
-      if (IrReceiver.decodedIRData.flags == IRDATA_FLAGS_IS_REPEAT) {
-        Serial.println(String(millis()) + ": hold " + remoteLastPushed);
-
+      } else if (IrReceiver.decodedIRData.flags == IRDATA_FLAGS_IS_REPEAT) {
         if (remoteLastPushed == two) {
           rightForwardStart();
           leftForwardStart();
@@ -110,7 +104,7 @@ void processIrButtons() {
         }
       }
     }
-    
+
     infrared.resume(); // Receive the next value
   }
 }

@@ -55,7 +55,7 @@ uint32_t nine = 0xF609FF00;
 uint32_t zero = 0xE619FF00;
 
 uint32_t star = 0xE916FF00;
-uint32_t grid = 0xE916FF00;
+uint32_t grid = 0xF20DFF00;
 uint32_t ok = 0xE31CFF00;
 uint32_t up = 0xE718FF00;
 uint32_t down = 0xAD52FF00;
