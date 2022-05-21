@@ -4,21 +4,21 @@ void initializeArm() {
   ServoPositions servoPositionsFromEeprom = {-1, -1, -1};
   EEPROM.get(0, servoPositionsFromEeprom);
 
-  if (servoPositionsFromEeprom.armMain >= armPositionMainMin && servoPositionsFromEeprom.armMain <= armPositionMainMax) {
+  if (servoPositionsFromEeprom.armMain >= ARM_POSITION_MAIN_MIN && servoPositionsFromEeprom.armMain <= ARM_POSITION_MAIN_MAX) {
     servoPositions.armMain = servoPositionsFromEeprom.armMain;
   }
 
   armServoMain.attach(PIN_ARM_MAIN);
   armServoMainRotateToPosition("initialize main");
       
-  if (servoPositionsFromEeprom.armRight >= armPositionRightMin && servoPositionsFromEeprom.armRight <= armPositionRightMax) {
+  if (servoPositionsFromEeprom.armRight >= ARM_POSITION_RIGHT_MIN && servoPositionsFromEeprom.armRight <= ARM_POSITION_RIGHT_MAX) {
     servoPositions.armRight = servoPositionsFromEeprom.armRight;
   }
 
   armServoRight.attach(PIN_ARM_RIGHT);
   armServoRightRotateToPosition("initialize right");
 
-  if (servoPositionsFromEeprom.armLeft >= armPositionLeftMin && servoPositionsFromEeprom.armLeft <= armPositionLeftMax) {
+  if (servoPositionsFromEeprom.armLeft >= ARM_POSITION_LEFT_MIN && servoPositionsFromEeprom.armLeft <= ARM_POSITION_LEFT_MAX) {
     servoPositions.armLeft = servoPositionsFromEeprom.armLeft;
   }
 
@@ -34,7 +34,7 @@ void initializeArm() {
 }
 
 void armServoMainRotateToPosition(String caller) {
-  if (servoPositions.armMain >= armPositionMainMin && servoPositions.armMain <= armPositionMainMax) {
+  if (servoPositions.armMain >= ARM_POSITION_MAIN_MIN && servoPositions.armMain <= ARM_POSITION_MAIN_MAX) {
     Serial.println(caller + ": servo main " + String(servoPositions.armMain));
     armServoMain.write(servoPositions.armMain);
     EEPROM.put(0, servoPositions);
@@ -42,7 +42,7 @@ void armServoMainRotateToPosition(String caller) {
 }
 
 void armServoRightRotateToPosition(String caller) {
-  if (servoPositions.armRight >= armPositionRightMin && servoPositions.armRight <= armPositionRightMax) {
+  if (servoPositions.armRight >= ARM_POSITION_RIGHT_MIN && servoPositions.armRight <= ARM_POSITION_RIGHT_MAX) {
     Serial.println(caller + ": servo right " + String(servoPositions.armRight));
     armServoRight.write(servoPositions.armRight);
     EEPROM.put(0, servoPositions);
@@ -50,7 +50,7 @@ void armServoRightRotateToPosition(String caller) {
 }
 
 void armServoLeftRotateToPosition(String caller) {
-  if (servoPositions.armLeft >= armPositionLeftMin && servoPositions.armLeft <= armPositionLeftMax) {
+  if (servoPositions.armLeft >= ARM_POSITION_LEFT_MIN && servoPositions.armLeft <= ARM_POSITION_LEFT_MAX) {
     Serial.println(caller + ": servo left " + String(servoPositions.armLeft));
     armServoLeft.write(servoPositions.armLeft);
     EEPROM.put(0, servoPositions);
@@ -68,8 +68,8 @@ void armServoClawRotateToPosition(String caller) {
 void armTurnRight() {
   servoPositions.armMain -= 5;
 
-  if (servoPositions.armMain < armPositionMainMin) {
-    servoPositions.armMain = armPositionMainMin;
+  if (servoPositions.armMain < ARM_POSITION_MAIN_MIN) {
+    servoPositions.armMain = ARM_POSITION_MAIN_MIN;
   }
 
   armServoMainRotateToPosition("armTurnRight");
@@ -78,19 +78,19 @@ void armTurnRight() {
 void armTurnLeft() {
   servoPositions.armMain += 5;
 
-  if (servoPositions.armMain > armPositionMainMax) {
-    servoPositions.armMain = armPositionMainMax;
+  if (servoPositions.armMain > ARM_POSITION_MAIN_MAX) {
+    servoPositions.armMain = ARM_POSITION_MAIN_MAX;
   }
 
   armServoMainRotateToPosition("armTurnLeft");
 }
 
 void armTurnCenter() {
-  while (servoPositions.armMain < armPositionMainDefault) {
+  while (servoPositions.armMain < ARM_POSITION_MAIN_DEFAULT) {
     armTurnLeft();
   }
 
-  while (servoPositions.armMain > armPositionMainDefault) {
+  while (servoPositions.armMain > ARM_POSITION_MAIN_DEFAULT) {
     armTurnRight();
   }
 }
@@ -138,8 +138,8 @@ bool armConditionsCheck() {
 void armForward() {
   servoPositions.armLeft -= 5;
   
-  if (servoPositions.armLeft < armPositionLeftMin) {
-    servoPositions.armLeft = armPositionLeftMin;
+  if (servoPositions.armLeft < ARM_POSITION_LEFT_MIN) {
+    servoPositions.armLeft = ARM_POSITION_LEFT_MIN;
   }
 
   armServoLeftRotateToPosition("armForward");
@@ -154,8 +154,8 @@ void armForward() {
 void armBack() {
   servoPositions.armLeft += 5;
   
-  if (servoPositions.armLeft > armPositionLeftMax) {
-    servoPositions.armLeft = armPositionLeftMax;
+  if (servoPositions.armLeft > ARM_POSITION_LEFT_MAX) {
+    servoPositions.armLeft = ARM_POSITION_LEFT_MAX;
   }
 
   armServoLeftRotateToPosition("armBack");
@@ -171,8 +171,8 @@ void armBack() {
 void armUp() {
   servoPositions.armRight -= 5;
   
-  if (servoPositions.armRight < armPositionRightMin) {
-    servoPositions.armRight = armPositionRightMin;
+  if (servoPositions.armRight < ARM_POSITION_RIGHT_MIN) {
+    servoPositions.armRight = ARM_POSITION_RIGHT_MIN;
   }
 
   armServoRightRotateToPosition("armUp");

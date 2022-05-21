@@ -75,8 +75,8 @@ void processFollowLine() {
 
 void mode3TurnRightFromObstruction() {
   do {
-    analogWrite(PIN_WHEELS_ENA, wheelsSpeedDefault);
-    analogWrite(PIN_WHEELS_ENB, wheelsSpeedDefault);
+    analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+    analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
     leftForwardStart();
     
     delay(300);
@@ -84,12 +84,12 @@ void mode3TurnRightFromObstruction() {
     
     updateDistanceCm();
 
-    if (distance < distanceWarning) {
+    if (distance < DISTANCE_WARNING) {
       Serial.println("2. I SEE IT " + String(distance));
     } else {
       Serial.println("2. I DON'T SEE IT " + String(distance));
     }
-  } while (distance < distanceWarning);
+  } while (distance < DISTANCE_WARNING);
 
   Serial.println("mode3TurnRightFromObstruction done " + String(distance));
   delay(100);
@@ -100,14 +100,14 @@ bool mode3TurnUltrasonicLeftToObstruction() {
     armTurnLeft();
     updateDistanceCm();
 
-    if (distance < distanceWarning) {
+    if (distance < DISTANCE_WARNING) {
       Serial.println("1. I SEE IT " + String(distance));
       return true;
     } 
     else {
       Serial.println("1. I DON'T SEE IT " + String(distance));
     }
-  } while (servoPositions.armMain < armPositionMainMax);
+  } while (servoPositions.armMain < ARM_POSITION_MAIN_MAX);
 
   Serial.println("mode3TurnUltrasonicLeftToObstruction done " + String(distance));
   delay(100);
@@ -127,8 +127,8 @@ void processMode3() {
     bothStop();
     armTurnCenter();
     
-    analogWrite(PIN_WHEELS_ENA, wheelsSpeedDefault);
-    analogWrite(PIN_WHEELS_ENB, wheelsSpeedDefault);
+    analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+    analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
     
     leftForwardStart();
     delay(700);
@@ -157,8 +157,8 @@ void initMode3() {
   leftForwardStart();
   delay(500);
 
-  analogWrite(PIN_WHEELS_ENA, wheelsSpeedDefault - 30);
-  analogWrite(PIN_WHEELS_ENB, wheelsSpeedDefault + 40);
+  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT - 30);
+  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT + 40);
 
   rightForwardStart();
   leftForwardStart();
@@ -173,7 +173,7 @@ void processMode2() {
   if (center == HIGH) {
     updateDistanceCm();
     
-    if (distance < distanceWarning) {
+    if (distance < DISTANCE_WARNING) {
       initMode3();
     } else {
       addMoveToLastMovesArray(2);

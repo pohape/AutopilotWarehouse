@@ -2,8 +2,6 @@ void processIrButtons() {
   if (infrared.decode( & infraredResults)) {
     remotePushed = String(infraredResults.value);
 
-    Serial.println(remotePushed);
-
     if (mode == 1 && remotePushed == one) {
       remoteLastPushed = one;
 
@@ -104,8 +102,6 @@ void processIrButtons() {
       } else if (remoteLastPushed == star) {
         armUp();
       }
-    } else {
-      Serial.println(String(millis()) + ": pushed " + remoteLastPushed);
     }
 
     infrared.resume(); // Receive the next value

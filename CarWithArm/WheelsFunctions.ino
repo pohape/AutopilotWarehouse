@@ -2,23 +2,23 @@ void manageStateOfWheels() {
   unsigned long currentMillis = millis();
 
   // if the wheel is moving more than $oneMoveMs ms
-  if (leftCurrentlyMovingForward && rightCurrentlyMovingForward && (currentMillis - leftForwardStarted) > oneMoveBothMs && (currentMillis - rightForwardStarted) > oneMoveBothMs) {
+  if (leftCurrentlyMovingForward && rightCurrentlyMovingForward && (currentMillis - leftForwardStarted) > ONE_MOVE_BOTH_MS && (currentMillis - rightForwardStarted) > ONE_MOVE_BOTH_MS) {
     bothStop();
-  } else if (leftCurrentlyMovingBack && rightCurrentlyMovingBack && (currentMillis - leftBackStarted) > oneMoveBothMs && (currentMillis - rightBackStarted) > oneMoveBothMs) {
+  } else if (leftCurrentlyMovingBack && rightCurrentlyMovingBack && (currentMillis - leftBackStarted) > ONE_MOVE_BOTH_MS && (currentMillis - rightBackStarted) > ONE_MOVE_BOTH_MS) {
     bothStop();
-  } else if (leftCurrentlyMovingForward && (currentMillis - leftForwardStarted) > oneMoveSingleMs) {
+  } else if (leftCurrentlyMovingForward && (currentMillis - leftForwardStarted) > ONE_MOVE_SINGLE_MS) {
     //Serial.println(String(currentMillis) + ": leftCurrentlyMovingForward && leftForwardStarted " + String(leftForwardStarted) + "; oneMoveMs " + String(oneMoveSingleMs) + "; working for " + String(currentMillis - leftForwardStarted));
 
     leftStop();
-  } else if (rightCurrentlyMovingForward && (currentMillis - rightForwardStarted) > oneMoveSingleMs) {
+  } else if (rightCurrentlyMovingForward && (currentMillis - rightForwardStarted) > ONE_MOVE_SINGLE_MS) {
     //Serial.println(String(currentMillis) + ": rightCurrentlyMovingForward && rightForwardStarted " + String(rightForwardStarted) + "; oneMoveMs " + String(oneMoveSingleMs) + "; working for " + String(currentMillis - rightForwardStarted));
 
     rightStop();
-  } else if (leftCurrentlyMovingBack && (currentMillis - leftBackStarted) > oneMoveSingleMs) {
+  } else if (leftCurrentlyMovingBack && (currentMillis - leftBackStarted) > ONE_MOVE_SINGLE_MS) {
     //Serial.println(String(currentMillis) + ": leftCurrentlyMovingBack && leftBackStarted " + String(leftBackStarted) + "; oneMoveMs " + String(oneMoveSingleMs) + "; working for " + String(currentMillis - leftBackStarted));
 
     leftStop();
-  } else if (rightCurrentlyMovingBack && (currentMillis - rightBackStarted) > oneMoveSingleMs) {
+  } else if (rightCurrentlyMovingBack && (currentMillis - rightBackStarted) > ONE_MOVE_SINGLE_MS) {
     //Serial.println(String(currentMillis) + ": rightCurrentlyMovingBack && rightBackStarted " + String(rightBackStarted) + "; oneMoveMs " + String(oneMoveSingleMs) + "; working for " + String(currentMillis - rightBackStarted));
 
     rightStop();

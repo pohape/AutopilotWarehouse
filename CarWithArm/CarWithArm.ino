@@ -35,7 +35,7 @@ const int PIN_ARM_CLAW = 53;
 
 // ultrasonic block >>>
 SR04 ultrasonic = SR04(ULTRASONIC_ECHO_PIN, ULTRASONIC_TRIG_PIN);
-const int distanceWarning = 25;
+const int DISTANCE_WARNING = 25;
 int distance = 0;
 // <<< ultrasonic block
 
@@ -81,23 +81,23 @@ struct ServoPositions {
    int armClaw;
 };
 
-const int armPositionMainDefault = 72; // 80 - center, correction is -8
-const int armPositionMainMin = 2; // 10, with correction is 2
-const int armPositionMainMax = 137; // 145, with correction is 137
+const int ARM_POSITION_MAIN_DEFAULT = 72; // 80 - center, correction is -8
+const int ARM_POSITION_MAIN_MIN = 2; // 10, with correction is 2
+const int ARM_POSITION_MAIN_MAX = 137; // 145, with correction is 137
 
-const int armPositionRightDefault = 40; // 20 - поднята, 80 - опущена
-const int armPositionRightMin = 0;
-const int armPositionRightMax = 80;
+const int ARM_POSITION_RIGHT_DEFAULT = 40; // 20 - поднята, 80 - опущена
+const int ARM_POSITION_RIGHT_MIN = 0;
+const int ARM_POSITION_RIGHT_MAX = 80;
 
-const int armPositionLeftDefault = 140; // 0 - вытянута, 140 - втянута
-const int armPositionLeftMin = 0;
-const int armPositionLeftMax = 170;
+const int ARM_POSITION_LEFT_DEFAULT = 140; // 0 - вытянута, 140 - втянута
+const int ARM_POSITION_LEFT_MIN = 0;
+const int ARM_POSITION_LEFT_MAX = 170;
 
 int armPositionClawDefault = 0; // 0 - закрыто, 50 - открыто
 int armPositionClawMin = 0;
 int armPositionClawMax = 50;
 
-ServoPositions servoPositions = {armPositionMainDefault,armPositionLeftDefault, armPositionRightDefault};
+ServoPositions servoPositions = {ARM_POSITION_MAIN_DEFAULT, ARM_POSITION_LEFT_DEFAULT, ARM_POSITION_RIGHT_DEFAULT};
 // <<< arm block
 
 // tracing block >>>
@@ -112,9 +112,9 @@ int lastFollowLineMoves[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 // <<< tracing block
 
 // wheels block >>>
-const int wheelsSpeedDefault = 108; // from 0 to 255;
-const int oneMoveBothMs = 130;
-const int oneMoveSingleMs = 150;
+const int WHEELS_SPEED_DEFAULT = 108; // from 0 to 255;
+const int ONE_MOVE_BOTH_MS = 130;
+const int ONE_MOVE_SINGLE_MS = 150;
 
 // keeping the current state of the wheels >>
 unsigned long leftForwardStarted = 0;
@@ -151,8 +151,8 @@ void setup() {
 
   pinMode(PIN_WHEELS_ENA, OUTPUT);
   pinMode(PIN_WHEELS_ENB, OUTPUT);
-  analogWrite(PIN_WHEELS_ENA, wheelsSpeedDefault);
-  analogWrite(PIN_WHEELS_ENB, wheelsSpeedDefault);
+  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
 
   pinMode(PIN_WHEELS_IN1, OUTPUT);
   pinMode(PIN_WHEELS_IN2, OUTPUT);
