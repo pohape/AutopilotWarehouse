@@ -107,7 +107,7 @@ bool mode3TurnUltrasonicLeftToObstruction() {
     else {
       Serial.println("1. I DON'T SEE IT " + String(distance));
     }
-  } while (armPositionMain < armPositionMainMax);
+  } while (servoPositions.armMain < armPositionMainMax);
 
   Serial.println("mode3TurnUltrasonicLeftToObstruction done " + String(distance));
   delay(100);

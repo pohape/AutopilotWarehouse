@@ -1,6 +1,7 @@
 #include <IRremote.h>
 #include "SR04.h"
 #include <Servo.h>
+#include <EEPROM.h>
 
 // PINs >>>
 
@@ -73,20 +74,26 @@ Servo armServoRight;
 Servo armServoLeft;
 Servo armServoClaw;
 
-const int armPositionMainCenter = 72; // 80 - center, correction is -8
+struct ServoPositions {
+   int armMain;
+   int armLeft;
+   int armRight;
+};
+
+const int armPositionMainDefault = 72; // 80 - center, correction is -8
 const int armPositionMainMin = 2; // 10, with correction is 2
 const int armPositionMainMax = 137; // 145, with correction is 137
-int armPositionMain = 0; // unknown at start
 
+const int armPositionRightDefault = 40; // 20 - поднята, 80 - опущена
 const int armPositionRightMin = 0;
 const int armPositionRightMax = 80;
-int armPositionRight = 60; // 20 - поднята, 80 - опущена
 
+const int armPositionLeftDefault = 140; // 0 - вытянута, 140 - втянута
 const int armPositionLeftMin = 0;
 const int armPositionLeftMax = 170;
-int armPositionLeft = 140; // 0 - вытянута, 140 - втянута
 
-int armPositionClaw = 0; // 0 - закрыто, 100 - открыто
+int armPositionClaw = -1; // 0 - закрыто, 100 - открыто
+ServoPositions servoPositions = {armPositionMainDefault,armPositionLeftDefault, armPositionRightDefault};
 // <<< arm block
 
 // tracing block >>>
@@ -148,20 +155,7 @@ void setup() {
   pinMode(PIN_WHEELS_IN3, OUTPUT);
   pinMode(PIN_WHEELS_IN4, OUTPUT);
 
-  armServoMain.attach(PIN_ARM_MAIN);
-  armServoRight.attach(PIN_ARM_RIGHT);
-  armServoLeft.attach(PIN_ARM_LEFT);
-  armServoClaw.attach(PIN_ARM_CLAW);
-
-  armServoMain.write(armPositionMainCenter);
-  armPositionMain = armPositionMainCenter;
-  delay(100);
-  
-  armServoLeft.write(armPositionLeft);
-  delay(100);
-  armServoRight.write(armPositionRight);
-  delay(100);
-  armServoClaw.write(armPositionClaw);
+  initializeArm(); 
 }
 
 void loop() {
