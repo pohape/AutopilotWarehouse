@@ -78,6 +78,7 @@ struct ServoPositions {
    int armMain;
    int armLeft;
    int armRight;
+   int armClaw;
 };
 
 const int armPositionMainDefault = 72; // 80 - center, correction is -8
@@ -92,7 +93,10 @@ const int armPositionLeftDefault = 140; // 0 - вытянута, 140 - втян�
 const int armPositionLeftMin = 0;
 const int armPositionLeftMax = 170;
 
-int armPositionClaw = -1; // 0 - закрыто, 100 - открыто
+int armPositionClawDefault = 0; // 0 - закрыто, 50 - открыто
+int armPositionClawMin = 0;
+int armPositionClawMax = 50;
+
 ServoPositions servoPositions = {armPositionMainDefault,armPositionLeftDefault, armPositionRightDefault};
 // <<< arm block
 

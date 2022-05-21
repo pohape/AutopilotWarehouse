@@ -67,7 +67,7 @@ void processIrButtons() {
     } else if (mode == 1 && remotePushed == ok) {
       remoteLastPushed = ok;
 
-      if (armPositionClaw == 0) {
+      if (servoPositions.armClaw == armPositionClawMin) {
         openClaw();
       } else {
         closeClaw();
