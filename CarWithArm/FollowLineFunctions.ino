@@ -46,8 +46,7 @@ void followLineCheckAndStop() {
     }
   }
 
-  //Serial.println("Follow line STOP");
-  mode = 1;
+  setMode(1);
   
   backInRowCount = 0;
   lastFollowLineMoves[0] = 0;
@@ -137,12 +136,14 @@ void processMode3() {
     delay(300);
     
     bothStop();
-    mode = 2;
+    setMode(2);
   }
 }
 
 void initMode3() {
-  mode = 3;
+  bothStop();
+  setMode(3);
+  
   rightBackStart();
   leftBackStart();
   delay(300);
@@ -198,7 +199,7 @@ void processMode2() {
       addMoveToLastMovesArray(8);
       leftBackStart();
       rightBackStart();
-      delay(50);
+      delay(30);
     } else {
       return;
     }

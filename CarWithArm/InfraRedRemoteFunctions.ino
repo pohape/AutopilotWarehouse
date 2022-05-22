@@ -20,12 +20,10 @@ void processIrButtons() {
         remoteLastPushed = five;
 
         if (mode == 1) {
-          mode = 2;
+          setMode(2);
         } else {
-          mode = 1;
+          setMode(1);
         }
-
-        Serial.println("mode " + String(mode));
       } else if (mode == 1 && IrReceiver.decodedIRData.decodedRawData == seven) {
         remoteLastPushed = seven;
 

@@ -113,7 +113,7 @@ int lastFollowLineMoves[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 // <<< tracing block
 
 // wheels block >>>
-const int WHEELS_SPEED_DEFAULT = 108; // from 0 to 255;
+const int WHEELS_SPEED_DEFAULT = 90; // from 0 to 255;
 const int ONE_MOVE_BOTH_MS = 130;
 const int ONE_MOVE_SINGLE_MS = 150;
 
@@ -140,6 +140,7 @@ int backInRowCount = 0;
 
 // 1 = manual
 // 2 = follow the line
+// 3 = drive around an obstacle
 int mode = 1;
 
 void setup() {
@@ -177,4 +178,16 @@ void buzz(int times) {
     delay(1);
     digitalWrite(PIN_BUZZER,LOW);
   }
+}
+
+void setMode(int m) {
+  Serial.println("Set mode " + String(mode));
+
+  if ((mode == 1 && m == 2) || (mode == 2 && m == 1)) {
+    bothStop();
+    delay(100);
+  }
+  
+  mode = m;
+  buzz(50);
 }
