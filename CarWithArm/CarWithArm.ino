@@ -1,4 +1,4 @@
-#include <IRremote.h>
+#include <IRremote.hpp>
 #include "SR04.h"
 #include <Servo.h>
 #include <EEPROM.h>
@@ -109,11 +109,11 @@ ServoPositions servoPositions = {ARM_POSITION_MAIN_DEFAULT, ARM_POSITION_LEFT_DE
 // 7 - back left
 // 8 - back
 // 9 - back right
-int lastFollowLineMoves[15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+int lastFollowLineMoves[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 // <<< tracing block
 
 // wheels block >>>
-const int WHEELS_SPEED_DEFAULT = 90; // from 0 to 255;
+const int WHEELS_SPEED_DEFAULT = 100; // from 0 to 255;
 const int ONE_MOVE_BOTH_MS = 130;
 const int ONE_MOVE_SINGLE_MS = 150;
 
@@ -167,6 +167,16 @@ void setup() {
 }
 
 void loop() {
+//  int right = digitalRead(PIN_TRACING_RIGHT);
+//  int center = digitalRead(PIN_TRACING_CENTER);
+//  int left = digitalRead(PIN_TRACING_LEFT);
+//
+//  Serial.println("Left: " + String(left));
+//  Serial.println("Center: " + String(center));
+//  Serial.println("Right: " + String(right));
+//  Serial.println("");
+//  delay(500);
+  
   processIrButtons();
   processFollowLine();
   manageStateOfWheels();
@@ -180,13 +190,13 @@ void buzz(int times) {
   }
 }
 
-void setMode(int m) {
-  Serial.println("Set mode " + String(mode));
+void setMode(int m, String caller) {
+  Serial.println(caller + ": set mode " + String(m));
 
-  if ((mode == 1 && m == 2) || (mode == 2 && m == 1)) {
-    bothStop();
-    delay(100);
-  }
+//  if ((mode == 1 && m == 2) || (mode == 2 && m == 1)) {
+//    bothStop();
+//    delay(100);
+//  }
   
   mode = m;
   buzz(50);

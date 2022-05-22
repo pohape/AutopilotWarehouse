@@ -62,13 +62,13 @@ void processMode3() {
     delay(300);
     
     bothStop();
-    setMode(2);
+    setMode(2, "Process mode 3, found a line");
   }
 }
 
 void initMode3() {
   bothStop();
-  setMode(3);
+  setMode(3, "Init mode 3");
   
   rightBackStart();
   leftBackStart();

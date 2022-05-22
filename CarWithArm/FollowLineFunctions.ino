@@ -7,6 +7,9 @@ void addMoveToLastMovesArray(int move) {
   }
   
   if (lastFollowLineMoves[0] != move) { 
+    lastFollowLineMoves[15] = lastFollowLineMoves[14];
+    lastFollowLineMoves[14] = lastFollowLineMoves[13];
+    lastFollowLineMoves[13] = lastFollowLineMoves[12];
     lastFollowLineMoves[12] = lastFollowLineMoves[11];
     lastFollowLineMoves[11] = lastFollowLineMoves[10];
     lastFollowLineMoves[10] = lastFollowLineMoves[9];
@@ -25,28 +28,34 @@ void addMoveToLastMovesArray(int move) {
 
 void followLineCheckAndStop() {
   if (backInRowCount < 30) {
-    int last = 0;
-    int otherCount = 0;
-    
-    for (int i = 0; i < 13; i++)
-    {
-      if (last == lastFollowLineMoves[i]) {
-        //Serial.println("BAD last == last");
-        return;
-      } else if (lastFollowLineMoves[i] != 2 && lastFollowLineMoves[i] != 8) {
-        otherCount++;
-    
-        if (otherCount > 3) {
-          //Serial.println("BAD otherCount == 3");
-          return;
-        }
-      }
-    
-      last = lastFollowLineMoves[i];
-    }
+    return;
+//    int last = 0;
+//    int otherCount = 0;
+//    
+//    for (int i = 0; i < 16; i++)
+//    {
+//      if (last == lastFollowLineMoves[i]) {
+//        //Serial.println("BAD last == last");
+//        return;
+//      } else if (lastFollowLineMoves[i] != 2 && lastFollowLineMoves[i] != 8) {
+//        otherCount++;
+//    
+//        if (otherCount > 3) {
+//          //Serial.println("BAD otherCount == 3");
+//          return;
+//        }
+//      }
+//    
+//      last = lastFollowLineMoves[i];
+//    }
   }
 
-  setMode(1);
+//  for (int i = 0; i < 16; i++)
+//  {
+//    Serial.println(String(i) + ": " + String(lastFollowLineMoves[i]));
+//  }
+
+  setMode(1, "followLineCheckAndStop "+ String(backInRowCount));
   
   backInRowCount = 0;
   lastFollowLineMoves[0] = 0;
@@ -62,6 +71,9 @@ void followLineCheckAndStop() {
   lastFollowLineMoves[10] = 0;
   lastFollowLineMoves[11] = 0;
   lastFollowLineMoves[12] = 0;
+  lastFollowLineMoves[13] = 0;
+  lastFollowLineMoves[14] = 0;
+  lastFollowLineMoves[15] = 0;
 }
 
 void processFollowLine() {
@@ -89,25 +101,35 @@ void processMode2() {
       leftForwardStart();
     }
   } else {
+    Serial.println("Lost center, both stop");
     bothStop();
 
     int right = digitalRead(PIN_TRACING_RIGHT);
     int left = digitalRead(PIN_TRACING_LEFT);
 
     if (right == HIGH && left == LOW) {
+      //Serial.println("Left BLACK, right NO, call leftForwardStart()");
       addMoveToLastMovesArray(1);
       leftForwardStart();
       delay(40);
     } else if (left == HIGH && right == LOW) {
+      //Serial.println("Left NO, right BLACK, call rightForwardStart()");
       addMoveToLastMovesArray(3);
       rightForwardStart();
       delay(40);
     } else if (left == LOW && right == LOW) {
+      //Serial.println("Both NO, drive back");
       addMoveToLastMovesArray(8);
       leftBackStart();
       rightBackStart();
-      delay(30);
+      delay(40);
     } else {
+      // TODO: process this case
+//      Serial.println("Both BLACK and center is NO, do nothing");
+//      Serial.println("Left " + String(left));
+//      Serial.println("Center " + String(center));
+//      Serial.println("Right " + String(right));
+      
       return;
     }
   }

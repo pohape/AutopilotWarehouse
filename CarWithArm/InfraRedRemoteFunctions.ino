@@ -20,9 +20,9 @@ void processIrButtons() {
         remoteLastPushed = five;
 
         if (mode == 1) {
-          setMode(2);
+          setMode(2, "Pushed the button");
         } else {
-          setMode(1);
+          setMode(1, "Pushed the button");
         }
       } else if (mode == 1 && IrReceiver.decodedIRData.decodedRawData == seven) {
         remoteLastPushed = seven;

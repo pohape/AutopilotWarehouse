@@ -28,87 +28,106 @@ void manageStateOfWheels() {
 // Wheels left/right start/stop functions >>>
 void rightForwardStart() {
   unsigned long currentMillis = millis();
-
-  //Serial.println(String(currentMillis) + ": Right forward start");
   rightForwardStarted = currentMillis;
-  rightForwardStopped = 0;
-  rightCurrentlyMovingForward = true;
-  rightCurrentlyMovingBack = false;
 
-  digitalWrite(PIN_WHEELS_IN4, LOW);
-  digitalWrite(PIN_WHEELS_IN3, HIGH);
+  if (!rightCurrentlyMovingForward) {
+    rightForwardStopped = 0;
+    rightCurrentlyMovingForward = true;
+    rightCurrentlyMovingBack = false;
+  
+    digitalWrite(PIN_WHEELS_IN4, LOW);
+    digitalWrite(PIN_WHEELS_IN3, HIGH);
+
+    Serial.println(String(currentMillis) + ": Right forward start");
+  }
 }
 
 void rightBackStart() {
   unsigned long currentMillis = millis();
-
-  //Serial.println(String(currentMillis) + ": Right back start");
   rightBackStarted = currentMillis;
-  rightBackStopped = 0;
-  rightCurrentlyMovingForward = false;
-  rightCurrentlyMovingBack = true;
 
-  digitalWrite(PIN_WHEELS_IN3, LOW);
-  digitalWrite(PIN_WHEELS_IN4, HIGH);
+  if (!rightCurrentlyMovingBack) {
+    rightBackStopped = 0;
+    rightCurrentlyMovingForward = false;
+    rightCurrentlyMovingBack = true;
+  
+    digitalWrite(PIN_WHEELS_IN3, LOW);
+    digitalWrite(PIN_WHEELS_IN4, HIGH);
+
+    Serial.println(String(currentMillis) + ": Right back start");
+  }
 }
 
 void leftForwardStart() {
   unsigned long currentMillis = millis();
-
-  //Serial.println(String(currentMillis) + ": Left forward start");
   leftForwardStarted = currentMillis;
-  leftForwardStopped = 0;
-  leftCurrentlyMovingForward = true;
 
-  digitalWrite(PIN_WHEELS_IN2, LOW);
-  digitalWrite(PIN_WHEELS_IN1, HIGH);
+  if (!leftCurrentlyMovingForward) {
+    leftForwardStopped = 0;
+    leftCurrentlyMovingForward = true;
+    leftCurrentlyMovingBack = false;
+  
+    digitalWrite(PIN_WHEELS_IN2, LOW);
+    digitalWrite(PIN_WHEELS_IN1, HIGH);
+
+    Serial.println(String(currentMillis) + ": Left forward start");
+  }
 }
 
 void leftBackStart() {
   unsigned long currentMillis = millis();
-
-  //Serial.println(String(currentMillis) + ": Left back start");
   leftBackStarted = currentMillis;
-  leftBackStopped = 0;
-  leftCurrentlyMovingForward = false;
-  leftCurrentlyMovingBack = true;
 
-  digitalWrite(PIN_WHEELS_IN1, LOW);
-  digitalWrite(PIN_WHEELS_IN2, HIGH);
+  if (!leftCurrentlyMovingBack) {
+    leftBackStopped = 0;
+    leftCurrentlyMovingForward = false;
+    leftCurrentlyMovingBack = true;
+  
+    digitalWrite(PIN_WHEELS_IN1, LOW);
+    digitalWrite(PIN_WHEELS_IN2, HIGH);
+  
+    Serial.println(String(currentMillis) + ": Left back start");
+  }
 }
 
 void leftStop() {
-  leftCurrentlyMovingForward = false;
-  leftCurrentlyMovingBack = false;
-
-  digitalWrite(PIN_WHEELS_IN1, LOW);
-  digitalWrite(PIN_WHEELS_IN2, LOW);
-
-  //Serial.println(String(millis()) + ": Left stopped");
+  if (leftCurrentlyMovingForward || leftCurrentlyMovingBack) {
+    leftCurrentlyMovingForward = false;
+    leftCurrentlyMovingBack = false;
+  
+    digitalWrite(PIN_WHEELS_IN1, LOW);
+    digitalWrite(PIN_WHEELS_IN2, LOW);
+  
+    Serial.println(String(millis()) + ": Left stopped");
+  }
 }
 
 void rightStop() {
-  rightCurrentlyMovingForward = false;
-  rightCurrentlyMovingBack = false;
-
-  digitalWrite(PIN_WHEELS_IN3, LOW);
-  digitalWrite(PIN_WHEELS_IN4, LOW);
-
-  Serial.println(String(millis()) + ": Right stopped");
+  if (rightCurrentlyMovingForward || rightCurrentlyMovingBack) {
+    rightCurrentlyMovingForward = false;
+    rightCurrentlyMovingBack = false;
+  
+    digitalWrite(PIN_WHEELS_IN3, LOW);
+    digitalWrite(PIN_WHEELS_IN4, LOW);
+  
+    Serial.println(String(millis()) + ": Right stopped");
+  }
 }
 
 void bothStop() {
-  digitalWrite(PIN_WHEELS_IN1, LOW);
-  digitalWrite(PIN_WHEELS_IN2, LOW);
-  digitalWrite(PIN_WHEELS_IN3, LOW);
-  digitalWrite(PIN_WHEELS_IN4, LOW);
+  if (leftCurrentlyMovingForward || leftCurrentlyMovingBack || rightCurrentlyMovingForward || rightCurrentlyMovingBack){
+    digitalWrite(PIN_WHEELS_IN1, LOW);
+    digitalWrite(PIN_WHEELS_IN2, LOW);
+    digitalWrite(PIN_WHEELS_IN3, LOW);
+    digitalWrite(PIN_WHEELS_IN4, LOW);
 
-  rightCurrentlyMovingForward = false;
-  rightCurrentlyMovingBack = false;
-  leftCurrentlyMovingForward = false;
-  leftCurrentlyMovingBack = false;
+    leftCurrentlyMovingForward = false;
+    leftCurrentlyMovingBack = false;
+    rightCurrentlyMovingForward = false;
+    rightCurrentlyMovingBack = false;
 
-  //Serial.println(String(millis()) + ": Both stopped");
+    Serial.println(String(millis()) + ": bothStop");
+  }
 }
 
 // <<< Wheels left/right start/stop functions
