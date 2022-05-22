@@ -52,16 +52,41 @@ void processMode3() {
     bothStop();
     armTurnCenter();
     
-    analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
-    analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+    analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_OUTSIDE);
+    analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_INSIDE);
     
     leftForwardStart();
-    delay(700);
-
     rightForwardStart();
-    delay(300);
     
+    delay(700);    
+    bothStop();    
+
+    analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TO_GO_BACK);
+    analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_TO_GO_BACK);
+
+    do {
+      leftBackStart();
+      rightBackStart();
+  
+      delay(5);
+  
+      int left = digitalRead(PIN_TRACING_LEFT) ? 1 : 0;
+      int center = digitalRead(PIN_TRACING_CENTER) ? 1 : 0;
+      int right = digitalRead(PIN_TRACING_RIGHT) ? 1 : 0;
+    } while ((center + right + left) == 0);
+
     bothStop();
+    delay(2000);
+
+    analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+    analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+
+    leftForwardStart();
+    rightForwardStart();
+
+    delay(200);
+    bothStop();
+    
     setMode(2, "Process mode 3, found a line");
   }
 }
@@ -84,8 +109,8 @@ void initMode3() {
   leftForwardStart();
   delay(500);
 
-  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT - 30);
-  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT + 40);
+  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_INSIDE);
+  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_OUTSIDE);
 
   rightForwardStart();
   leftForwardStart();

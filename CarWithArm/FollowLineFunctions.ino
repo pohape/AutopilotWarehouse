@@ -108,27 +108,48 @@ void processMode2() {
     int left = digitalRead(PIN_TRACING_LEFT);
 
     if (right == HIGH && left == LOW) {
-      //Serial.println("Left BLACK, right NO, call leftForwardStart()");
+      Serial.println("Left BLACK, right NO, call leftForwardStart()");
       addMoveToLastMovesArray(1);
+
+      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TO_TURN);
+      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_TO_TURN);
+      
       leftForwardStart();
-      delay(50);
+      delay(ONE_WHEEL_TURN_DELAY);
+
+      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
     } else if (left == HIGH && right == LOW) {
-      //Serial.println("Left NO, right BLACK, call rightForwardStart()");
+      Serial.println("Left NO, right BLACK, call rightForwardStart()");
       addMoveToLastMovesArray(3);
+      
+      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TO_TURN);
+      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_TO_TURN);
+      
       rightForwardStart();
-      delay(50);
+      delay(ONE_WHEEL_TURN_DELAY);
+
+      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
     } else if (left == LOW && right == LOW) {
-      //Serial.println("Both NO, drive back");
+      Serial.println("Both NO, drive back");
       addMoveToLastMovesArray(8);
+
+      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TO_GO_BACK);
+      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_TO_GO_BACK);
+      
       leftBackStart();
       rightBackStart();
-      delay(50);
+      delay(SEARCH_LINE_BACK_DELAY);
+
+      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
     } else {
       // TODO: process this case
-//      Serial.println("Both BLACK and center is NO, do nothing");
-//      Serial.println("Left " + String(left));
-//      Serial.println("Center " + String(center));
-//      Serial.println("Right " + String(right));
+      Serial.println("Both BLACK and center is NO, do nothing");
+      Serial.println("Left " + String(left));
+      Serial.println("Center " + String(center));
+      Serial.println("Right " + String(right));
       
       return;
     }
