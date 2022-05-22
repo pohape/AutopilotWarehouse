@@ -2,7 +2,6 @@
 #include "SR04.h"
 #include <Servo.h>
 #include <EEPROM.h>
-#include <Buzzer.h>
 
 // PINs >>>
 
@@ -143,8 +142,6 @@ int backInRowCount = 0;
 // 2 = follow the line
 int mode = 1;
 
-Buzzer buzzer(PIN_BUZZER);
-
 void setup() {
   Serial.begin(9600);  // speed for the console
   infrared.enableIRIn(); // Start the infrared receiver
@@ -163,7 +160,7 @@ void setup() {
   pinMode(PIN_WHEELS_IN3, OUTPUT);
   pinMode(PIN_WHEELS_IN4, OUTPUT);
 
-  //pinMode(PIN_BUZZER, OUTPUT);
+  pinMode(PIN_BUZZER, OUTPUT);
 
   initializeArm(); 
 }
@@ -172,4 +169,12 @@ void loop() {
   processIrButtons();
   processFollowLine();
   manageStateOfWheels();
+}
+
+void buzz(int times) {
+  for (int i = 0; i < times; i++) {
+    digitalWrite(PIN_BUZZER,HIGH);
+    delay(1);
+    digitalWrite(PIN_BUZZER,LOW);
+  }
 }

@@ -1,13 +1,8 @@
 void processIrButtons() {
   if (IrReceiver.decode()) {
     if (IrReceiver.decodedIRData.protocol == NEC) {
-//      Serial.println("Raw:");
-//      Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX);
-//      Serial.println("Flags:");
-//      Serial.println(IrReceiver.decodedIRData.flags);
-//      Serial.println("printIRResultShort:");
-//      IrReceiver.printIRResultShort( & Serial);
-
+      buzz(1);
+      
       if (mode == 1 && IrReceiver.decodedIRData.decodedRawData == one) {
         remoteLastPushed = one;
 
