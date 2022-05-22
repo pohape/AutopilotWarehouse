@@ -27,7 +27,7 @@ void addMoveToLastMovesArray(int move) {
 }
 
 void followLineCheckAndStop() {
-  if (backInRowCount < 30) {
+  if (backInRowCount < 10) {
     return;
 //    int last = 0;
 //    int otherCount = 0;
@@ -111,18 +111,18 @@ void processMode2() {
       //Serial.println("Left BLACK, right NO, call leftForwardStart()");
       addMoveToLastMovesArray(1);
       leftForwardStart();
-      delay(40);
+      delay(50);
     } else if (left == HIGH && right == LOW) {
       //Serial.println("Left NO, right BLACK, call rightForwardStart()");
       addMoveToLastMovesArray(3);
       rightForwardStart();
-      delay(40);
+      delay(50);
     } else if (left == LOW && right == LOW) {
       //Serial.println("Both NO, drive back");
       addMoveToLastMovesArray(8);
       leftBackStart();
       rightBackStart();
-      delay(40);
+      delay(50);
     } else {
       // TODO: process this case
 //      Serial.println("Both BLACK and center is NO, do nothing");
