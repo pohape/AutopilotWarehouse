@@ -27,7 +27,7 @@ void addMoveToLastMovesArray(int move) {
 }
 
 void followLineCheckAndStop() {
-  if (backInRowCount < 10) {
+  if (backInRowCount < MAX_BACK_IN_ROW_TO_STOP) {
     return;
 //    int last = 0;
 //    int otherCount = 0;

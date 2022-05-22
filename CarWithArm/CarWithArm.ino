@@ -110,10 +110,16 @@ ServoPositions servoPositions = {ARM_POSITION_MAIN_DEFAULT, ARM_POSITION_LEFT_DE
 // 8 - back
 // 9 - back right
 int lastFollowLineMoves[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+const int MAX_BACK_IN_ROW_TO_STOP = 15;
 // <<< tracing block
 
 // wheels block >>>
-const int WHEELS_SPEED_DEFAULT = 100; // from 0 to 255;
+const int WHEELS_SPEED_DEFAULT = 90; // from 0 to 255;
+const int WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_INSIDE = 50;
+const int WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_OUTSIDE = 140;
+const int WHEELS_SPEED_TO_GO_BACK = 140;
+const int WHEELS_SPEED_TO_TURN = 140;
+
 const int ONE_MOVE_BOTH_MS = 130;
 const int ONE_MOVE_SINGLE_MS = 150;
 
@@ -200,4 +206,8 @@ void setMode(int m, String caller) {
   
   mode = m;
   buzz(50);
+
+  if (m == 2) {
+    armTurnCenter();
+  }
 }
