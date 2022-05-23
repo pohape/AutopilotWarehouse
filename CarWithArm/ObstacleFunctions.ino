@@ -1,11 +1,11 @@
 void mode3TurnRightFromObstruction() {
+  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_OUTSIDE);
+  digitalWrite(PIN_WHEELS_IN2, LOW);
+  
   do {
-    analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
-    analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
-    leftForwardStart();
-    
-    delay(300);
-    bothStop();
+    digitalWrite(PIN_WHEELS_IN1, HIGH);
+    delay(250);
+    digitalWrite(PIN_WHEELS_IN1, LOW);
     
     updateDistanceCm();
 
@@ -15,7 +15,10 @@ void mode3TurnRightFromObstruction() {
       Serial.println("2. I DON'T SEE IT " + String(distance));
     }
   } while (distance < DISTANCE_WARNING);
-
+  
+  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+  
   Serial.println("mode3TurnRightFromObstruction done " + String(distance));
   delay(100);
 }
@@ -69,10 +72,20 @@ void initMode3() {
   bothStop();
   setMode(3, "Init mode 3");
   
-  rightBackStart();
-  leftBackStart();
+  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+  
+  digitalWrite(PIN_WHEELS_IN1, LOW);
+  digitalWrite(PIN_WHEELS_IN2, HIGH);
+  digitalWrite(PIN_WHEELS_IN3, LOW);
+  digitalWrite(PIN_WHEELS_IN4, HIGH);
+
   delay(300);
-  bothStop();
+
+  digitalWrite(PIN_WHEELS_IN1, LOW);
+  digitalWrite(PIN_WHEELS_IN2, LOW);
+  digitalWrite(PIN_WHEELS_IN3, LOW);
+  digitalWrite(PIN_WHEELS_IN4, LOW);
 
   do {
     mode3TurnRightFromObstruction();
