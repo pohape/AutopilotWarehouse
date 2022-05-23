@@ -25,6 +25,36 @@ void manageStateOfWheels() {
   }
 }
 
+void bothForwardStart() {
+  if (!rightCurrentlyMovingForward || !leftCurrentlyMovingForward) {
+    analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+    analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+    
+    digitalWrite(PIN_WHEELS_IN1, HIGH);
+    digitalWrite(PIN_WHEELS_IN2, LOW);
+    digitalWrite(PIN_WHEELS_IN3, HIGH);
+    digitalWrite(PIN_WHEELS_IN4, LOW);
+  
+//    delay(100);
+  
+    rightForwardStopped = 0;
+    leftCurrentlyMovingForward = true;
+    rightCurrentlyMovingForward = true;
+    
+    leftCurrentlyMovingBack = false;
+    rightCurrentlyMovingBack = false;
+  
+//    analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TO_GO_BACK);
+//    analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_TO_GO_BACK);
+
+    //Serial.println(String(currentMillis) + ": Both forward start");
+  }
+
+  unsigned long currentMillis = millis();
+  rightForwardStarted = currentMillis;
+  leftForwardStarted = currentMillis;
+}
+
 // Wheels left/right start/stop functions >>>
 void rightForwardStart() {
   unsigned long currentMillis = millis();
