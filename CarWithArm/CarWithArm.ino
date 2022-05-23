@@ -114,7 +114,7 @@ const int MAX_BACK_IN_ROW_TO_STOP = 1000;
 // <<< tracing block
 
 // wheels block >>>
-const int WHEELS_SPEED_DEFAULT = 90; // from 0 to 255;
+const int WHEELS_SPEED_DEFAULT = 95; // from 0 to 255;
 const int WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_INSIDE = 45;
 const int WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_OUTSIDE = 110;
 const int WHEELS_SPEED_TO_GO_BACK = 60;
