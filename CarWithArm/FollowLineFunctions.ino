@@ -21,31 +21,36 @@ void addMoveToLastMovesArray(int move) {
 }
 
 void followLineCheckAndStop() {
-    return;
-//    int last = 0;
-//    int otherCount = 0;
-//    
-//    for (int i = 0; i < 16; i++)
-//    {
-//      if (last == lastFollowLineMoves[i]) {
-//        //Serial.println("BAD last == last");
-//        return;
-//      } else if (lastFollowLineMoves[i] != 2 && lastFollowLineMoves[i] != 8) {
-//        otherCount++;
-//    
-//        if (otherCount > 3) {
-//          //Serial.println("BAD otherCount == 3");
-//          return;
-//        }
-//      }
-//    
-//      last = lastFollowLineMoves[i];
-//    }
+  Serial.println();
 
-//  for (int i = 0; i < 16; i++)
-//  {
-//    Serial.println(String(i) + ": " + String(lastFollowLineMoves[i]));
-//  }
+  for (int i = 0; i < 16; i++)
+  {
+    Serial.println(String(i) + ": " + String(lastFollowLineMoves[i]));
+  }
+
+  Serial.println();
+  
+  int last = 0;
+  int otherCount = 0;
+  
+  for (int i = 0; i < 16; i++)
+  {
+    if (last == lastFollowLineMoves[i]) {
+      //Serial.println("BAD last == last");
+      return;
+    } else if (lastFollowLineMoves[i] != 2 && lastFollowLineMoves[i] != 8) {
+      otherCount++;
+  
+      if (otherCount > 2) {
+        //Serial.println("BAD otherCount == 2");
+        return;
+      }
+    }
+  
+    last = lastFollowLineMoves[i];
+  }
+
+  
 
   setMode(1, "followLineCheckAndStop");
 
@@ -88,8 +93,7 @@ void processMode2() {
       initMode3();
     } else {
       addMoveToLastMovesArray(2);
-      rightForwardStart();
-      leftForwardStart();
+      bothForwardStart();
     }
   } else {
     Serial.println("Lost center, both stop");
