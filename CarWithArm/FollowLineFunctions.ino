@@ -134,16 +134,7 @@ void processMode2() {
     } else if (left == LOW && right == LOW) {
       Serial.println("Both NO, drive back");
       addMoveToLastMovesArray(8);
-
-      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TO_GO_BACK);
-      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_TO_GO_BACK);
-      
-      leftBackStart();
-      rightBackStart();
-      delay(SEARCH_LINE_BACK_DELAY);
-
-      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
-      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+      findLineBackwards();
     } else {
       // TODO: process this case
       Serial.println("Both BLACK and center is NO, do nothing");
@@ -156,5 +147,69 @@ void processMode2() {
   }
 
   followLineCheckAndStop();
+}
+
+void findLineBackwards() {
+  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+  
+  digitalWrite(PIN_WHEELS_IN1, LOW);
+  digitalWrite(PIN_WHEELS_IN2, HIGH);
+  digitalWrite(PIN_WHEELS_IN3, LOW);
+  digitalWrite(PIN_WHEELS_IN4, HIGH);
+
+  delay(50);
+
+  int right = digitalRead(PIN_TRACING_RIGHT) ? 1 : 0;
+  int center = digitalRead(PIN_TRACING_CENTER) ? 1 : 0;
+  int left = digitalRead(PIN_TRACING_LEFT) ? 1 : 0;
+  int sum = right + center + left;
+
+  if (sum == 0) {
+    delay(50);
+
+    int right = digitalRead(PIN_TRACING_RIGHT) ? 1 : 0;
+    int center = digitalRead(PIN_TRACING_CENTER) ? 1 : 0;
+    int left = digitalRead(PIN_TRACING_LEFT) ? 1 : 0;
+    int sum = right + center + left;
+  
+    if (sum == 0) {
+      delay(50);
+  
+      int right = digitalRead(PIN_TRACING_RIGHT) ? 1 : 0;
+      int center = digitalRead(PIN_TRACING_CENTER) ? 1 : 0;
+      int left = digitalRead(PIN_TRACING_LEFT) ? 1 : 0;
+      int sum = right + center + left;
+    
+      if (sum == 0) {
+        delay(50);
+      
+        analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TO_GO_BACK);
+        analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_TO_GO_BACK);
+      
+        right = digitalRead(PIN_TRACING_RIGHT) ? 1 : 0;
+        center = digitalRead(PIN_TRACING_CENTER) ? 1 : 0;
+        left = digitalRead(PIN_TRACING_LEFT) ? 1 : 0;
+        sum = right + center + left;
+      
+        if (sum == 0) {
+          do {
+            right = digitalRead(PIN_TRACING_RIGHT) ? 1 : 0;
+            center = digitalRead(PIN_TRACING_CENTER) ? 1 : 0;
+            left = digitalRead(PIN_TRACING_LEFT) ? 1 : 0;
+            sum = right + center + left;
+          } while (sum == 0);
+        }
+      }
+    }
+  }
+
+  digitalWrite(PIN_WHEELS_IN1, LOW);
+  digitalWrite(PIN_WHEELS_IN2, LOW);
+  digitalWrite(PIN_WHEELS_IN3, LOW);
+  digitalWrite(PIN_WHEELS_IN4, LOW);
+  
+  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
 }
 // <<< follow line functions

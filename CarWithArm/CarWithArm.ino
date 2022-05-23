@@ -117,7 +117,7 @@ const int MAX_BACK_IN_ROW_TO_STOP = 15;
 const int WHEELS_SPEED_DEFAULT = 90; // from 0 to 255;
 const int WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_INSIDE = 45;
 const int WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_OUTSIDE = 110;
-const int WHEELS_SPEED_TO_GO_BACK = 90;
+const int WHEELS_SPEED_TO_GO_BACK = 60;
 const int WHEELS_SPEED_TO_TURN = 120;
 
 const int ONE_WHEEL_TURN_DELAY = 50;
@@ -153,6 +153,7 @@ int backInRowCount = 0;
 int mode = 1;
 
 void setup() {
+  delay(500);
   Serial.begin(9600);  // speed for the console
   infrared.enableIRIn(); // Start the infrared receiver
 
