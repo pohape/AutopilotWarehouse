@@ -1,11 +1,5 @@
 // follow line functions >>>
 void addMoveToLastMovesArray(int move) {
-  if (move == 8) {
-    backInRowCount++;
-  } else {
-    backInRowCount = 0;
-  }
-  
   if (lastFollowLineMoves[0] != move) { 
     lastFollowLineMoves[15] = lastFollowLineMoves[14];
     lastFollowLineMoves[14] = lastFollowLineMoves[13];
@@ -27,7 +21,6 @@ void addMoveToLastMovesArray(int move) {
 }
 
 void followLineCheckAndStop() {
-  if (backInRowCount < MAX_BACK_IN_ROW_TO_STOP) {
     return;
 //    int last = 0;
 //    int otherCount = 0;
@@ -48,16 +41,14 @@ void followLineCheckAndStop() {
 //    
 //      last = lastFollowLineMoves[i];
 //    }
-  }
 
 //  for (int i = 0; i < 16; i++)
 //  {
 //    Serial.println(String(i) + ": " + String(lastFollowLineMoves[i]));
 //  }
 
-  setMode(1, "followLineCheckAndStop "+ String(backInRowCount));
-  
-  backInRowCount = 0;
+  setMode(1, "followLineCheckAndStop");
+
   lastFollowLineMoves[0] = 0;
   lastFollowLineMoves[1] = 0;
   lastFollowLineMoves[2] = 0;
@@ -193,7 +184,22 @@ void findLineBackwards() {
         sum = right + center + left;
       
         if (sum == 0) {
+          int backInRowCount = 0;
+          
           do {
+            if (backInRowCount > MAX_BACK_IN_ROW_TO_STOP) {
+              digitalWrite(PIN_WHEELS_IN1, LOW);
+              digitalWrite(PIN_WHEELS_IN2, LOW);
+              digitalWrite(PIN_WHEELS_IN3, LOW);
+              digitalWrite(PIN_WHEELS_IN4, LOW);
+              setMode(1, String(MAX_BACK_IN_ROW_TO_STOP) + " back in a row");
+
+              return;
+            }
+
+            backInRowCount++;
+            delay(1);
+            
             right = digitalRead(PIN_TRACING_RIGHT) ? 1 : 0;
             center = digitalRead(PIN_TRACING_CENTER) ? 1 : 0;
             left = digitalRead(PIN_TRACING_LEFT) ? 1 : 0;

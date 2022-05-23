@@ -110,7 +110,7 @@ ServoPositions servoPositions = {ARM_POSITION_MAIN_DEFAULT, ARM_POSITION_LEFT_DE
 // 8 - back
 // 9 - back right
 int lastFollowLineMoves[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-const int MAX_BACK_IN_ROW_TO_STOP = 15;
+const int MAX_BACK_IN_ROW_TO_STOP = 1000;
 // <<< tracing block
 
 // wheels block >>>
@@ -143,7 +143,6 @@ unsigned long rightBackStarted = 0;
 unsigned long rightBackStopped = 0;
 bool rightCurrentlyMovingBack = false;
 
-int backInRowCount = 0;
 // << keeping the current state of the wheels
 // <<< wheels block
 
@@ -163,8 +162,6 @@ void setup() {
 
   pinMode(PIN_WHEELS_ENA, OUTPUT);
   pinMode(PIN_WHEELS_ENB, OUTPUT);
-  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
-  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
 
   pinMode(PIN_WHEELS_IN1, OUTPUT);
   pinMode(PIN_WHEELS_IN2, OUTPUT);
@@ -177,16 +174,6 @@ void setup() {
 }
 
 void loop() {
-//  int right = digitalRead(PIN_TRACING_RIGHT);
-//  int center = digitalRead(PIN_TRACING_CENTER);
-//  int left = digitalRead(PIN_TRACING_LEFT);
-//
-//  Serial.println("Left: " + String(left));
-//  Serial.println("Center: " + String(center));
-//  Serial.println("Right: " + String(right));
-//  Serial.println("");
-//  delay(500);
-  
   processIrButtons();
   processFollowLine();
   manageStateOfWheels();
