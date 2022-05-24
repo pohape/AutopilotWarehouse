@@ -200,18 +200,31 @@ void buzz(int times) {
   }
 }
 
-void setMode(int m, String caller) {
-  Serial.println(caller + ": set mode " + String(m));
+void setMode(int newMode, String caller) {
+  Serial.println(caller + ": set mode " + String(newMode));
+  
+  if (newMode == 1) {
+    BTSerial.write('1');
+  } else if (newMode == 2) {
+    BTSerial.write('2');
+  } else if (newMode == 3) {
+    BTSerial.write('3');
+  } else if (newMode == 4) {
+    BTSerial.write('4');
+  }
+
+  BTSerial.write('\n');
 
 //  if ((mode == 1 && m == 2) || (mode == 2 && m == 1)) {
 //    bothStop();
 //    delay(100);
 //  }
   
-  mode = m;
   buzz(50);
 
-  if (m == 2) {
+  if (newMode == 2) {
     armTurnCenter();
   }
+
+  mode = newMode;
 }

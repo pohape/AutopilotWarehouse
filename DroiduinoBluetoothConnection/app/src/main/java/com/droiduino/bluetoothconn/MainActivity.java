@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -201,15 +202,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case MESSAGE_READ:
-                        String arduinoMsg = msg.obj.toString(); // Read message from Arduino
-                        switch (arduinoMsg.toLowerCase()) {
-                            case "led is turned on":
-                                textViewArduinoMessages.setText("Arduino Message : " + arduinoMsg);
-                                break;
-                            case "led is turned off":
-                                textViewArduinoMessages.setText("Arduino Message : " + arduinoMsg);
-                                break;
-                        }
+                        String arduinoMsg = msg.obj.toString().trim(); // Read message from Arduino
+                        Toast.makeText(MainActivity.this, arduinoMsg, Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
