@@ -1,50 +1,31 @@
 // For testing purposes use Android app from this repository, located in DroduinoBluetoothConnection directory
-
+#include <SoftwareSerial.h>
 const int ledPin = 13; // Built in LED in Arduino board
-String msg, cmd;
+String command = ""; // Stores response of the HC-06 Bluetooth device
+SoftwareSerial BTSerial(53, 51); // RX, TX
 
 void setup()
 {  
-  // Initialization
-  pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, LOW);
-  Serial.begin(9600); // Communication rate of the Bluetooth Module
-  msg = "";
+  delay(500);
+  Serial.begin(9600);
+  Serial.println("Arduino with HC-06 is ready");
+
+  // HC-06 default baud rate is 9600
+  BTSerial.begin(9600);  
+  Serial.println("BTserial started at 9600");
+  delay(500);
 }
 
-void blinking(int count)
-{  
-    for (int i=1; i <= count; i++){
-      digitalWrite(ledPin, HIGH); // Turn on LED
-      delay(250);
-      digitalWrite(ledPin, LOW); // Turn off LED
-      delay(250);
-   }
-}
 
 void loop() {
-  if (Serial.available() > 0) { // Check if there is data coming
-    msg = Serial.readString(); // Read the message as String
-    Serial.println("Android Command: " + msg);
-  
-    if (msg == "U"){
-      blinking(2);
-    } else if (msg == "D"){
-      blinking(3);
-    } else if (msg == "O"){
-      blinking(4);
-    } else if (msg == "C"){
-      blinking(5);
-    } else if (msg == "F"){
-      blinking(6);
-    } else if (msg == "R"){
-      blinking(7);
-    } else if (msg == "L"){
-      blinking(9);
-    } else if (msg == "B"){
-      blinking(10);
-    } 
+   // Keep reading from HC-06 and send to Arduino Serial Monitor
+  if (BTSerial.available()) {
+    Serial.write(BTSerial.read());
   }
-
-  msg = ""; // reset command
+  
+  // Keep reading from Arduino Serial Monitor and send to HC-06
+  if (Serial.available())
+  {
+    BTSerial.write(Serial.read());
+  }
 }
