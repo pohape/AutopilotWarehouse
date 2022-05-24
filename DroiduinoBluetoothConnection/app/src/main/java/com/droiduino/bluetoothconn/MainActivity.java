@@ -85,40 +85,102 @@ public class MainActivity extends AppCompatActivity {
     private int mode = 1;
     private boolean armScreen = true;
 
+    protected Button buttonSwitchToDrivingOrToArm;
+    protected Button buttonSwitchToFollowLineOrManual;
+    protected Button buttonForward;
+    protected Button buttonBack;
+    protected Button buttonLeft;
+    protected Button buttonRight;
+    protected Button buttonUp;
+    protected Button buttonDown;
+    protected Button buttonOpen;
+    protected Button buttonClose;
+
+    protected void switchScreenToManual() {
+        mode = 1;
+        buttonSwitchToFollowLineOrManual.setText("Switch to follow line mode");
+        buttonSwitchToDrivingOrToArm.setEnabled(true);
+
+        buttonUp.setEnabled(armScreen);
+        buttonDown.setEnabled(armScreen);
+        buttonOpen.setEnabled(armScreen);
+        buttonClose.setEnabled(armScreen);
+
+        buttonForward.setEnabled(true);
+        buttonLeft.setEnabled(true);
+        buttonRight.setEnabled(true);
+        buttonBack.setEnabled(true);
+        Toast.makeText(MainActivity.this, "Switched to MANUAL mode", Toast.LENGTH_SHORT).show();
+    }
+
+    protected void switchScreenToFollowLine() {
+        mode = 2;
+        buttonSwitchToFollowLineOrManual.setText("Switch to manual mode");
+        buttonSwitchToDrivingOrToArm.setEnabled(true);
+
+        buttonUp.setEnabled(false);
+        buttonDown.setEnabled(false);
+        buttonOpen.setEnabled(false);
+        buttonClose.setEnabled(false);
+
+        buttonForward.setEnabled(false);
+        buttonLeft.setEnabled(false);
+        buttonRight.setEnabled(false);
+        buttonBack.setEnabled(false);
+        Toast.makeText(MainActivity.this, "Switched to FOLLOW LINE mode", Toast.LENGTH_SHORT).show();
+    }
+
+    protected void switchScreenToObstacle() {
+        mode = 3;
+        buttonSwitchToFollowLineOrManual.setText("Switch to manual mode");
+        buttonSwitchToDrivingOrToArm.setEnabled(true);
+
+        buttonUp.setEnabled(false);
+        buttonDown.setEnabled(false);
+        buttonOpen.setEnabled(false);
+        buttonClose.setEnabled(false);
+
+        buttonForward.setEnabled(false);
+        buttonLeft.setEnabled(false);
+        buttonRight.setEnabled(false);
+        buttonBack.setEnabled(false);
+        Toast.makeText(MainActivity.this, "Switched to OBSTACLE mode", Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // buttons
-        final Button buttonSwitchToDrivingOrToArm = findViewById(R.id.switchScreen);
+        buttonSwitchToDrivingOrToArm = findViewById(R.id.switchScreen);
         buttonSwitchToDrivingOrToArm.setEnabled(false);
 
-        final Button buttonSwitchToFollowLineOrManual = findViewById(R.id.switchMode);
+        buttonSwitchToFollowLineOrManual = findViewById(R.id.switchMode);
         buttonSwitchToFollowLineOrManual.setEnabled(false);
 
-        final Button buttonForward = findViewById(R.id.buttonForward);
+        buttonForward = findViewById(R.id.buttonForward);
         buttonForward.setEnabled(false);
 
-        final Button buttonBack = findViewById(R.id.buttonBack);
+        buttonBack = findViewById(R.id.buttonBack);
         buttonBack.setEnabled(false);
 
-        final Button buttonLeft = findViewById(R.id.buttonLeft);
+        buttonLeft = findViewById(R.id.buttonLeft);
         buttonLeft.setEnabled(false);
 
-        final Button buttonRight = findViewById(R.id.buttonRight);
+        buttonRight = findViewById(R.id.buttonRight);
         buttonRight.setEnabled(false);
 
-        final Button buttonUp = findViewById(R.id.buttonUp);
+        buttonUp = findViewById(R.id.buttonUp);
         buttonUp.setEnabled(false);
 
-        final Button buttonDown = findViewById(R.id.buttonDown);
+        buttonDown = findViewById(R.id.buttonDown);
         buttonDown.setEnabled(false);
 
-        final Button buttonOpen = findViewById(R.id.buttonOpen);
+        buttonOpen = findViewById(R.id.buttonOpen);
         buttonOpen.setEnabled(false);
 
-        final Button buttonClose = findViewById(R.id.buttonClose);
+        buttonClose = findViewById(R.id.buttonClose);
         buttonClose.setEnabled(false);
 
         // UI Initialization
@@ -203,7 +265,15 @@ public class MainActivity extends AppCompatActivity {
 
                     case MESSAGE_READ:
                         String arduinoMsg = msg.obj.toString().trim(); // Read message from Arduino
-                        Toast.makeText(MainActivity.this, arduinoMsg, Toast.LENGTH_SHORT).show();
+
+                        if (arduinoMsg.equals("1")) {
+                            switchScreenToManual();
+                        } else if (arduinoMsg.equals("2")) {
+                            switchScreenToFollowLine();
+                        } else if (arduinoMsg.equals("3")) {
+                            switchScreenToObstacle();
+                        }
+
                         break;
                 }
             }
@@ -240,35 +310,11 @@ public class MainActivity extends AppCompatActivity {
         buttonSwitchToFollowLineOrManual.setOnClickListener(v -> {
             connectedThread.write(BT_COMMAND_SWITCH_MODE);
 
-            if (mode == 1) {
-                mode = 2;
-                buttonSwitchToFollowLineOrManual.setText("Switch to manual mode");
-                buttonSwitchToDrivingOrToArm.setEnabled(false);
-
-                buttonUp.setEnabled(false);
-                buttonDown.setEnabled(false);
-                buttonOpen.setEnabled(false);
-                buttonClose.setEnabled(false);
-
-                buttonForward.setEnabled(false);
-                buttonLeft.setEnabled(false);
-                buttonRight.setEnabled(false);
-                buttonBack.setEnabled(false);
-            } else {
-                mode = 1;
-                buttonSwitchToFollowLineOrManual.setText("Switch to follow mode");
-                buttonSwitchToDrivingOrToArm.setEnabled(true);
-
-                buttonUp.setEnabled(armScreen);
-                buttonDown.setEnabled(armScreen);
-                buttonOpen.setEnabled(armScreen);
-                buttonClose.setEnabled(armScreen);
-
-                buttonForward.setEnabled(true);
-                buttonLeft.setEnabled(true);
-                buttonRight.setEnabled(true);
-                buttonBack.setEnabled(true);
-            }
+//            if (mode == 1) {
+//                switchScreenToFollowLine();
+//            } else if (mode == 2 || mode == 3) {
+//                switchScreenToManual();
+//            }
         });
 
         buttonForward.setOnTouchListener((v, event) -> {
