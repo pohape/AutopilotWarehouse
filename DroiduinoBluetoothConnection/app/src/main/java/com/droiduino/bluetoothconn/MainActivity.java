@@ -79,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
     private final static int BT_COMMAND_WHEELS_RIGHT_BACK_PRESSED = 27;
     private final static int BT_COMMAND_WHEELS_RIGHT_BACK_RELEASED = 28;
 
+    private final static int BT_COMMAND_SWITCH_MODE = 29;
+
     private int mode = 1;
     private boolean armScreen = true;
 
@@ -238,6 +240,40 @@ public class MainActivity extends AppCompatActivity {
                 buttonDown.setEnabled(true);
                 buttonOpen.setEnabled(true);
                 buttonClose.setEnabled(true);
+            }
+        });
+
+        buttonSwitchToFollowLineOrManual.setOnClickListener(v -> {
+            connectedThread.write(BT_COMMAND_SWITCH_MODE);
+
+            if (mode == 1) {
+                mode = 2;
+                buttonSwitchToFollowLineOrManual.setText("Switch to manual mode");
+                buttonSwitchToDrivingOrToArm.setEnabled(false);
+
+                buttonUp.setEnabled(false);
+                buttonDown.setEnabled(false);
+                buttonOpen.setEnabled(false);
+                buttonClose.setEnabled(false);
+
+                buttonForward.setEnabled(false);
+                buttonLeft.setEnabled(false);
+                buttonRight.setEnabled(false);
+                buttonBack.setEnabled(false);
+            } else {
+                mode = 1;
+                buttonSwitchToFollowLineOrManual.setText("Switch to follow mode");
+                buttonSwitchToDrivingOrToArm.setEnabled(true);
+
+                buttonUp.setEnabled(armScreen);
+                buttonDown.setEnabled(armScreen);
+                buttonOpen.setEnabled(armScreen);
+                buttonClose.setEnabled(armScreen);
+
+                buttonForward.setEnabled(true);
+                buttonLeft.setEnabled(true);
+                buttonRight.setEnabled(true);
+                buttonBack.setEnabled(true);
             }
         });
 
