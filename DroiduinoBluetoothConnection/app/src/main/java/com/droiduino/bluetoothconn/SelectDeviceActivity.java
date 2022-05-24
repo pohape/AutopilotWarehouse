@@ -33,9 +33,12 @@ public class SelectDeviceActivity extends AppCompatActivity {
             // There are paired devices. Get the name and address of each paired device.
             for (BluetoothDevice device : pairedDevices) {
                 String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-                DeviceInfoModel deviceInfoModel = new DeviceInfoModel(deviceName, deviceHardwareAddress);
-                deviceList.add(deviceInfoModel);
+
+                if (deviceName.startsWith("HC")) {
+                    String deviceHardwareAddress = device.getAddress(); // MAC address
+                    DeviceInfoModel deviceInfoModel = new DeviceInfoModel(deviceName, deviceHardwareAddress);
+                    deviceList.add(deviceInfoModel);
+                }
             }
             // Display paired device using recyclerView
             RecyclerView recyclerView = findViewById(R.id.recyclerViewDevice);
