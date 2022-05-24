@@ -21,14 +21,15 @@ void addMoveToLastMovesArray(int move) {
 }
 
 void followLineCheckAndStop() {
-  Serial.println();
-
-  for (int i = 0; i < 16; i++)
-  {
-    Serial.println(String(i) + ": " + String(lastFollowLineMoves[i]));
-  }
-
-  Serial.println();
+// WARNING: THIS println CODE SLOWS DOWN THE OTHER CODE AND THE FOLLOW LINE FUNCTION WORKS NOT AS EXPECTED!
+//  Serial.println();
+//
+//  for (int i = 0; i < 16; i++)
+//  {
+//    Serial.println(String(i) + ": " + String(lastFollowLineMoves[i]));
+//  }
+//
+//  Serial.println();
   
   int last = 0;
   int otherCount = 0;
