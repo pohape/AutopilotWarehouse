@@ -61,12 +61,39 @@ public class MainActivity extends AppCompatActivity {
     private final static int BT_COMMAND_ARM_CLOSE_CLAW_PRESSED = 15;
     private final static int BT_COMMAND_ARM_CLOSE_CLAW_RELEASED = 16;
 
+    private final static int BT_COMMAND_WHEELS_FORWARD_PRESSED = 17;
+    private final static int BT_COMMAND_WHEELS_FORWARD_RELEASED = 18;
+
+    private final static int BT_COMMAND_WHEELS_LEFT_FORWARD_PRESSED = 19;
+    private final static int BT_COMMAND_WHEELS_LEFT_FORWARD_RELEASED = 20;
+
+    private final static int BT_COMMAND_WHEELS_RIGHT_FORWARD_PRESSED = 21;
+    private final static int BT_COMMAND_WHEELS_RIGHT_FORWARD_RELEASED = 22;
+
+    private final static int BT_COMMAND_WHEELS_BACK_PRESSED = 23;
+    private final static int BT_COMMAND_WHEELS_BACK_RELEASED = 24;
+
+    private final static int BT_COMMAND_WHEELS_LEFT_BACK_PRESSED = 25;
+    private final static int BT_COMMAND_WHEELS_LEFT_BACK_RELEASED = 26;
+
+    private final static int BT_COMMAND_WHEELS_RIGHT_BACK_PRESSED = 27;
+    private final static int BT_COMMAND_WHEELS_RIGHT_BACK_RELEASED = 28;
+
+    private int mode = 1;
+    private boolean armScreen = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // buttons
+        final Button buttonSwitchToDrivingOrToArm = findViewById(R.id.switchScreen);
+        buttonSwitchToDrivingOrToArm.setEnabled(false);
+
+        final Button buttonSwitchToFollowLineOrManual = findViewById(R.id.switchMode);
+        buttonSwitchToFollowLineOrManual.setEnabled(false);
+
         final Button buttonForward = findViewById(R.id.buttonForward);
         buttonForward.setEnabled(false);
 
@@ -144,6 +171,9 @@ public class MainActivity extends AppCompatActivity {
                                 buttonOpen.setEnabled(true);
                                 buttonClose.setEnabled(true);
 
+                                buttonSwitchToDrivingOrToArm.setEnabled(true);
+                                buttonSwitchToFollowLineOrManual.setEnabled(true);
+
                                 break;
                             case -1:
                                 toolbar.setSubtitle("Device fails to connect");
@@ -160,6 +190,9 @@ public class MainActivity extends AppCompatActivity {
 
                                 buttonOpen.setEnabled(false);
                                 buttonClose.setEnabled(false);
+
+                                buttonSwitchToDrivingOrToArm.setEnabled(false);
+                                buttonSwitchToFollowLineOrManual.setEnabled(false);
 
                                 break;
                         }
@@ -188,11 +221,31 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // buttons on click
+        buttonSwitchToDrivingOrToArm.setOnClickListener(v -> {
+            if (armScreen) {
+                armScreen = false;
+                buttonSwitchToDrivingOrToArm.setText("Switch to ARM control");
+
+                buttonUp.setEnabled(false);
+                buttonDown.setEnabled(false);
+                buttonOpen.setEnabled(false);
+                buttonClose.setEnabled(false);
+            } else {
+                armScreen = true;
+                buttonSwitchToDrivingOrToArm.setText("Switch to DRIVING");
+
+                buttonUp.setEnabled(true);
+                buttonDown.setEnabled(true);
+                buttonOpen.setEnabled(true);
+                buttonClose.setEnabled(true);
+            }
+        });
+
         buttonForward.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                connectedThread.write(BT_COMMAND_ARM_FORWARD_PRESSED);
+                connectedThread.write(armScreen ? BT_COMMAND_ARM_FORWARD_PRESSED : BT_COMMAND_WHEELS_FORWARD_PRESSED);
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                connectedThread.write(BT_COMMAND_ARM_FORWARD_RELEASED);
+                connectedThread.write(armScreen ? BT_COMMAND_ARM_FORWARD_RELEASED : BT_COMMAND_WHEELS_FORWARD_RELEASED);
             }
 
             return true;
@@ -200,9 +253,9 @@ public class MainActivity extends AppCompatActivity {
 
         buttonBack.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                connectedThread.write(BT_COMMAND_ARM_BACK_PRESSED);
+                connectedThread.write(armScreen ? BT_COMMAND_ARM_BACK_PRESSED : BT_COMMAND_WHEELS_BACK_PRESSED);
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                connectedThread.write(BT_COMMAND_ARM_BACK_RELEASED);
+                connectedThread.write(armScreen ? BT_COMMAND_ARM_BACK_RELEASED : BT_COMMAND_WHEELS_BACK_RELEASED);
             }
 
             return true;
@@ -230,9 +283,9 @@ public class MainActivity extends AppCompatActivity {
 
         buttonLeft.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                connectedThread.write(BT_COMMAND_ARM_LEFT_PRESSED);
+                connectedThread.write(armScreen ? BT_COMMAND_ARM_LEFT_PRESSED : BT_COMMAND_WHEELS_LEFT_FORWARD_PRESSED);
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                connectedThread.write(BT_COMMAND_ARM_LEFT_RELEASED);
+                connectedThread.write(armScreen ? BT_COMMAND_ARM_LEFT_RELEASED : BT_COMMAND_WHEELS_LEFT_FORWARD_RELEASED);
             }
 
             return true;
@@ -240,9 +293,9 @@ public class MainActivity extends AppCompatActivity {
 
         buttonRight.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                connectedThread.write(BT_COMMAND_ARM_RIGHT_PRESSED);
+                connectedThread.write(armScreen ? BT_COMMAND_ARM_RIGHT_PRESSED : BT_COMMAND_WHEELS_RIGHT_FORWARD_PRESSED);
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                connectedThread.write(BT_COMMAND_ARM_RIGHT_RELEASED);
+                connectedThread.write(armScreen ? BT_COMMAND_ARM_RIGHT_RELEASED : BT_COMMAND_WHEELS_RIGHT_FORWARD_RELEASED);
             }
 
             return true;

@@ -22,6 +22,24 @@ const int BT_COMMAND_ARM_OPEN_CLAW_RELEASED = 14;
 const int BT_COMMAND_ARM_CLOSE_CLAW_PRESSED = 15;
 const int BT_COMMAND_ARM_CLOSE_CLAW_RELEASED = 16;
 
+const int BT_COMMAND_WHEELS_FORWARD_PRESSED = 17;
+const int BT_COMMAND_WHEELS_FORWARD_RELEASED = 18;
+
+const int BT_COMMAND_WHEELS_LEFT_FORWARD_PRESSED = 19;
+const int BT_COMMAND_WHEELS_LEFT_FORWARD_RELEASED = 20;
+
+const int BT_COMMAND_WHEELS_RIGHT_FORWARD_PRESSED = 21;
+const int BT_COMMAND_WHEELS_RIGHT_FORWARD_RELEASED = 22;
+
+const int BT_COMMAND_WHEELS_BACK_PRESSED = 23;
+const int BT_COMMAND_WHEELS_BACK_RELEASED = 24;
+
+const int BT_COMMAND_WHEELS_LEFT_BACK_PRESSED = 25;
+const int BT_COMMAND_WHEELS_LEFT_BACK_RELEASED = 26;
+
+const int BT_COMMAND_WHEELS_RIGHT_BACK_PRESSED = 27;
+const int BT_COMMAND_WHEELS_RIGHT_BACK_RELEASED = 28;
+
 int btLastCommand = 0;
 
 void processBluetooth() {
@@ -49,6 +67,40 @@ void processBluetooth() {
       openClaw();
     } else if (btLastCommand == BT_COMMAND_ARM_CLOSE_CLAW_PRESSED) {
       closeClaw();
-    }
+    } else if (btLastCommand == BT_COMMAND_ARM_CLOSE_CLAW_PRESSED) {
+      closeClaw();
+    } else if (btLastCommand == BT_COMMAND_WHEELS_FORWARD_PRESSED) {
+      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+  
+      rightForwardStart();
+      leftForwardStart();
+    } else if (btLastCommand == BT_COMMAND_WHEELS_LEFT_FORWARD_PRESSED) {
+      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+      
+      rightForwardStart();
+    } else if (btLastCommand == BT_COMMAND_WHEELS_RIGHT_FORWARD_PRESSED) {
+      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+      
+      leftForwardStart();
+    } else if (btLastCommand == BT_COMMAND_WHEELS_BACK_PRESSED) {
+      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+      
+      rightBackStart();
+      leftBackStart();
+    } else if (btLastCommand == BT_COMMAND_WHEELS_LEFT_BACK_PRESSED) {
+      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+      
+      rightBackStart();
+    } else if (btLastCommand == BT_COMMAND_WHEELS_RIGHT_BACK_PRESSED) {
+      analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+      analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+      
+      leftBackStart();
+    } 
   }
 } 
