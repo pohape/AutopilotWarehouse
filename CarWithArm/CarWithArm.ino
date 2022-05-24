@@ -2,6 +2,7 @@
 #include "SR04.h"
 #include <Servo.h>
 #include <EEPROM.h>
+#include <SoftwareSerial.h>
 
 // PINs >>>
 
@@ -29,11 +30,20 @@ const int PIN_WHEELS_IN4 = 11; // black, 5th from left
 const int PIN_ARM_MAIN = 3;
 const int PIN_ARM_LEFT = 4;
 const int PIN_ARM_RIGHT = 5;
-const int PIN_ARM_CLAW = 53;
+const int PIN_ARM_CLAW = 52;
+
+// bluetooth
+const int PIN_BLUETOOTH_RX = 53;
+const int PIN_BLUETOOTH_TX = 51;
 
 const int PIN_BUZZER = 2;
 
 // <<< PINs
+
+// bluetooth block >>>
+String btResponce = ""; // Stores response of the HC-06 Bluetooth device
+SoftwareSerial BTSerial(PIN_BLUETOOTH_RX, PIN_BLUETOOTH_TX); // RX, TX
+// <<< bluetooth block
 
 // ultrasonic block >>>
 SR04 ultrasonic = SR04(ULTRASONIC_ECHO_PIN, ULTRASONIC_TRIG_PIN);
@@ -169,12 +179,15 @@ void setup() {
   pinMode(PIN_WHEELS_IN4, OUTPUT);
 
   pinMode(PIN_BUZZER, OUTPUT);
-
-  initializeArm(); 
+  initializeArm();
+  
+  BTSerial.begin(9600);
+  delay(500);
 }
 
 void loop() {
-  processIrButtons();
+  //processIrButtons();
+  processBluetooth();
   processFollowLine();
   manageStateOfWheels();
 }

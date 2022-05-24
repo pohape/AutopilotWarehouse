@@ -1,7 +1,5 @@
 package com.droiduino.bluetoothconn;
 
-import static android.content.ContentValues.TAG;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -11,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -25,6 +24,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import static android.content.ContentValues.TAG;
+
 public class MainActivity extends AppCompatActivity {
 
     private String deviceName = null;
@@ -35,6 +36,30 @@ public class MainActivity extends AppCompatActivity {
 
     private final static int CONNECTING_STATUS = 1; // used in bluetooth handler to identify message status
     private final static int MESSAGE_READ = 2; // used in bluetooth handler to identify message update
+
+    private final static int BT_COMMAND_ARM_FORWARD_PRESSED = 1;
+    private final static int BT_COMMAND_ARM_FORWARD_RELEASED = 2;
+
+    private final static int BT_COMMAND_ARM_BACK_PRESSED = 3;
+    private final static int BT_COMMAND_ARM_BACK_RELEASED = 4;
+
+    private final static int BT_COMMAND_ARM_LEFT_PRESSED = 5;
+    private final static int BT_COMMAND_ARM_LEFT_RELEASED = 6;
+
+    private final static int BT_COMMAND_ARM_RIGHT_PRESSED = 7;
+    private final static int BT_COMMAND_ARM_RIGHT_RELEASED = 8;
+
+    private final static int BT_COMMAND_ARM_UP_PRESSED = 9;
+    private final static int BT_COMMAND_ARM_UP_RELEASED = 10;
+
+    private final static int BT_COMMAND_ARM_DOWN_PRESSED = 11;
+    private final static int BT_COMMAND_ARM_DOWN_RELEASED = 12;
+
+    private final static int BT_COMMAND_ARM_OPEN_CLAW_PRESSED = 13;
+    private final static int BT_COMMAND_ARM_OPEN_CLAW_RELEASED = 14;
+
+    private final static int BT_COMMAND_ARM_CLOSE_CLAW_PRESSED = 15;
+    private final static int BT_COMMAND_ARM_CLOSE_CLAW_RELEASED = 16;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,36 +188,84 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // buttons on click
-        buttonForward.setOnClickListener(view -> {
-            connectedThread.write("F");
+        buttonForward.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                connectedThread.write(BT_COMMAND_ARM_FORWARD_PRESSED);
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                connectedThread.write(BT_COMMAND_ARM_FORWARD_RELEASED);
+            }
+
+            return true;
         });
 
-        buttonBack.setOnClickListener(view -> {
-            connectedThread.write("B");
+        buttonBack.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                connectedThread.write(BT_COMMAND_ARM_BACK_PRESSED);
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                connectedThread.write(BT_COMMAND_ARM_BACK_RELEASED);
+            }
+
+            return true;
         });
 
-        buttonDown.setOnClickListener(view -> {
-            connectedThread.write("D");
+        buttonDown.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                connectedThread.write(BT_COMMAND_ARM_DOWN_PRESSED);
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                connectedThread.write(BT_COMMAND_ARM_DOWN_RELEASED);
+            }
+
+            return true;
         });
 
-        buttonOpen.setOnClickListener(view -> {
-            connectedThread.write("O");
+        buttonUp.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                connectedThread.write(BT_COMMAND_ARM_UP_PRESSED);
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                connectedThread.write(BT_COMMAND_ARM_UP_RELEASED);
+            }
+
+            return true;
         });
 
-        buttonUp.setOnClickListener(view -> {
-            connectedThread.write("U");
+        buttonLeft.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                connectedThread.write(BT_COMMAND_ARM_LEFT_PRESSED);
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                connectedThread.write(BT_COMMAND_ARM_LEFT_RELEASED);
+            }
+
+            return true;
         });
 
-        buttonLeft.setOnClickListener(view -> {
-            connectedThread.write("L");
+        buttonRight.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                connectedThread.write(BT_COMMAND_ARM_RIGHT_PRESSED);
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                connectedThread.write(BT_COMMAND_ARM_RIGHT_RELEASED);
+            }
+
+            return true;
         });
 
-        buttonRight.setOnClickListener(view -> {
-            connectedThread.write("R");
+        buttonOpen.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                connectedThread.write(BT_COMMAND_ARM_OPEN_CLAW_PRESSED);
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                connectedThread.write(BT_COMMAND_ARM_OPEN_CLAW_RELEASED);
+            }
+
+            return true;
         });
 
-        buttonClose.setOnClickListener(view -> {
-            connectedThread.write("C");
+        buttonClose.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                connectedThread.write(BT_COMMAND_ARM_CLOSE_CLAW_PRESSED);
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                connectedThread.write(BT_COMMAND_ARM_CLOSE_CLAW_RELEASED);
+            }
+
+            return true;
         });
     }
 
@@ -316,6 +389,15 @@ public class MainActivity extends AppCompatActivity {
             byte[] bytes = input.getBytes(); //converts entered String into bytes
             try {
                 mmOutStream.write(bytes);
+                mmOutStream.flush();
+            } catch (IOException e) {
+                Log.e("Send Error", "Unable to send message", e);
+            }
+        }
+
+        public void write(int input) {
+            try {
+                mmOutStream.write(input);
                 mmOutStream.flush();
             } catch (IOException e) {
                 Log.e("Send Error", "Unable to send message", e);
