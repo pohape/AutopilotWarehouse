@@ -85,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
     private int mode = 1;
     private boolean armScreen = true;
 
+    protected Toolbar toolbar;
+
     protected Button buttonSwitchToDrivingOrToArm;
     protected Button buttonSwitchToFollowLineOrManual;
     protected Button buttonForward;
@@ -98,8 +100,12 @@ public class MainActivity extends AppCompatActivity {
 
     protected void switchScreenToManual() {
         mode = 1;
+        toolbar.setTitle("Current mode: manual " + (armScreen ? "ARM" : "DRIVING"));
         buttonSwitchToFollowLineOrManual.setText("Switch to follow line mode");
+        buttonSwitchToDrivingOrToArm.setText("Switch to " + (armScreen ? "DRIVING" : "ARM control"));
+
         buttonSwitchToDrivingOrToArm.setEnabled(true);
+        buttonSwitchToFollowLineOrManual.setEnabled(true);
 
         buttonUp.setEnabled(armScreen);
         buttonDown.setEnabled(armScreen);
@@ -110,13 +116,18 @@ public class MainActivity extends AppCompatActivity {
         buttonLeft.setEnabled(true);
         buttonRight.setEnabled(true);
         buttonBack.setEnabled(true);
+
+
         Toast.makeText(MainActivity.this, "Switched to MANUAL mode", Toast.LENGTH_SHORT).show();
     }
 
     protected void switchScreenToFollowLine() {
         mode = 2;
+        toolbar.setTitle("Current mode: following the line");
         buttonSwitchToFollowLineOrManual.setText("Switch to manual mode");
+
         buttonSwitchToDrivingOrToArm.setEnabled(true);
+        buttonSwitchToFollowLineOrManual.setEnabled(true);
 
         buttonUp.setEnabled(false);
         buttonDown.setEnabled(false);
@@ -132,8 +143,11 @@ public class MainActivity extends AppCompatActivity {
 
     protected void switchScreenToObstacle() {
         mode = 3;
+        toolbar.setTitle("Current mode: going around an obstacle");
         buttonSwitchToFollowLineOrManual.setText("Switch to manual mode");
+
         buttonSwitchToDrivingOrToArm.setEnabled(true);
+        buttonSwitchToFollowLineOrManual.setEnabled(true);
 
         buttonUp.setEnabled(false);
         buttonDown.setEnabled(false);
@@ -151,6 +165,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        toolbar = findViewById(R.id.toolbar);
 
         // buttons
         buttonSwitchToDrivingOrToArm = findViewById(R.id.switchScreen);
@@ -223,21 +239,7 @@ public class MainActivity extends AppCompatActivity {
                                 progressBarConnecting.setVisibility(View.GONE);
 
                                 buttonConnect.setEnabled(true);
-
-                                buttonForward.setEnabled(true);
-                                buttonBack.setEnabled(true);
-
-                                buttonRight.setEnabled(true);
-                                buttonLeft.setEnabled(true);
-
-                                buttonUp.setEnabled(true);
-                                buttonDown.setEnabled(true);
-
-                                buttonOpen.setEnabled(true);
-                                buttonClose.setEnabled(true);
-
-                                buttonSwitchToDrivingOrToArm.setEnabled(true);
-                                buttonSwitchToFollowLineOrManual.setEnabled(true);
+                                switchScreenToManual();
 
                                 break;
                             case -1:
@@ -288,23 +290,8 @@ public class MainActivity extends AppCompatActivity {
 
         // buttons on click
         buttonSwitchToDrivingOrToArm.setOnClickListener(v -> {
-            if (armScreen) {
-                armScreen = false;
-                buttonSwitchToDrivingOrToArm.setText("Switch to ARM control");
-
-                buttonUp.setEnabled(false);
-                buttonDown.setEnabled(false);
-                buttonOpen.setEnabled(false);
-                buttonClose.setEnabled(false);
-            } else {
-                armScreen = true;
-                buttonSwitchToDrivingOrToArm.setText("Switch to DRIVING");
-
-                buttonUp.setEnabled(true);
-                buttonDown.setEnabled(true);
-                buttonOpen.setEnabled(true);
-                buttonClose.setEnabled(true);
-            }
+            armScreen = !armScreen;
+            switchScreenToManual();
         });
 
         buttonSwitchToFollowLineOrManual.setOnClickListener(v -> {
