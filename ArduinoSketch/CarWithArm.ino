@@ -45,6 +45,10 @@ String btResponce = ""; // Stores response of the HC-06 Bluetooth device
 SoftwareSerial BTSerial(PIN_BLUETOOTH_RX, PIN_BLUETOOTH_TX); // RX, TX
 // <<< bluetooth block
 
+// QR-code scanner block >>>
+#define QRSerial Serial3
+// <<< QR-code scanner block
+
 // ultrasonic block >>>
 SR04 ultrasonic = SR04(ULTRASONIC_ECHO_PIN, ULTRASONIC_TRIG_PIN);
 const int DISTANCE_WARNING = 25;
@@ -182,12 +186,14 @@ void setup() {
   initializeArm();
   
   BTSerial.begin(9600);
+  QRSerial.begin(9600);
   delay(500);
 }
 
 void loop() {
   //processIrButtons();
   processBluetooth();
+  processQrCodeScanner();
   processFollowLine();
   manageStateOfWheels();
 }
