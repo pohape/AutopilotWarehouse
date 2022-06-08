@@ -87,9 +87,9 @@ const int ARM_POSITION_LEFT_DEFAULT = 140; // 0 - вытянута, 140 - втя
 const int ARM_POSITION_LEFT_MIN = 0;
 const int ARM_POSITION_LEFT_MAX = 170;
 
-int armPositionClawDefault = 0; // 0 - закрыто, 50 - открыто
-int armPositionClawMin = 0;
-int armPositionClawMax = 50;
+const int CLAW_POSITION_DEFAULT = 0; // 0 - закрыто, 50 - открыто
+const int CLAW_POSITION_MIN = 10;
+const int CLAW_POSITION_MAX = 50;
 
 ServoPositions servoPositions = {ARM_POSITION_MAIN_DEFAULT, ARM_POSITION_LEFT_DEFAULT, ARM_POSITION_RIGHT_DEFAULT};
 // <<< arm block
@@ -171,15 +171,17 @@ void setup() {
 }
 
 void loop() {
-  //processIrButtons();
   processBluetooth();
   processQrCodeScanner();
-  processFollowLine();
   manageStateOfWheels();
 
-//  clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
-//  Serial.println("claw distance: " + String(clawDistance));
-//  delay(100);
+  if (mode == 2) {
+    processMode2();
+  } else if (mode == 3) {
+    processMode3();
+  } else if (mode == 4) {
+    processMode4();
+  }
 }
 
 void buzz(int times) {
@@ -204,12 +206,6 @@ void setMode(int newMode, String caller) {
   }
 
   BTSerial.write('\n');
-
-//  if ((mode == 1 && m == 2) || (mode == 2 && m == 1)) {
-//    bothStop();
-//    delay(100);
-//  }
-  
   buzz(50);
 
   if (newMode == 2) {
