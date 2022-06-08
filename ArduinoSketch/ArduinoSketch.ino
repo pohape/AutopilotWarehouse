@@ -148,7 +148,7 @@ int mode = 1;
 void setup() {
   delay(500);
   Serial.begin(9600);  // speed for the console
-  infrared.enableIRIn(); // Start the infrared receiver
+  pinMode(PIN_INFRARED_CLAW_DISTANCE, INPUT);
 
   pinMode(PIN_TRACING_RIGHT, INPUT);
   pinMode(PIN_TRACING_CENTER, INPUT);
