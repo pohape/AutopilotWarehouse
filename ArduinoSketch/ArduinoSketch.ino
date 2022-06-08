@@ -16,7 +16,7 @@ const int PIN_TRACING_CENTER = A3; // S = black, G - brown, V - white
 const int PIN_TRACING_LEFT = A4; // S = black, G - brown, V - white
 
 // infrared
-const int PIN_INFRARED = A5;
+const int PIN_INFRARED_CLAW_DISTANCE = A5;
 
 // wheels
 const int PIN_WHEELS_ENA = 6; // green, first (left)
@@ -55,31 +55,10 @@ const int DISTANCE_WARNING = 25;
 int distance = 0;
 // <<< ultrasonic block
 
-// infrared block >>>
-IRrecv infrared(PIN_INFRARED);
-decode_results infraredResults;
-
-uint32_t one = 0xBA45FF00;
-uint32_t two = 0xB946FF00;
-uint32_t three = 0xB847FF00;
-uint32_t four = 0xBB44FF00;
-uint32_t five = 0xBF40FF00;
-uint32_t six = 0xBC43FF00;
-uint32_t seven = 0xF807FF00;
-uint32_t eight = 0xEA15FF00;
-uint32_t nine = 0xF609FF00;
-uint32_t zero = 0xE619FF00;
-
-uint32_t star = 0xE916FF00;
-uint32_t grid = 0xF20DFF00;
-uint32_t ok = 0xE31CFF00;
-uint32_t up = 0xE718FF00;
-uint32_t down = 0xAD52FF00;
-uint32_t left = 0xF708FF00;
-uint32_t right = 0xA55AFF00;
-
-uint32_t remoteLastPushed;
-// <<< infrared block
+// infrared distance block >>>
+const int CLAW_DISTANCE_HOLD = 880;
+int clawDistance = 0;
+// <<< infrared distance block
 
 // arm block >>>
 Servo armServoMain;
@@ -168,7 +147,7 @@ int mode = 1;
 void setup() {
   delay(500);
   Serial.begin(9600);  // speed for the console
-  infrared.enableIRIn(); // Start the infrared receiver
+  pinMode(PIN_INFRARED_CLAW_DISTANCE, INPUT);
 
   pinMode(PIN_TRACING_RIGHT, INPUT);
   pinMode(PIN_TRACING_CENTER, INPUT);
@@ -191,11 +170,14 @@ void setup() {
 }
 
 void loop() {
-  //processIrButtons();
   processBluetooth();
   processQrCodeScanner();
   processFollowLine();
   manageStateOfWheels();
+
+//  clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
+//  Serial.println("claw distance: " + String(clawDistance));
+//  delay(100);
 }
 
 void buzz(int times) {
