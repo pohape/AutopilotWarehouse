@@ -25,7 +25,7 @@ void initializeArm() {
   armServoLeft.attach(PIN_ARM_LEFT);
   armServoLeftRotateToPosition("initialize left");
 
-  if (servoPositionsFromEeprom.armClaw >= armPositionClawMin && servoPositionsFromEeprom.armClaw <= armPositionClawMax) {
+  if (servoPositionsFromEeprom.armClaw >= CLAW_POSITION_MIN && servoPositionsFromEeprom.armClaw <= CLAW_POSITION_MAX) {
     servoPositions.armClaw = servoPositionsFromEeprom.armClaw;
   }
 
@@ -58,7 +58,7 @@ void armServoLeftRotateToPosition(String caller) {
 }
 
 void armServoClawRotateToPosition(String caller) {
-  if (servoPositions.armClaw >= armPositionClawMin && servoPositions.armClaw <= armPositionClawMax) {
+  if (servoPositions.armClaw >= CLAW_POSITION_MIN && servoPositions.armClaw <= CLAW_POSITION_MAX) {
     Serial.println(caller + ": servo claw " + String(servoPositions.armClaw));
     armServoClaw.write(servoPositions.armClaw);
     EEPROM.put(0, servoPositions);
@@ -96,12 +96,12 @@ void armTurnCenter() {
 }
 
 void openClaw() {
-  servoPositions.armClaw = armPositionClawMax;
+  servoPositions.armClaw = CLAW_POSITION_MAX;
   armServoClawRotateToPosition("openClaw");
 }
 
 void closeClaw() {
-  servoPositions.armClaw = armPositionClawMin;
+  servoPositions.armClaw = CLAW_POSITION_MIN;
   armServoClawRotateToPosition("closeClaw");
 }
 

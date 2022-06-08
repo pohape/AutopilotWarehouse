@@ -73,14 +73,6 @@ void followLineCheckAndStop() {
   lastFollowLineMoves[15] = 0;
 }
 
-void processFollowLine() {
-  if (mode == 2) {
-    processMode2();
-  } else if (mode == 3) {
-    processMode3();
-  }
-}
-
 void processMode2() {
   // найти черную линию
   // проехать вперед долю секунды

@@ -73,7 +73,7 @@ struct ServoPositions {
    int armClaw;
 };
 
-const int ARM_SERVOS_STEP = 5;
+const int ARM_SERVOS_STEP = 1;
 
 const int ARM_POSITION_MAIN_DEFAULT = 72; // 80 - center, correction is -8
 const int ARM_POSITION_MAIN_MIN = 2; // 10, with correction is 2
@@ -142,12 +142,13 @@ bool rightCurrentlyMovingBack = false;
 // 1 = manual
 // 2 = follow the line
 // 3 = drive around an obstacle
+// 4 = take package
 int mode = 1;
 
 void setup() {
   delay(500);
   Serial.begin(9600);  // speed for the console
-  pinMode(PIN_INFRARED_CLAW_DISTANCE, INPUT);
+  infrared.enableIRIn(); // Start the infrared receiver
 
   pinMode(PIN_TRACING_RIGHT, INPUT);
   pinMode(PIN_TRACING_CENTER, INPUT);
@@ -170,6 +171,7 @@ void setup() {
 }
 
 void loop() {
+  //processIrButtons();
   processBluetooth();
   processQrCodeScanner();
   processFollowLine();

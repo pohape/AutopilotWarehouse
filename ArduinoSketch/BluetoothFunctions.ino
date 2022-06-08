@@ -40,7 +40,9 @@ const int BT_COMMAND_WHEELS_LEFT_BACK_RELEASED = 26;
 const int BT_COMMAND_WHEELS_RIGHT_BACK_PRESSED = 27;
 const int BT_COMMAND_WHEELS_RIGHT_BACK_RELEASED = 28;
 
-const int BT_COMMAND_SWITCH_MODE = 29;
+const int BT_COMMAND_SET_MODE_MANUAL = 29;
+const int BT_COMMAND_SET_MODE_FOLLOW_LINE = 30;
+const int BT_COMMAND_SET_MODE_TAKE_PACKAGE = 31;
 
 int btLastCommand = 0;
 
@@ -48,12 +50,12 @@ void processBluetooth() {
   if (BTSerial.available()) {
     btLastCommand = BTSerial.read();
 
-    if (btLastCommand == BT_COMMAND_SWITCH_MODE) {
-      if (mode == 1) {
-        setMode(2, "Bluetooth command");
-      } else {
-        setMode(1, "Bluetooth command");
-      }
+    if (btLastCommand == BT_COMMAND_SET_MODE_MANUAL) {
+      setMode(1, "Bluetooth command");
+    } else if (btLastCommand == BT_COMMAND_SET_MODE_FOLLOW_LINE) {
+      setMode(2, "Bluetooth command");
+    } else if (btLastCommand == BT_COMMAND_SET_MODE_TAKE_PACKAGE) {
+      setMode(4, "Bluetooth command");
     }
     
     buzz(1);
