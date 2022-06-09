@@ -79,13 +79,13 @@ const int ARM_POSITION_MAIN_DEFAULT = 72; // 80 - center, correction is -8
 const int ARM_POSITION_MAIN_MIN = 2; // 10, with correction is 2
 const int ARM_POSITION_MAIN_MAX = 137; // 145, with correction is 137
 
-const int ARM_POSITION_RIGHT_DEFAULT = 40; // 20 - поднята, 110 - опущена
+const int ARM_POSITION_RIGHT_DEFAULT = 0; // 20 - поднята, 110 - опущена
 const int ARM_POSITION_RIGHT_MIN = 0;
 const int ARM_POSITION_RIGHT_MAX = 110;
 
-const int ARM_POSITION_LEFT_DEFAULT = 140; // 0 - вытянута, 140 - втянута
+const int ARM_POSITION_LEFT_DEFAULT = 110; // 0 - вытянута, 120 - втянута
 const int ARM_POSITION_LEFT_MIN = 0;
-const int ARM_POSITION_LEFT_MAX = 170;
+const int ARM_POSITION_LEFT_MAX = 120;
 
 const int CLAW_POSITION_DEFAULT = 0; // 0 - закрыто, 50 - открыто
 const int CLAW_POSITION_MIN = 10;
@@ -170,7 +170,7 @@ void setup() {
   QRSerial.begin(9600);
   delay(500);
 
-  //findPackage();
+  armToDefaultPosition();
 }
 
 void loop() {

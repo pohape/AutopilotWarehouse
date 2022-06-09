@@ -55,11 +55,23 @@ void armServoRightRotateToPosition(String caller) {
   }
 }
 
+void armServoRightRotateToPositionWithoutEeprom() {
+  if (servoPositions.armRight >= ARM_POSITION_RIGHT_MIN && servoPositions.armRight <= ARM_POSITION_RIGHT_MAX) {
+    armServoRight.write(servoPositions.armRight);
+  }
+}
+
 void armServoLeftRotateToPosition(String caller) {
   if (servoPositions.armLeft >= ARM_POSITION_LEFT_MIN && servoPositions.armLeft <= ARM_POSITION_LEFT_MAX) {
     Serial.println(caller + ": servo left " + String(servoPositions.armLeft));
     armServoLeft.write(servoPositions.armLeft);
     EEPROM.put(0, servoPositions);
+  }
+}
+
+void armServoLeftRotateToPositionWithoutEeprom() {
+  if (servoPositions.armLeft >= ARM_POSITION_LEFT_MIN && servoPositions.armLeft <= ARM_POSITION_LEFT_MAX) {
+    armServoLeft.write(servoPositions.armLeft);
   }
 }
 
@@ -166,19 +178,20 @@ bool armConditionsCheck(int left, int right) {
     armConditionsCheckWarning("left > ARM_POSITION_RIGHT_MAX");
     
     return false;
-  } else if (right < 10 && left > 110) {
-    armConditionsCheckWarning("left > 110 && right < 10");
-    
-    return false;
-  } else if (right <= 40 && left > 85) {
-    armConditionsCheckWarning("left > 85 && right < 40");
-    
-    return false;
-  } else if (right == 0 && left < 60) {
-    armConditionsCheckWarning("left < 60 && right == 0");
-    
-    return false;
   }
+//  else if (right < 10 && left > 110) {
+//    armConditionsCheckWarning("left > 110 && right < 10");
+//    
+//    return false;
+//  } else if (right <= 40 && left > 85) {
+//    armConditionsCheckWarning("left > 85 && right < 40");
+//    
+//    return false;
+//  } else if (right == 0 && left < 60) {
+//    armConditionsCheckWarning("left < 60 && right == 0");
+//    
+//    return false;
+//  }
 
   return true;
 }
@@ -235,20 +248,25 @@ void armDown() {
 }
 
 void armToDefaultPosition() {
-  // ARM_POSITION_RIGHT_MIN=0
-  // ARM_POSITION_LEFT_MAX=170
-
-  while (servoPositions.armRight > ARM_POSITION_RIGHT_MIN || servoPositions.armLeft < ARM_POSITION_LEFT_MAX) {
-    if (servoPositions.armRight > ARM_POSITION_RIGHT_MIN) {
+  while (servoPositions.armRight != ARM_POSITION_RIGHT_DEFAULT || servoPositions.armLeft != ARM_POSITION_LEFT_DEFAULT) {
+    if (servoPositions.armRight > ARM_POSITION_RIGHT_DEFAULT) {
       servoPositions.armRight--;
-      armServoRightRotateToPosition("armToDefaultPosition");
+    } else if (servoPositions.armRight < ARM_POSITION_RIGHT_DEFAULT) {
+      servoPositions.armRight++;
     }
 
-    if (servoPositions.armLeft < ARM_POSITION_LEFT_MAX) {
+    if (servoPositions.armLeft < ARM_POSITION_LEFT_DEFAULT) {
       servoPositions.armLeft++;
-      armServoLeftRotateToPosition("armToDefaultPosition");
+    } else if (servoPositions.armLeft > ARM_POSITION_LEFT_DEFAULT) {
+      servoPositions.armLeft--;
     }
+
+    delay(5);
+    armServoRightRotateToPositionWithoutEeprom();
+    armServoLeftRotateToPositionWithoutEeprom();
   }
+
+  EEPROM.put(0, servoPositions);
 }
 
 
