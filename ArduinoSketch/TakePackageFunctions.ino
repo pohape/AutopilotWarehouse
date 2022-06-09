@@ -22,3 +22,27 @@ bool findPackage() {
   
 }
 
+void findClosestObjectAndTurnThere() {
+  armTurnRightMax();
+
+  int closestObjectDegree = -1;
+  int closestObjectDistance = 1000;
+
+  for (servoPositions.armMain = ARM_POSITION_MAIN_MIN; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
+    armServoMainRotateToPosition("findClosestObjectAndTurnThere");
+    updateDistanceCm();
+
+    if (distance < closestObjectDistance) {
+      closestObjectDistance = distance;
+      closestObjectDegree = servoPositions.armMain;
+    }
+  }
+
+  while (servoPositions.armMain < closestObjectDegree) {
+    armTurnLeft();
+  }
+
+  while (servoPositions.armMain > closestObjectDegree) {
+    armTurnRight();
+  }
+}

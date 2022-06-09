@@ -85,6 +85,18 @@ void armTurnLeft() {
   armServoMainRotateToPosition("armTurnLeft");
 }
 
+void armTurnLeftMax() {
+  while (servoPositions.armMain < ARM_POSITION_MAIN_MAX) {
+    armTurnLeft();
+  }
+}
+
+void armTurnRightMax() {
+  while (servoPositions.armMain > ARM_POSITION_MAIN_MIN) {
+    armTurnRight();
+  }
+}
+
 void armTurnCenter() {
   while (servoPositions.armMain < ARM_POSITION_MAIN_DEFAULT) {
     armTurnLeft();

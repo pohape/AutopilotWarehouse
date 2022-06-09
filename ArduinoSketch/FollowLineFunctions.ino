@@ -51,8 +51,6 @@ void followLineCheckAndStop() {
     last = lastFollowLineMoves[i];
   }
 
-  
-
   setMode(1, "followLineCheckAndStop");
 
   lastFollowLineMoves[0] = 0;
