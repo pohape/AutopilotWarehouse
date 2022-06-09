@@ -29,8 +29,8 @@ void findClosestObjectAndTurnThere() {
   int closestObjectDistance = 1000;
 
   for (servoPositions.armMain = ARM_POSITION_MAIN_MIN; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
-    armServoMainRotateToPosition("findClosestObjectAndTurnThere");
-    updateDistanceCm();
+    armServoMainRotateToPositionWithoutEeprom();
+    distance = ultrasonic.Distance();
 
     if (distance < closestObjectDistance) {
       closestObjectDistance = distance;
@@ -39,10 +39,14 @@ void findClosestObjectAndTurnThere() {
   }
 
   while (servoPositions.armMain < closestObjectDegree) {
-    armTurnLeft();
+    armTurnLeftWithoutEeprom();
+    delay(5);
   }
 
   while (servoPositions.armMain > closestObjectDegree) {
-    armTurnRight();
+    armTurnRightWithoutEeprom();
+    delay(5);
   }
+
+  EEPROM.put(0, servoPositions);
 }

@@ -41,6 +41,12 @@ void armServoMainRotateToPosition(String caller) {
   }
 }
 
+void armServoMainRotateToPositionWithoutEeprom() {
+  if (servoPositions.armMain >= ARM_POSITION_MAIN_MIN && servoPositions.armMain <= ARM_POSITION_MAIN_MAX) {
+    armServoMain.write(servoPositions.armMain);
+  }
+}
+
 void armServoRightRotateToPosition(String caller) {
   if (servoPositions.armRight >= ARM_POSITION_RIGHT_MIN && servoPositions.armRight <= ARM_POSITION_RIGHT_MAX) {
     Serial.println(caller + ": servo right " + String(servoPositions.armRight));
@@ -75,6 +81,16 @@ void armTurnRight() {
   armServoMainRotateToPosition("armTurnRight");
 }
 
+void armTurnRightWithoutEeprom() {
+  servoPositions.armMain -= ARM_SERVOS_STEP;
+
+  if (servoPositions.armMain < ARM_POSITION_MAIN_MIN) {
+    servoPositions.armMain = ARM_POSITION_MAIN_MIN;
+  }
+
+  armServoMainRotateToPositionWithoutEeprom();
+}
+
 void armTurnLeft() {
   servoPositions.armMain += ARM_SERVOS_STEP;
 
@@ -85,16 +101,32 @@ void armTurnLeft() {
   armServoMainRotateToPosition("armTurnLeft");
 }
 
+void armTurnLeftWithoutEeprom() {
+  servoPositions.armMain += ARM_SERVOS_STEP;
+
+  if (servoPositions.armMain > ARM_POSITION_MAIN_MAX) {
+    servoPositions.armMain = ARM_POSITION_MAIN_MAX;
+  }
+
+  armServoMainRotateToPositionWithoutEeprom();
+}
+
 void armTurnLeftMax() {
   while (servoPositions.armMain < ARM_POSITION_MAIN_MAX) {
-    armTurnLeft();
+    armTurnLeftWithoutEeprom();
+    delay(5);
   }
+
+  EEPROM.put(0, servoPositions);
 }
 
 void armTurnRightMax() {
   while (servoPositions.armMain > ARM_POSITION_MAIN_MIN) {
-    armTurnRight();
+    armTurnRightWithoutEeprom();
+    delay(5);
   }
+
+  EEPROM.put(0, servoPositions);
 }
 
 void armTurnCenter() {
