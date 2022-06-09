@@ -56,7 +56,7 @@ int distance = 0;
 // <<< ultrasonic block
 
 // infrared distance block >>>
-const int CLAW_DISTANCE_HOLD = 880;
+const int CLAW_DISTANCE_HOLD = 860;
 int clawDistance = 0;
 // <<< infrared distance block
 
@@ -65,13 +65,6 @@ Servo armServoMain;
 Servo armServoRight;
 Servo armServoLeft;
 Servo armServoClaw;
-
-struct ServoPositions {
-   int armMain;
-   int armLeft;
-   int armRight;
-   int armClaw;
-};
 
 const int ARM_SERVOS_STEP = 1;
 
@@ -91,7 +84,17 @@ const int CLAW_POSITION_DEFAULT = 0; // 0 - закрыто, 50 - открыто
 const int CLAW_POSITION_MIN = 10;
 const int CLAW_POSITION_MAX = 50;
 
+struct ServoPositions {
+   int armMain;
+   int armLeft;
+   int armRight;
+   int armClaw;
+};
+
 ServoPositions servoPositions = {ARM_POSITION_MAIN_DEFAULT, ARM_POSITION_LEFT_DEFAULT, ARM_POSITION_RIGHT_DEFAULT};
+
+const int ARM_TAKE_PACKAGE_POSITIONS_COUNT = 8;
+const int ARM_TAKE_PACKAGE_POSITIONS[ARM_TAKE_PACKAGE_POSITIONS_COUNT][2] = { {15, 110}, {15, 100}, {10, 90}, {0, 90}, {10, 83}, {0, 80}, {0, 75}, {0, 68} };
 // <<< arm block
 
 // tracing block >>>
@@ -170,7 +173,7 @@ void setup() {
   QRSerial.begin(9600);
   delay(500);
 
-  armToDefaultPosition();
+  findAndTakePackage();
 }
 
 void loop() {

@@ -83,6 +83,12 @@ void armServoClawRotateToPosition(String caller) {
   }
 }
 
+void armServoClawRotateToPositionWithoutEeprom() {
+  if (servoPositions.armClaw >= CLAW_POSITION_MIN && servoPositions.armClaw <= CLAW_POSITION_MAX) {
+    armServoClaw.write(servoPositions.armClaw);
+  }
+}
+
 void armTurnRight() {
   servoPositions.armMain -= ARM_SERVOS_STEP;
 
@@ -152,13 +158,23 @@ void armTurnCenter() {
 }
 
 void openClaw() {
-  servoPositions.armClaw = CLAW_POSITION_MAX;
-  armServoClawRotateToPosition("openClaw");
+  while (servoPositions.armClaw < CLAW_POSITION_MAX) {
+    servoPositions.armClaw++;
+    armServoClawRotateToPositionWithoutEeprom();
+    delay(10);
+  }
+  
+  EEPROM.put(0, servoPositions);
 }
 
 void closeClaw() {
-  servoPositions.armClaw = CLAW_POSITION_MIN;
-  armServoClawRotateToPosition("closeClaw");
+  while (servoPositions.armClaw > CLAW_POSITION_MIN) {
+    servoPositions.armClaw--;
+    armServoClawRotateToPositionWithoutEeprom();
+    delay(10);
+  }
+  
+  EEPROM.put(0, servoPositions);
 }
 
 bool armConditionsCheck(int left, int right) {
@@ -248,20 +264,24 @@ void armDown() {
 }
 
 void armToDefaultPosition() {
-  while (servoPositions.armRight != ARM_POSITION_RIGHT_DEFAULT || servoPositions.armLeft != ARM_POSITION_LEFT_DEFAULT) {
-    if (servoPositions.armRight > ARM_POSITION_RIGHT_DEFAULT) {
+  armToPosition(ARM_POSITION_LEFT_DEFAULT, ARM_POSITION_RIGHT_DEFAULT);
+}
+
+void armToPosition(int left, int right) {
+  while (servoPositions.armRight != right || servoPositions.armLeft != left) {
+    if (servoPositions.armRight > right) {
       servoPositions.armRight--;
-    } else if (servoPositions.armRight < ARM_POSITION_RIGHT_DEFAULT) {
+    } else if (servoPositions.armRight < right) {
       servoPositions.armRight++;
     }
 
-    if (servoPositions.armLeft < ARM_POSITION_LEFT_DEFAULT) {
+    if (servoPositions.armLeft < left) {
       servoPositions.armLeft++;
-    } else if (servoPositions.armLeft > ARM_POSITION_LEFT_DEFAULT) {
+    } else if (servoPositions.armLeft > left) {
       servoPositions.armLeft--;
     }
 
-    delay(5);
+    delay(10);
     armServoRightRotateToPositionWithoutEeprom();
     armServoLeftRotateToPositionWithoutEeprom();
   }

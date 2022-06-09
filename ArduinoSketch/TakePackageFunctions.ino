@@ -11,37 +11,34 @@ void findAndTakePackage() {
   // 6. Медленно поднимаем коробку и проверяем каждые несколько градусов поднятия, что коробка в клюве (CLAW_DISTANCE_HOLD)
   // 7. Если коробка выпала, то переключаемся в ручной режим и посылаем сигнал в Андроид, что нужна помощь оператора
   // 8. Если коробка не выпала, то разворачиваемся на 360 градусов и включаем режим слежения за линией
-}
 
-bool findPackage() {
-  //armToDefaultPosition();
-  //armTurnRightMax();
-  //findClosestObjectAndTurnThere();
+  armToDefaultPosition();
+  armTurnRightMax();
+  findClosestObjectAndTurnThere();
   takePackage();
-    
-  
 }
 
-void takePackage() {
+bool takePackage() {
   openClaw();
 
-  // ARM_POSITION_RIGHT_MAX=80
-  // ARM_POSITION_LEFT_MIN=0
+  for (int armPositionKey = 0; armPositionKey < ARM_TAKE_PACKAGE_POSITIONS_COUNT; armPositionKey++) {
+    int left = ARM_TAKE_PACKAGE_POSITIONS[armPositionKey][0];
+    int right = ARM_TAKE_PACKAGE_POSITIONS[armPositionKey][1];
 
-  while (servoPositions.armRight < 50 || servoPositions.armLeft > ARM_POSITION_LEFT_MIN) {
-    if (servoPositions.armRight < 50) {
-      servoPositions.armRight++;
-      armServoRightRotateToPosition("armToDefaultPosition");
-    }
-
-    if (servoPositions.armLeft > ARM_POSITION_LEFT_MIN) {
-      servoPositions.armLeft--;
-      armServoLeftRotateToPosition("armToDefaultPosition");
-    }
-
+    armToPosition(left, right);
+    delay(100);
     clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
-    Serial.println("claw distance: " + String(clawDistance));
-  }
+
+    if (clawDistance <= CLAW_DISTANCE_HOLD) {
+      closeClaw();
+      delay(200);
+      armToDefaultPosition();
+
+      return true;
+    }
+  } 
+
+  return false;
 }
 
 void findClosestObjectAndTurnThere() {
