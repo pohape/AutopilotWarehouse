@@ -166,31 +166,17 @@ bool armConditionsCheck(int left, int right) {
     armConditionsCheckWarning("left > ARM_POSITION_RIGHT_MAX");
     
     return false;
-  } else if (left <= 20 && right < 40) {
-    armConditionsCheckWarning("left <= 20 && right < 40");
+  } else if (right < 10 && left > 110) {
+    armConditionsCheckWarning("left > 110 && right < 10");
     
     return false;
-  } else if (left <= 30 && right < 30) {
-    armConditionsCheckWarning("left <= 30 && right < 30");
+  } else if (right <= 40 && left > 85) {
+    armConditionsCheckWarning("left > 85 && right < 40");
     
     return false;
-  } else if (left >= 150 && right > 30) {
-    armConditionsCheckWarning("left >= 150 && right > 30");
+  } else if (right == 0 && left < 60) {
+    armConditionsCheckWarning("left < 60 && right == 0");
     
-    return false;
-  } else if (left >= 100 && right >= 70) {
-    armConditionsCheckWarning("left >= 100 && right >= 70");
-    
-    return false;
-  } 
-  else if (left >= 130 && left <= 150 && right > 35) {
-    armConditionsCheckWarning("left >= 130 && left <= 150 && right > 35");
-    
-    return false;
-  }
-  else if (left >= 150 && right != 0) {
-    armConditionsCheckWarning("left >= 150 && right != 0");
-
     return false;
   }
 

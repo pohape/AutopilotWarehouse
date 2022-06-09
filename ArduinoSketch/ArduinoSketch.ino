@@ -79,9 +79,9 @@ const int ARM_POSITION_MAIN_DEFAULT = 72; // 80 - center, correction is -8
 const int ARM_POSITION_MAIN_MIN = 2; // 10, with correction is 2
 const int ARM_POSITION_MAIN_MAX = 137; // 145, with correction is 137
 
-const int ARM_POSITION_RIGHT_DEFAULT = 40; // 20 - поднята, 80 - опущена
+const int ARM_POSITION_RIGHT_DEFAULT = 40; // 20 - поднята, 110 - опущена
 const int ARM_POSITION_RIGHT_MIN = 0;
-const int ARM_POSITION_RIGHT_MAX = 80;
+const int ARM_POSITION_RIGHT_MAX = 110;
 
 const int ARM_POSITION_LEFT_DEFAULT = 140; // 0 - вытянута, 140 - втянута
 const int ARM_POSITION_LEFT_MIN = 0;
@@ -139,10 +139,11 @@ bool rightCurrentlyMovingBack = false;
 // << keeping the current state of the wheels
 // <<< wheels block
 
-// 1 = manual
-// 2 = follow the line
-// 3 = drive around an obstacle
-// 4 = take package
+const int MODE_MANUAL = 1;
+const int MODE_FOLLOW_LINE = 2;
+const int MODE_AROUND_OBSTACLE = 3;
+const int MODE_TAKE_PACKAGE = 4;
+
 int mode = 1;
 
 void setup() {
@@ -168,6 +169,8 @@ void setup() {
   BTSerial.begin(9600);
   QRSerial.begin(9600);
   delay(500);
+
+  //findPackage();
 }
 
 void loop() {

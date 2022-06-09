@@ -16,10 +16,32 @@ void findAndTakePackage() {
 bool findPackage() {
   //armToDefaultPosition();
   //armTurnRightMax();
-  findClosestObjectAndTurnThere();
-
+  //findClosestObjectAndTurnThere();
+  takePackage();
     
   
+}
+
+void takePackage() {
+  openClaw();
+
+  // ARM_POSITION_RIGHT_MAX=80
+  // ARM_POSITION_LEFT_MIN=0
+
+  while (servoPositions.armRight < 50 || servoPositions.armLeft > ARM_POSITION_LEFT_MIN) {
+    if (servoPositions.armRight < 50) {
+      servoPositions.armRight++;
+      armServoRightRotateToPosition("armToDefaultPosition");
+    }
+
+    if (servoPositions.armLeft > ARM_POSITION_LEFT_MIN) {
+      servoPositions.armLeft--;
+      armServoLeftRotateToPosition("armToDefaultPosition");
+    }
+
+    clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
+    Serial.println("claw distance: " + String(clawDistance));
+  }
 }
 
 void findClosestObjectAndTurnThere() {
