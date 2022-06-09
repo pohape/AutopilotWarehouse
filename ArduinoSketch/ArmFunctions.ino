@@ -204,5 +204,22 @@ void armDown() {
   Serial.println("Left: " + String(servoPositions.armLeft) + "; Right: " + String(servoPositions.armRight));
 }
 
+void armToDefaultPosition() {
+  // ARM_POSITION_RIGHT_MIN=0
+  // ARM_POSITION_LEFT_MAX=170
+
+  while (servoPositions.armRight > ARM_POSITION_RIGHT_MIN || servoPositions.armLeft < ARM_POSITION_LEFT_MAX) {
+    if (servoPositions.armRight > ARM_POSITION_RIGHT_MIN) {
+      servoPositions.armRight--;
+      armServoRightRotateToPosition("armToDefaultPosition");
+    }
+
+    if (servoPositions.armLeft < ARM_POSITION_LEFT_MAX) {
+      servoPositions.armLeft++;
+      armServoLeftRotateToPosition("armToDefaultPosition");
+    }
+  }
+}
+
 
 // <<< Arm functions
