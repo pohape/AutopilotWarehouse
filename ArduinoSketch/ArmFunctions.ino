@@ -47,6 +47,20 @@ void armServoMainRotateToPositionWithoutEeprom() {
   }
 }
 
+void armServoMainRotateSlowToPosition(int desiredPosition) {
+  while (servoPositions.armMain < desiredPosition) {
+    armTurnLeftWithoutEeprom();
+    delay(5);
+  }
+
+  while (servoPositions.armMain > desiredPosition) {
+    armTurnRightWithoutEeprom();
+    delay(5);
+  }
+
+  EEPROM.put(0, servoPositions);
+}
+
 void armServoRightRotateToPosition(String caller) {
   if (servoPositions.armRight >= ARM_POSITION_RIGHT_MIN && servoPositions.armRight <= ARM_POSITION_RIGHT_MAX) {
     Serial.println(caller + ": servo right " + String(servoPositions.armRight));

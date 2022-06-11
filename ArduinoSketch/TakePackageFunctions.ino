@@ -14,8 +14,8 @@ void findAndTakePackage() {
 
   armToDefaultPosition();
   armTurnRightMax();
-  findClosestObjectAndTurnThere();
-  takePackage();
+  findObjectAndTurnThere();
+  //  takePackage();
 }
 
 bool takePackage() {
@@ -33,6 +33,7 @@ bool takePackage() {
       closeClaw();
       delay(200);
       armToDefaultPosition();
+      armTurnCenter();
 
       return true;
     }
@@ -41,31 +42,39 @@ bool takePackage() {
   return false;
 }
 
-void findClosestObjectAndTurnThere() {
-  armTurnRightMax();
+int findObject() {
+  int degreePackageStart = -1;
+  int degreePackageEnd = -1;
 
-  int closestObjectDegree = -1;
-  int closestObjectDistance = 1000;
+  while (degreePackageStart == -1 || degreePackageEnd == -1) {
+    armTurnRightMax();
+    
+    for (servoPositions.armMain = ARM_POSITION_MAIN_MIN; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
+      armServoMainRotateToPositionWithoutEeprom();
+      distance = ultrasonic.Distance();
+  
+      if (distance < MAX_DISTANCE_TO_PACKAGE) {
+        buzz(1);
 
-  for (servoPositions.armMain = ARM_POSITION_MAIN_MIN; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
-    armServoMainRotateToPositionWithoutEeprom();
-    distance = ultrasonic.Distance();
-
-    if (distance < closestObjectDistance) {
-      closestObjectDistance = distance;
-      closestObjectDegree = servoPositions.armMain;
+        if (degreePackageStart < 0) {
+          delay(1000);
+          degreePackageStart = servoPositions.armMain;
+        } else {
+          degreePackageEnd = servoPositions.armMain;
+        }
+  
+        Serial.println(String(servoPositions.armMain) + ": " + String(distance));
+      }
     }
   }
 
-  while (servoPositions.armMain < closestObjectDegree) {
-    armTurnLeftWithoutEeprom();
-    delay(5);
-  }
+  int degreePackageCenter = degreePackageStart + (degreePackageEnd - degreePackageStart) / 2;
+  Serial.println(String(degreePackageStart) + " - " + degreePackageCenter + " - " + String(degreePackageEnd));
 
-  while (servoPositions.armMain > closestObjectDegree) {
-    armTurnRightWithoutEeprom();
-    delay(5);
-  }
+  return degreePackageCenter;
+}
 
-  EEPROM.put(0, servoPositions);
+void findObjectAndTurnThere() {
+  int degreePackageCenter = findObject();
+  armServoMainRotateSlowToPosition(degreePackageCenter);
 }
