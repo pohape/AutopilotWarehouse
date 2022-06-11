@@ -15,7 +15,7 @@ void findAndTakePackage() {
   armToDefaultPosition();
   armTurnRightMax();
   findObjectAndTurnThere();
-  //  takePackage();
+  takePackage();
 }
 
 bool takePackage() {
@@ -116,10 +116,12 @@ int findObjectLeftToRight(int startDegree) {
 
 int findObject() {
   int degreePackageCenter1 = findObjectRightToLeft(ARM_POSITION_MAIN_MIN);
-  int degreePackageCenter2 = findObjectLeftToRight(servoPositions.armMain + 30);
-  int degreePackageCenter3 = findObjectRightToLeft(servoPositions.armMain - 30);
-  int degreePackageCenter4 = findObjectLeftToRight(servoPositions.armMain + 30);
-  int degreePackageCenter = (degreePackageCenter1 + degreePackageCenter2 + degreePackageCenter3 + degreePackageCenter4) / 4;
+  int degreePackageCenter2 = findObjectLeftToRight(servoPositions.armMain + 20);
+  int degreePackageCenter3 = findObjectRightToLeft(servoPositions.armMain - 20);
+  int degreePackageCenter4 = findObjectLeftToRight(servoPositions.armMain + 20);
+  int degreePackageCenter5 = findObjectRightToLeft(servoPositions.armMain - 20);
+  int degreePackageCenter6 = findObjectLeftToRight(servoPositions.armMain + 20);
+  int degreePackageCenter = (degreePackageCenter1 + degreePackageCenter2 + degreePackageCenter3 + degreePackageCenter4 + degreePackageCenter5 + degreePackageCenter6) / 6;
   Serial.println(String(degreePackageCenter1) + " - " + degreePackageCenter + " - " + String(degreePackageCenter2));
 
   return degreePackageCenter;

@@ -53,7 +53,7 @@ SoftwareSerial BTSerial(PIN_BLUETOOTH_RX, PIN_BLUETOOTH_TX); // RX, TX
 SR04 ultrasonic = SR04(ULTRASONIC_ECHO_PIN, ULTRASONIC_TRIG_PIN);
 const int DISTANCE_WARNING = 25;
 const int MIN_DISTANCE_TO_PACKAGE = 10;
-const int MAX_DISTANCE_TO_PACKAGE = 16;
+const int MAX_DISTANCE_TO_PACKAGE = 15;
 int distance = 0;
 // <<< ultrasonic block
 
@@ -83,7 +83,7 @@ const int ARM_POSITION_LEFT_MIN = 0;
 const int ARM_POSITION_LEFT_MAX = 120;
 
 const int CLAW_POSITION_DEFAULT = 0; // 0 - закрыто, 50 - открыто
-const int CLAW_POSITION_MIN = 10;
+const int CLAW_POSITION_MIN = 7;
 const int CLAW_POSITION_MAX = 50;
 
 struct ServoPositions {
