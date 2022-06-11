@@ -42,14 +42,11 @@ bool takePackage() {
   return false;
 }
 
-int findObject() {
-  int degreePackageStart1 = -1;
-  int degreePackageEnd1 = -1;
-  int degreePackageStart2 = -1;
-  int degreePackageEnd2 = -1;
-
-
-  while (degreePackageStart1 == -1 || degreePackageEnd1 == -1) {
+int findObjectRightToLeft() {
+  int degreePackageStart = -1;
+  int degreePackageEnd = -1;
+  
+  while (degreePackageStart == -1 || degreePackageEnd == -1) {
     armTurnRightMax();
     
     for (servoPositions.armMain = ARM_POSITION_MAIN_MIN; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
@@ -59,22 +56,27 @@ int findObject() {
       if (distance < MAX_DISTANCE_TO_PACKAGE) {
         buzz(1);
 
-        if (degreePackageStart1 < 0) {
+        if (degreePackageStart < 0) {
           buzz(500);
-          degreePackageStart1 = servoPositions.armMain;
+          degreePackageStart = servoPositions.armMain;
         } else {
-          degreePackageEnd1 = servoPositions.armMain;
+          degreePackageEnd = servoPositions.armMain;
         }
-  
-        Serial.println(String(servoPositions.armMain) + ": " + String(distance));
-      } else if (degreePackageEnd1 > 0) {
+      } else if (degreePackageEnd > 0) {
         buzz(500);
         break;
       }
     }
   }
 
-   while (degreePackageStart2 == -1 || degreePackageEnd2 == -1 || (degreePackageEnd2 - degreePackageStart2) < 10) {
+  return degreePackageStart + (degreePackageEnd - degreePackageStart) / 2;
+}
+
+int findObjectLeftToRight() {
+  int degreePackageStart = -1;
+  int degreePackageEnd = -1;
+  
+  while (degreePackageStart == -1 || degreePackageEnd == -1) {
     armTurnLeftMax();
     
     for (servoPositions.armMain = ARM_POSITION_MAIN_MAX; servoPositions.armMain >= ARM_POSITION_MAIN_MIN; servoPositions.armMain--) {
@@ -84,28 +86,29 @@ int findObject() {
       if (distance < MAX_DISTANCE_TO_PACKAGE) {
         buzz(1);
 
-        if (degreePackageEnd2 < 0) {
+        if (degreePackageEnd < 0) {
           buzz(500);
-          degreePackageEnd2 = servoPositions.armMain;
+          degreePackageEnd = servoPositions.armMain;
         } else {
-          degreePackageStart2 = servoPositions.armMain;
+          degreePackageStart = servoPositions.armMain;
         }
-  
-        Serial.println(String(servoPositions.armMain) + ": " + String(distance));
-      } else if (degreePackageStart2 > 0) {
+      } else if (degreePackageStart > 0) {
         buzz(500);
         break;
       }
     }
   }
 
-  int degreePackageCenter1 = degreePackageStart1 + (degreePackageEnd1 - degreePackageStart1) / 2;
-  int degreePackageCenter2 = degreePackageStart2 + (degreePackageEnd2 - degreePackageStart2) / 2;
-  int degreePackageCenter = (degreePackageCenter1 + degreePackageCenter2) / 2;
-  Serial.println(String(degreePackageStart1) + " - " + degreePackageCenter1 + " - " + String(degreePackageEnd1));
-  Serial.println(String(degreePackageStart2) + " - " + degreePackageCenter2 + " - " + String(degreePackageEnd2));
-  Serial.println(degreePackageCenter);
+  return degreePackageStart + (degreePackageEnd - degreePackageStart) / 2;
+}
 
+int findObject() {
+  int degreePackageCenter1 = findObjectRightToLeft();
+  int degreePackageCenter2 = findObjectLeftToRight();
+  int degreePackageCenter3 = findObjectRightToLeft();
+  int degreePackageCenter4 = findObjectLeftToRight();
+  int degreePackageCenter = (degreePackageCenter1 + degreePackageCenter2 + degreePackageCenter3 + degreePackageCenter4) / 4;
+  Serial.println(String(degreePackageCenter1) + " - " + degreePackageCenter + " - " + String(degreePackageCenter2));
 
   return degreePackageCenter;
 }
