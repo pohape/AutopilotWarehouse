@@ -42,14 +42,20 @@ bool takePackage() {
   return false;
 }
 
-int findObjectRightToLeft() {
+int findObjectRightToLeft(int startDegree) {
+  if (startDegree < ARM_POSITION_MAIN_MIN) {
+    startDegree = ARM_POSITION_MAIN_MIN;
+  }
+  
   int degreePackageStart = -1;
   int degreePackageEnd = -1;
   
   while (degreePackageStart == -1 || degreePackageEnd == -1) {
-    armTurnRightMax();
+    //Serial.println(String(startDegree) + " - right to left, current is " + String(servoPositions.armMain));
+
+    armServoMainRotateSlowToPosition(startDegree);
     
-    for (servoPositions.armMain = ARM_POSITION_MAIN_MIN; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
+    for (servoPositions.armMain = startDegree; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
       armServoMainRotateToPositionWithoutEeprom();
       distance = ultrasonic.Distance();
   
@@ -72,14 +78,20 @@ int findObjectRightToLeft() {
   return degreePackageStart + (degreePackageEnd - degreePackageStart) / 2;
 }
 
-int findObjectLeftToRight() {
+int findObjectLeftToRight(int startDegree) {
+  if (startDegree > ARM_POSITION_MAIN_MAX) {
+    startDegree = ARM_POSITION_MAIN_MAX;
+  }
+  
   int degreePackageStart = -1;
   int degreePackageEnd = -1;
   
   while (degreePackageStart == -1 || degreePackageEnd == -1) {
-    armTurnLeftMax();
+    //Serial.println(String(startDegree) + " - left to right, current is " + String(servoPositions.armMain));
+
+    armServoMainRotateSlowToPosition(startDegree);
     
-    for (servoPositions.armMain = ARM_POSITION_MAIN_MAX; servoPositions.armMain >= ARM_POSITION_MAIN_MIN; servoPositions.armMain--) {
+    for (servoPositions.armMain = startDegree; servoPositions.armMain >= ARM_POSITION_MAIN_MIN; servoPositions.armMain--) {
       armServoMainRotateToPositionWithoutEeprom();
       distance = ultrasonic.Distance();
   
@@ -103,10 +115,10 @@ int findObjectLeftToRight() {
 }
 
 int findObject() {
-  int degreePackageCenter1 = findObjectRightToLeft();
-  int degreePackageCenter2 = findObjectLeftToRight();
-  int degreePackageCenter3 = findObjectRightToLeft();
-  int degreePackageCenter4 = findObjectLeftToRight();
+  int degreePackageCenter1 = findObjectRightToLeft(ARM_POSITION_MAIN_MIN);
+  int degreePackageCenter2 = findObjectLeftToRight(servoPositions.armMain + 30);
+  int degreePackageCenter3 = findObjectRightToLeft(servoPositions.armMain - 30);
+  int degreePackageCenter4 = findObjectLeftToRight(servoPositions.armMain + 30);
   int degreePackageCenter = (degreePackageCenter1 + degreePackageCenter2 + degreePackageCenter3 + degreePackageCenter4) / 4;
   Serial.println(String(degreePackageCenter1) + " - " + degreePackageCenter + " - " + String(degreePackageCenter2));
 
