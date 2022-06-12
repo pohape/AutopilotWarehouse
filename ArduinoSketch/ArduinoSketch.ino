@@ -53,7 +53,7 @@ SoftwareSerial BTSerial(PIN_BLUETOOTH_RX, PIN_BLUETOOTH_TX); // RX, TX
 SR04 ultrasonic = SR04(ULTRASONIC_ECHO_PIN, ULTRASONIC_TRIG_PIN);
 const int DISTANCE_WARNING = 25;
 const int MIN_DISTANCE_TO_PACKAGE = 10;
-const int MAX_DISTANCE_TO_PACKAGE = 15;
+const int MAX_DISTANCE_TO_PACKAGE = 18;
 int distance = 0;
 // <<< ultrasonic block
 

@@ -22,41 +22,49 @@ void findAndTakePackage() {
 bool findPackageAndHoverAboveIt() {
   openClaw();
 
-  for (int armPositionKey = 0; armPositionKey < ARM_HOVER_POSITIONS_COUNT; armPositionKey++) {
-    int left = ARM_HOVER_POSITIONS[armPositionKey][0];
-    int right = ARM_HOVER_POSITIONS[armPositionKey][1];
+  int mainPositions[5] = {servoPositions.armMain - 10, servoPositions.armMain - 5, servoPositions.armMain, servoPositions.armMain + 5, servoPositions.armMain + 10};
 
-    Serial.println(String(left) + " - " + String(right));
+  for (int mainPositionKey = 0; mainPositionKey < 5; mainPositionKey++){
+    armServoMainRotateSlowToPosition(mainPositions[mainPositionKey]);
 
-    while (servoPositions.armRight != right || servoPositions.armLeft != left) {
-      if (servoPositions.armRight > right) {
-        servoPositions.armRight--;
-      } else if (servoPositions.armRight < right) {
-        servoPositions.armRight++;
+    for (int armPositionKey = 0; armPositionKey < ARM_HOVER_POSITIONS_COUNT; armPositionKey++) {
+      int left = ARM_HOVER_POSITIONS[armPositionKey][0];
+      int right = ARM_HOVER_POSITIONS[armPositionKey][1];
+  
+      Serial.println(String(left) + " - " + String(right));
+  
+      while (servoPositions.armRight != right || servoPositions.armLeft != left) {
+        if (servoPositions.armRight > right) {
+          servoPositions.armRight--;
+        } else if (servoPositions.armRight < right) {
+          servoPositions.armRight++;
+        }
+    
+        if (servoPositions.armLeft < left) {
+          servoPositions.armLeft++;
+        } else if (servoPositions.armLeft > left) {
+          servoPositions.armLeft--;
+        }
+    
+        armServoRightRotateToPositionWithoutEeprom();
+        armServoLeftRotateToPositionWithoutEeprom();
+        delay(20);
+        
+        clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
+        Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
+   
+        if (clawDistance < CLAW_DISTANCE_HOVER) {
+          EEPROM.put(0, servoPositions);
+  
+          return true;
+        }    
       }
   
-      if (servoPositions.armLeft < left) {
-        servoPositions.armLeft++;
-      } else if (servoPositions.armLeft > left) {
-        servoPositions.armLeft--;
-      }
-  
-      armServoRightRotateToPositionWithoutEeprom();
-      armServoLeftRotateToPositionWithoutEeprom();
-      delay(20);
-      
-      clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
-      Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
- 
-      if (clawDistance < CLAW_DISTANCE_HOVER) {
-        EEPROM.put(0, servoPositions);
-
-        return true;
-      }    
+      EEPROM.put(0, servoPositions);
     }
+  }
 
-    EEPROM.put(0, servoPositions);
-  } 
+  buzz(500);
 
   return false;
 }
@@ -77,6 +85,7 @@ int findObjectRightToLeft(int startDegree) {
     for (servoPositions.armMain = startDegree; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
       armServoMainRotateToPositionWithoutEeprom();
       distance = ultrasonic.Distance();
+      Serial.println(distance);
   
       if (distance < MAX_DISTANCE_TO_PACKAGE) {
         buzz(1);
@@ -113,6 +122,7 @@ int findObjectLeftToRight(int startDegree) {
     for (servoPositions.armMain = startDegree; servoPositions.armMain >= ARM_POSITION_MAIN_MIN; servoPositions.armMain--) {
       armServoMainRotateToPositionWithoutEeprom();
       distance = ultrasonic.Distance();
+      Serial.println(distance);
   
       if (distance < MAX_DISTANCE_TO_PACKAGE) {
         buzz(1);
