@@ -12,16 +12,39 @@ void findAndTakePackage() {
   // 7. Если коробка выпала, то переключаемся в ручной режим и посылаем сигнал в Андроид, что нужна помощь оператора
   // 8. Если коробка не выпала, то разворачиваемся на 360 градусов и включаем режим слежения за линией
 
-  armToDefaultPosition();
-  armTurnRightMax();
-  findObjectAndTurnThere();
-  
-//  if (findPackageAndHoverAboveIt()) {
-//    takePackage();
-//  }
+  if (findObjectAndTurnThere() == PACKAGE_NOT_FOUND_BY_ULTRASONIC) {
+    setManualWithError(PACKAGE_NOT_FOUND_BY_ULTRASONIC);
+  } else {
+    if (findPackageAndHoverAboveIt() == PACKAGE_NOT_FOUND_BY_INFRARED_HOVER) {
+      setManualWithError(PACKAGE_NOT_FOUND_BY_ULTRASONIC);
+    } else {
+      takePackage();
+    }
+  }
 }
 
-bool takePackage() {
+void takePackage() {
+  int result = tryTakePackage();
+    
+  if (result == PACKAGE_NOT_FOUND_BY_INFRARED_TAKE) {
+    bothForwardStart();
+    delay(100);
+    bothStop();
+    findAndTakePackage();
+
+    return;
+  } else if (result == PACKAGE_LOST) {
+    if (findPackageAndHoverAboveIt() == PACKAGE_NOT_FOUND_BY_INFRARED_HOVER) {
+      setManualWithError(PACKAGE_NOT_FOUND_BY_ULTRASONIC);
+    } else {
+      takePackage();
+    }
+  } else {
+    armToDefaultPosition();
+  }
+}
+
+int tryTakePackage() {
   armToPosition(55, 80, 10);
   armToPosition(36, 100, 10);
   openClaw();
@@ -44,11 +67,6 @@ bool takePackage() {
 
     int currentLeftPause = 0;
     int currenRightPause = 0;
-
-//    Serial.println();
-//    Serial.println();
-//    Serial.println();
-//    Serial.println(String(leftDistance) + " --- " + String(rightDistance) + " --- " + String(leftFactor) + " --- " + String(rightFactor));
 
     while (servoPositions.armRight != right || servoPositions.armLeft != left) {
       if (currenRightPause < rightFactor) {
@@ -80,7 +98,7 @@ bool takePackage() {
       delay(20);
       
       clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
-      Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
+      //Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
  
       if (clawDistance < CLAW_DISTANCE_HOLD) {
         if ((armPositionKey + 1) < ARM_TAKE_PACKAGE_POSITIONS_COUNT) {
@@ -96,6 +114,15 @@ bool takePackage() {
         closeClaw();
         armToDefaultPosition();
 
+        clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
+        
+        if (clawDistance > CLAW_DISTANCE_HOLD) {
+          buzz(500);
+          Serial.println("PACKAGE_LOST " + String(clawDistance));
+
+          return PACKAGE_LOST;
+        }
+
         return true;
       }    
     }
@@ -103,13 +130,13 @@ bool takePackage() {
     EEPROM.put(0, servoPositions);
   }
 
-  armToDefaultPosition();
   buzz(500);
+  Serial.println("PACKAGE_NOT_FOUND_BY_INFRARED_TAKE");
 
-  return false;
+  return PACKAGE_NOT_FOUND_BY_INFRARED_TAKE;
 }
 
-bool findPackageAndHoverAboveIt() {
+int findPackageAndHoverAboveIt() {
   openClaw();
 
   int const MAIN_POSITIONS_COUNT = 7;
@@ -163,26 +190,23 @@ bool findPackageAndHoverAboveIt() {
         delay(20);
         
         clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
-        Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
+        //Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
    
         if (clawDistance < CLAW_DISTANCE_HOVER) {
           EEPROM.put(0, servoPositions);
   
-          return true;
+          return 0;
         }    
       }
 
-      Serial.println();
-      Serial.println();
-      Serial.println();
-  
       EEPROM.put(0, servoPositions);
     }
   }
 
   buzz(500);
+  Serial.println("PACKAGE_NOT_FOUND_BY_INFRARED_HOVER");
 
-  return false;
+  return PACKAGE_NOT_FOUND_BY_INFRARED_HOVER;
 }
 
 int findObjectRightToLeft(int startDegree) {
@@ -201,7 +225,7 @@ int findObjectRightToLeft(int startDegree) {
     for (servoPositions.armMain = startDegree; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
       armServoMainRotateToPositionWithoutEeprom();
       distance = ultrasonic.Distance();
-      Serial.println(distance);
+      //Serial.println(distance);
   
       if (distance < MAX_DISTANCE_TO_PACKAGE) {
         buzz(1);
@@ -214,14 +238,17 @@ int findObjectRightToLeft(int startDegree) {
         }
       } else if (degreePackageEnd > 0) {
         buzz(500);
-        break;
+
+        return degreePackageStart + (degreePackageEnd - degreePackageStart) / 2;
       } else {
         servoPositions.armMain += 2;
       }
     }
   }
 
-  return degreePackageStart + (degreePackageEnd - degreePackageStart) / 2;
+  Serial.println("PACKAGE_NOT_FOUND_BY_ULTRASONIC");
+
+  return PACKAGE_NOT_FOUND_BY_ULTRASONIC;
 }
 
 int findObjectLeftToRight(int startDegree) {
@@ -240,7 +267,7 @@ int findObjectLeftToRight(int startDegree) {
     for (servoPositions.armMain = startDegree; servoPositions.armMain >= ARM_POSITION_MAIN_MIN; servoPositions.armMain--) {
       armServoMainRotateToPositionWithoutEeprom();
       distance = ultrasonic.Distance();
-      Serial.println(distance);
+      //Serial.println(distance);
   
       if (distance < MAX_DISTANCE_TO_PACKAGE) {
         buzz(1);
@@ -253,14 +280,17 @@ int findObjectLeftToRight(int startDegree) {
         }
       } else if (degreePackageStart > 0) {
         buzz(500);
-        break;
+
+        return degreePackageStart + (degreePackageEnd - degreePackageStart) / 2;
       } else {
         servoPositions.armMain -= 2;
       }
     }
   }
 
-  return degreePackageStart + (degreePackageEnd - degreePackageStart) / 2;
+  Serial.println("PACKAGE_NOT_FOUND_BY_ULTRASONIC");
+
+  return PACKAGE_NOT_FOUND_BY_ULTRASONIC;
 }
 
 int findObject() {
@@ -268,12 +298,22 @@ int findObject() {
   int degreePackageCenter2 = findObjectLeftToRight(servoPositions.armMain + 15);
   int degreePackageCenter3 = findObjectRightToLeft(servoPositions.armMain - 15);
   int degreePackageCenter = (degreePackageCenter1 + degreePackageCenter2 + degreePackageCenter3) / 3;
-  Serial.println(String(degreePackageCenter) + ": " + String(degreePackageCenter1) + " - " + String(degreePackageCenter2) + " - " + String(degreePackageCenter3));
+  //Serial.println(String(degreePackageCenter) + ": " + String(degreePackageCenter1) + " - " + String(degreePackageCenter2) + " - " + String(degreePackageCenter3));
 
   return degreePackageCenter;
 }
 
-void findObjectAndTurnThere() {
+int findObjectAndTurnThere() {
+  armToDefaultPosition();
+  armTurnRightMax();
+
   int degreePackageCenter = findObject();
+
+  if (degreePackageCenter == PACKAGE_NOT_FOUND_BY_ULTRASONIC) {
+    return PACKAGE_NOT_FOUND_BY_ULTRASONIC;
+  }
+  
   armServoMainRotateSlowToPosition(degreePackageCenter);
+
+  return 0;
 }

@@ -87,6 +87,11 @@ const int CLAW_POSITION_DEFAULT = 0; // 0 - закрыто, 50 - открыто
 const int CLAW_POSITION_MIN = 0;
 const int CLAW_POSITION_MAX = 80;
 
+const int PACKAGE_NOT_FOUND_BY_ULTRASONIC = 1;
+const int PACKAGE_NOT_FOUND_BY_INFRARED_HOVER = 2;
+const int PACKAGE_NOT_FOUND_BY_INFRARED_TAKE = 3;
+const int PACKAGE_LOST = 4;
+
 struct ServoPositions {
    int armMain;
    int armLeft;
@@ -179,8 +184,8 @@ void setup() {
   QRSerial.begin(9600);
   delay(500);
 
-  takePackage();
-  //findAndTakePackage();
+  //takePackage();
+  findAndTakePackage();
 }
 
 void loop() {

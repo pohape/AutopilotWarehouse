@@ -46,18 +46,24 @@ const int BT_COMMAND_SET_MODE_TAKE_PACKAGE = 31;
 
 int btLastCommand = 0;
 
+void setManualWithError(int errorConstant) {
+  
+}
+
 void processBluetooth() {
   if (BTSerial.available()) {
     btLastCommand = BTSerial.read();
 
     if (btLastCommand == BT_COMMAND_SET_MODE_MANUAL) {
-      setMode(1, "Bluetooth command");
+      setMode(MODE_MANUAL, "Bluetooth command");
     } else if (btLastCommand == BT_COMMAND_SET_MODE_FOLLOW_LINE) {
-      setMode(2, "Bluetooth command");
+      setMode(MODE_FOLLOW_LINE, "Bluetooth command");
     } else if (btLastCommand == BT_COMMAND_SET_MODE_TAKE_PACKAGE) {
-      setMode(4, "Bluetooth command");
+      setMode(MODE_TAKE_PACKAGE, "Bluetooth command");
     }
-    
+
+    clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
+        Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
     buzz(1);
   }
 
