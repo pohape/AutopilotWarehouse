@@ -15,28 +15,47 @@ void findAndTakePackage() {
   armToDefaultPosition();
   armTurnRightMax();
   findObjectAndTurnThere();
-  takePackage();
+  findPackageAndHoverAboveIt();
+  //takePackage();
 }
 
-bool takePackage() {
+bool findPackageAndHoverAboveIt() {
   openClaw();
 
-  for (int armPositionKey = 0; armPositionKey < ARM_TAKE_PACKAGE_POSITIONS_COUNT; armPositionKey++) {
-    int left = ARM_TAKE_PACKAGE_POSITIONS[armPositionKey][0];
-    int right = ARM_TAKE_PACKAGE_POSITIONS[armPositionKey][1];
+  for (int armPositionKey = 0; armPositionKey < ARM_HOVER_POSITIONS_COUNT; armPositionKey++) {
+    int left = ARM_HOVER_POSITIONS[armPositionKey][0];
+    int right = ARM_HOVER_POSITIONS[armPositionKey][1];
 
-    armToPosition(left, right);
-    delay(100);
-    clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
+    Serial.println(String(left) + " - " + String(right));
 
-    if (clawDistance <= CLAW_DISTANCE_HOLD) {
-      closeClaw();
-      delay(200);
-      armToDefaultPosition();
-      armTurnCenter();
+    while (servoPositions.armRight != right || servoPositions.armLeft != left) {
+      if (servoPositions.armRight > right) {
+        servoPositions.armRight--;
+      } else if (servoPositions.armRight < right) {
+        servoPositions.armRight++;
+      }
+  
+      if (servoPositions.armLeft < left) {
+        servoPositions.armLeft++;
+      } else if (servoPositions.armLeft > left) {
+        servoPositions.armLeft--;
+      }
+  
+      armServoRightRotateToPositionWithoutEeprom();
+      armServoLeftRotateToPositionWithoutEeprom();
+      delay(20);
+      
+      clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
+      Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
+ 
+      if (clawDistance < CLAW_DISTANCE_HOVER) {
+        EEPROM.put(0, servoPositions);
 
-      return true;
+        return true;
+      }    
     }
+
+    EEPROM.put(0, servoPositions);
   } 
 
   return false;
@@ -119,9 +138,7 @@ int findObject() {
   int degreePackageCenter2 = findObjectLeftToRight(servoPositions.armMain + 20);
   int degreePackageCenter3 = findObjectRightToLeft(servoPositions.armMain - 20);
   int degreePackageCenter4 = findObjectLeftToRight(servoPositions.armMain + 20);
-  int degreePackageCenter5 = findObjectRightToLeft(servoPositions.armMain - 20);
-  int degreePackageCenter6 = findObjectLeftToRight(servoPositions.armMain + 20);
-  int degreePackageCenter = (degreePackageCenter1 + degreePackageCenter2 + degreePackageCenter3 + degreePackageCenter4 + degreePackageCenter5 + degreePackageCenter6) / 6;
+  int degreePackageCenter = (degreePackageCenter1 + degreePackageCenter2 + degreePackageCenter3 + degreePackageCenter4) / 4;
   Serial.println(String(degreePackageCenter1) + " - " + degreePackageCenter + " - " + String(degreePackageCenter2));
 
   return degreePackageCenter;
