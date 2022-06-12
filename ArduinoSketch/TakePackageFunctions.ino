@@ -22,6 +22,8 @@ void findAndTakePackage() {
 }
 
 bool takePackage() {
+  armToPosition(55, 80, 10);
+  armToPosition(36, 100, 10);
   openClaw();
 
   for (int armPositionKey = 0; armPositionKey < ARM_TAKE_PACKAGE_POSITIONS_COUNT; armPositionKey++) {
@@ -34,21 +36,34 @@ bool takePackage() {
     int rightDistance = servoPositions.armRight - right;
     rightDistance = rightDistance < 0 ? rightDistance * -1 : rightDistance;
     
-    int factor = (float)rightDistance / (float)leftDistance;
-    factor = factor < 0 ? 0 : factor;
+    int leftFactor = (float)rightDistance / (float)leftDistance;
+    leftFactor = leftFactor < 0 ? 0 : leftFactor;
+
+    int rightFactor = (float)leftDistance / (float)rightDistance;
+    rightFactor = rightFactor < 0 ? 0 : rightFactor;
 
     int currentLeftPause = 0;
+    int currenRightPause = 0;
 
-    Serial.println(String(left) + " - " + String(right) + " - " + String(factor));
+//    Serial.println();
+//    Serial.println();
+//    Serial.println();
+//    Serial.println(String(leftDistance) + " --- " + String(rightDistance) + " --- " + String(leftFactor) + " --- " + String(rightFactor));
 
     while (servoPositions.armRight != right || servoPositions.armLeft != left) {
-      if (servoPositions.armRight > right) {
-        servoPositions.armRight--;
-      } else if (servoPositions.armRight < right) {
-        servoPositions.armRight++;
+      if (currenRightPause < rightFactor) {
+        currenRightPause++;
+      } else {
+        currenRightPause = 0;
+        
+        if (servoPositions.armRight > right) {
+          servoPositions.armRight--;
+        } else if (servoPositions.armRight < right) {
+          servoPositions.armRight++;
+        }
       }
 
-      if (currentLeftPause < factor) {
+      if (currentLeftPause < leftFactor) {
         currentLeftPause++;
       } else {
         currentLeftPause = 0;
