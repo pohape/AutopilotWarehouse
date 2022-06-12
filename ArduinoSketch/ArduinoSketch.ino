@@ -99,8 +99,8 @@ ServoPositions servoPositions = {ARM_POSITION_MAIN_DEFAULT, ARM_POSITION_LEFT_DE
 const int ARM_TAKE_PACKAGE_POSITIONS_COUNT = 8;
 const int ARM_TAKE_PACKAGE_POSITIONS[ARM_TAKE_PACKAGE_POSITIONS_COUNT][2] = { {15, 110}, {15, 100}, {10, 90}, {0, 90}, {10, 83}, {0, 80}, {0, 75}, {0, 68} };
 
-const int ARM_HOVER_POSITIONS_COUNT = 6;
-const int ARM_HOVER_POSITIONS[ARM_HOVER_POSITIONS_COUNT][2] = { {30, 90}, {28, 80}, {19, 58}, {7, 54}, {19, 58}, {28, 80} };
+const int ARM_HOVER_POSITIONS_COUNT = 8;
+const int ARM_HOVER_POSITIONS[ARM_HOVER_POSITIONS_COUNT][2] = {{55, 80},  {36, 100}, {30, 90}, {28, 80}, {19, 58}, {7, 54}, {19, 58}, {28, 80} };
 // <<< arm block
 
 // tracing block >>>
@@ -179,7 +179,8 @@ void setup() {
   QRSerial.begin(9600);
   delay(500);
 
-  findAndTakePackage();
+  takePackage();
+  //findAndTakePackage();
 }
 
 void loop() {

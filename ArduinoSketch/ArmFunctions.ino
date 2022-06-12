@@ -284,10 +284,10 @@ void armDown() {
 }
 
 void armToDefaultPosition() {
-  armToPosition(ARM_POSITION_LEFT_DEFAULT, ARM_POSITION_RIGHT_DEFAULT);
+  armToPosition(ARM_POSITION_LEFT_DEFAULT, ARM_POSITION_RIGHT_DEFAULT, 10);
 }
 
-void armToPosition(int left, int right) {
+void armToPosition(int left, int right, int delayBetween) {
   while (servoPositions.armRight != right || servoPositions.armLeft != left) {
     if (servoPositions.armRight > right) {
       servoPositions.armRight--;
@@ -301,7 +301,7 @@ void armToPosition(int left, int right) {
       servoPositions.armLeft--;
     }
 
-    delay(10);
+    delay(delayBetween);
     armServoRightRotateToPositionWithoutEeprom();
     armServoLeftRotateToPositionWithoutEeprom();
   }

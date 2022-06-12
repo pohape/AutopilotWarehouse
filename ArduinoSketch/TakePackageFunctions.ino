@@ -16,9 +16,9 @@ void findAndTakePackage() {
   armTurnRightMax();
   findObjectAndTurnThere();
   
-  if (findPackageAndHoverAboveIt()) {
-    takePackage();
-  }
+//  if (findPackageAndHoverAboveIt()) {
+//    takePackage();
+//  }
 }
 
 bool takePackage() {
@@ -68,6 +68,16 @@ bool takePackage() {
       Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
  
       if (clawDistance < CLAW_DISTANCE_HOLD) {
+        if ((armPositionKey + 1) < ARM_TAKE_PACKAGE_POSITIONS_COUNT) {
+          int left = ARM_TAKE_PACKAGE_POSITIONS[armPositionKey + 1][0];
+          int right = ARM_TAKE_PACKAGE_POSITIONS[armPositionKey + 1][1];
+
+          buzz(50);
+          delay(500);
+          armToPosition(left, right, 100);
+          delay(500);
+        }
+        
         closeClaw();
         armToDefaultPosition();
 
@@ -176,7 +186,7 @@ int findObjectRightToLeft(int startDegree) {
     for (servoPositions.armMain = startDegree; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
       armServoMainRotateToPositionWithoutEeprom();
       distance = ultrasonic.Distance();
-      //Serial.println(distance);
+      Serial.println(distance);
   
       if (distance < MAX_DISTANCE_TO_PACKAGE) {
         buzz(1);
@@ -190,6 +200,8 @@ int findObjectRightToLeft(int startDegree) {
       } else if (degreePackageEnd > 0) {
         buzz(500);
         break;
+      } else {
+        servoPositions.armMain += 2;
       }
     }
   }
@@ -213,7 +225,7 @@ int findObjectLeftToRight(int startDegree) {
     for (servoPositions.armMain = startDegree; servoPositions.armMain >= ARM_POSITION_MAIN_MIN; servoPositions.armMain--) {
       armServoMainRotateToPositionWithoutEeprom();
       distance = ultrasonic.Distance();
-      //Serial.println(distance);
+      Serial.println(distance);
   
       if (distance < MAX_DISTANCE_TO_PACKAGE) {
         buzz(1);
@@ -227,6 +239,8 @@ int findObjectLeftToRight(int startDegree) {
       } else if (degreePackageStart > 0) {
         buzz(500);
         break;
+      } else {
+        servoPositions.armMain -= 2;
       }
     }
   }
@@ -236,8 +250,8 @@ int findObjectLeftToRight(int startDegree) {
 
 int findObject() {
   int degreePackageCenter1 = findObjectRightToLeft(ARM_POSITION_MAIN_MIN);
-  int degreePackageCenter2 = findObjectLeftToRight(servoPositions.armMain + 20);
-  int degreePackageCenter3 = findObjectRightToLeft(servoPositions.armMain - 20);
+  int degreePackageCenter2 = findObjectLeftToRight(servoPositions.armMain + 15);
+  int degreePackageCenter3 = findObjectRightToLeft(servoPositions.armMain - 15);
   int degreePackageCenter = (degreePackageCenter1 + degreePackageCenter2 + degreePackageCenter3) / 3;
   Serial.println(String(degreePackageCenter) + ": " + String(degreePackageCenter1) + " - " + String(degreePackageCenter2) + " - " + String(degreePackageCenter3));
 
