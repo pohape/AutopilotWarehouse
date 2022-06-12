@@ -62,8 +62,9 @@ void processBluetooth() {
       setMode(MODE_TAKE_PACKAGE, "Bluetooth command");
     }
 
-    clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
-        Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
+    //clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
+    //Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
+    
     buzz(1);
   }
 

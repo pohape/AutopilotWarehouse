@@ -58,7 +58,9 @@ int distance = 0;
 // <<< ultrasonic block
 
 // infrared distance block >>>
-const int CLAW_DISTANCE_HOLD = 890;
+const int CLAW_DISTANCE_HOLD_MIN = 839;
+const int CLAW_DISTANCE_HOLD_MAX = 905;
+const int CLAW_DISTANCE_TAKE = 890;
 const int CLAW_DISTANCE_HOVER = 960;
 int clawDistance = 0;
 // <<< infrared distance block

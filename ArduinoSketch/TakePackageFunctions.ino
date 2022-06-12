@@ -27,15 +27,12 @@ void takePackage() {
   int result = tryTakePackage();
     
   if (result == PACKAGE_NOT_FOUND_BY_INFRARED_TAKE) {
-    bothForwardStart();
-    delay(100);
-    bothStop();
     findAndTakePackage();
 
     return;
   } else if (result == PACKAGE_LOST) {
     if (findPackageAndHoverAboveIt() == PACKAGE_NOT_FOUND_BY_INFRARED_HOVER) {
-      setManualWithError(PACKAGE_NOT_FOUND_BY_ULTRASONIC);
+      setManualWithError(PACKAGE_NOT_FOUND_BY_INFRARED_HOVER);
     } else {
       takePackage();
     }
@@ -100,7 +97,7 @@ int tryTakePackage() {
       clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
       //Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
  
-      if (clawDistance < CLAW_DISTANCE_HOLD) {
+      if (clawDistance < CLAW_DISTANCE_TAKE) {
         if ((armPositionKey + 1) < ARM_TAKE_PACKAGE_POSITIONS_COUNT) {
           int left = ARM_TAKE_PACKAGE_POSITIONS[armPositionKey + 1][0];
           int right = ARM_TAKE_PACKAGE_POSITIONS[armPositionKey + 1][1];
@@ -116,7 +113,7 @@ int tryTakePackage() {
 
         clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
         
-        if (clawDistance > CLAW_DISTANCE_HOLD) {
+        if (clawDistance < CLAW_DISTANCE_HOLD_MIN || clawDistance > CLAW_DISTANCE_HOLD_MAX) {
           buzz(500);
           Serial.println("PACKAGE_LOST " + String(clawDistance));
 
@@ -187,7 +184,7 @@ int findPackageAndHoverAboveIt() {
           armServoLeftRotateToPositionWithoutEeprom();
         }
 
-        delay(20);
+        delay(10);
         
         clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
         //Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
@@ -214,35 +211,32 @@ int findObjectRightToLeft(int startDegree) {
     startDegree = ARM_POSITION_MAIN_MIN;
   }
   
+  armServoMainRotateSlowToPosition(startDegree);
+
   int degreePackageStart = -1;
   int degreePackageEnd = -1;
-  
-  while (degreePackageStart == -1 || degreePackageEnd == -1) {
-    //Serial.println(String(startDegree) + " - right to left, current is " + String(servoPositions.armMain));
 
-    armServoMainRotateSlowToPosition(startDegree);
-    
-    for (servoPositions.armMain = startDegree; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
-      armServoMainRotateToPositionWithoutEeprom();
-      distance = ultrasonic.Distance();
-      //Serial.println(distance);
-  
-      if (distance < MAX_DISTANCE_TO_PACKAGE) {
-        buzz(1);
 
-        if (degreePackageStart < 0) {
-          buzz(500);
-          degreePackageStart = servoPositions.armMain;
-        } else {
-          degreePackageEnd = servoPositions.armMain;
-        }
-      } else if (degreePackageEnd > 0) {
+  for (servoPositions.armMain = startDegree; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
+    armServoMainRotateToPositionWithoutEeprom();
+    distance = ultrasonic.Distance();
+    //Serial.println(distance);
+
+    if (distance < MAX_DISTANCE_TO_PACKAGE) {
+      buzz(1);
+
+      if (degreePackageStart < 0) {
         buzz(500);
-
-        return degreePackageStart + (degreePackageEnd - degreePackageStart) / 2;
+        degreePackageStart = servoPositions.armMain;
       } else {
-        servoPositions.armMain += 2;
+        degreePackageEnd = servoPositions.armMain;
       }
+    } else if (degreePackageEnd > 0) {
+      buzz(500);
+
+      return degreePackageStart + (degreePackageEnd - degreePackageStart) / 2;
+    } else {
+      servoPositions.armMain += 2;
     }
   }
 
@@ -255,36 +249,32 @@ int findObjectLeftToRight(int startDegree) {
   if (startDegree > ARM_POSITION_MAIN_MAX) {
     startDegree = ARM_POSITION_MAIN_MAX;
   }
-  
+
+  armServoMainRotateSlowToPosition(startDegree);
+
   int degreePackageStart = -1;
   int degreePackageEnd = -1;
-  
-  while (degreePackageStart == -1 || degreePackageEnd == -1) {
-    //Serial.println(String(startDegree) + " - left to right, current is " + String(servoPositions.armMain));
 
-    armServoMainRotateSlowToPosition(startDegree);
-    
-    for (servoPositions.armMain = startDegree; servoPositions.armMain >= ARM_POSITION_MAIN_MIN; servoPositions.armMain--) {
-      armServoMainRotateToPositionWithoutEeprom();
-      distance = ultrasonic.Distance();
-      //Serial.println(distance);
-  
-      if (distance < MAX_DISTANCE_TO_PACKAGE) {
-        buzz(1);
+  for (servoPositions.armMain = startDegree; servoPositions.armMain >= ARM_POSITION_MAIN_MIN; servoPositions.armMain--) {
+    armServoMainRotateToPositionWithoutEeprom();
+    distance = ultrasonic.Distance();
+    //Serial.println(distance);
 
-        if (degreePackageEnd < 0) {
-          buzz(500);
-          degreePackageEnd = servoPositions.armMain;
-        } else {
-          degreePackageStart = servoPositions.armMain;
-        }
-      } else if (degreePackageStart > 0) {
+    if (distance < MAX_DISTANCE_TO_PACKAGE) {
+      buzz(1);
+
+      if (degreePackageEnd < 0) {
         buzz(500);
-
-        return degreePackageStart + (degreePackageEnd - degreePackageStart) / 2;
+        degreePackageEnd = servoPositions.armMain;
       } else {
-        servoPositions.armMain -= 2;
+        degreePackageStart = servoPositions.armMain;
       }
+    } else if (degreePackageStart > 0) {
+      buzz(500);
+
+      return degreePackageStart + (degreePackageEnd - degreePackageStart) / 2;
+    } else {
+      servoPositions.armMain -= 2;
     }
   }
 
