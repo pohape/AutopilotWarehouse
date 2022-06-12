@@ -48,6 +48,12 @@ void armServoMainRotateToPositionWithoutEeprom() {
 }
 
 void armServoMainRotateSlowToPosition(int desiredPosition) {
+  if (desiredPosition < ARM_POSITION_MAIN_MIN) {
+    desiredPosition = ARM_POSITION_MAIN_MIN;
+  } else if (desiredPosition > ARM_POSITION_MAIN_MAX) {
+    desiredPosition = ARM_POSITION_MAIN_MAX;
+  }
+    
   while (servoPositions.armMain < desiredPosition) {
     armTurnLeftWithoutEeprom();
     delay(5);
