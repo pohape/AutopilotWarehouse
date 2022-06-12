@@ -78,6 +78,10 @@ bool findPackageAndHoverAboveIt() {
     for (int armPositionKey = 0; armPositionKey < ARM_HOVER_POSITIONS_COUNT; armPositionKey++) {
       int left = ARM_HOVER_POSITIONS[armPositionKey][0];
       int right = ARM_HOVER_POSITIONS[armPositionKey][1];
+
+      if (left == 0 && right == 0) {
+        continue;
+      }
   
       Serial.println(String(left) + " - " + String(right));
   
@@ -96,7 +100,7 @@ bool findPackageAndHoverAboveIt() {
     
         armServoRightRotateToPositionWithoutEeprom();
         armServoLeftRotateToPositionWithoutEeprom();
-        delay(20);
+        delay(50);
         
         clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
         Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
@@ -133,7 +137,7 @@ int findObjectRightToLeft(int startDegree) {
     for (servoPositions.armMain = startDegree; servoPositions.armMain <= ARM_POSITION_MAIN_MAX; servoPositions.armMain++) {
       armServoMainRotateToPositionWithoutEeprom();
       distance = ultrasonic.Distance();
-      Serial.println(distance);
+      //Serial.println(distance);
   
       if (distance < MAX_DISTANCE_TO_PACKAGE) {
         buzz(1);
@@ -170,7 +174,7 @@ int findObjectLeftToRight(int startDegree) {
     for (servoPositions.armMain = startDegree; servoPositions.armMain >= ARM_POSITION_MAIN_MIN; servoPositions.armMain--) {
       armServoMainRotateToPositionWithoutEeprom();
       distance = ultrasonic.Distance();
-      Serial.println(distance);
+      //Serial.println(distance);
   
       if (distance < MAX_DISTANCE_TO_PACKAGE) {
         buzz(1);
@@ -195,8 +199,7 @@ int findObject() {
   int degreePackageCenter1 = findObjectRightToLeft(ARM_POSITION_MAIN_MIN);
   int degreePackageCenter2 = findObjectLeftToRight(servoPositions.armMain + 20);
   int degreePackageCenter3 = findObjectRightToLeft(servoPositions.armMain - 20);
-  int degreePackageCenter4 = findObjectLeftToRight(servoPositions.armMain + 20);
-  int degreePackageCenter = (degreePackageCenter1 + degreePackageCenter2 + degreePackageCenter3 + degreePackageCenter4) / 4;
+  int degreePackageCenter = (degreePackageCenter1 + degreePackageCenter2 + degreePackageCenter3) / 3;
   Serial.println(String(degreePackageCenter1) + " - " + degreePackageCenter + " - " + String(degreePackageCenter2));
 
   return degreePackageCenter;
