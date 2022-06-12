@@ -1,5 +1,6 @@
 package com.droiduino.bluetoothconn;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -13,8 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -80,15 +79,23 @@ public class MainActivity extends AppCompatActivity {
     private final static int BT_COMMAND_WHEELS_RIGHT_BACK_PRESSED = 27;
     private final static int BT_COMMAND_WHEELS_RIGHT_BACK_RELEASED = 28;
 
-    private final static int BT_COMMAND_SWITCH_MODE = 29;
+    private final static int BT_COMMAND_SET_MODE_MANUAL = 101;
+    private final static int BT_COMMAND_SET_MODE_FOLLOW_LINE = 102;
+    private final static int BT_COMMAND_SET_MODE_TAKE_PACKAGE = 104;
 
-    private int mode = 1;
+    private final static int MODE_MANUAL = 1;
+    private final static int MODE_FOLLOW_LINE = 2;
+    private final static int MODE_AROUND_OBSTACLE = 3;
+    private final static int MODE_TAKE_PACKAGE = 4;
+
+    private int currentMode = MODE_MANUAL;
     private boolean armScreen = true;
 
     protected Toolbar toolbar;
 
-    protected Button buttonSwitchToDrivingOrToArm;
-    protected Button buttonSwitchToFollowLineOrManual;
+    protected Button buttonSwitchToFollowLine;
+    protected Button buttonSwitchToTakePackage;
+    protected Button buttonSwitchToManual;
     protected Button buttonForward;
     protected Button buttonBack;
     protected Button buttonLeft;
@@ -98,14 +105,23 @@ public class MainActivity extends AppCompatActivity {
     protected Button buttonOpen;
     protected Button buttonClose;
 
-    protected void switchScreenToManual() {
-        mode = 1;
-        toolbar.setTitle("Current mode: manual " + (armScreen ? "ARM" : "DRIVING"));
-        buttonSwitchToFollowLineOrManual.setText("Switch to follow line mode");
-        buttonSwitchToDrivingOrToArm.setText("Switch to " + (armScreen ? "DRIVING" : "ARM control"));
+    protected void setButtonsVisibility(boolean manual, boolean followLine, boolean takePackage) {
+        if (manual) {
+            buttonSwitchToManual.setText("Ручной режим");
+        } else {
+            buttonSwitchToManual.setText("Управлять " + (armScreen ? "колесами" : "рукой"));
+        }
 
-        buttonSwitchToDrivingOrToArm.setEnabled(true);
-        buttonSwitchToFollowLineOrManual.setEnabled(true);
+        buttonSwitchToManual.setEnabled(true);
+        buttonSwitchToFollowLine.setEnabled(followLine);
+        buttonSwitchToTakePackage.setEnabled(takePackage);
+    }
+
+    protected void switchScreenToManual() {
+        currentMode = MODE_MANUAL;
+
+        toolbar.setTitle("Текущий режим: ручное управление " + (armScreen ? "рукой" : "колесами"));
+        setButtonsVisibility(false, true, true);
 
         buttonUp.setEnabled(armScreen);
         buttonDown.setEnabled(armScreen);
@@ -116,18 +132,13 @@ public class MainActivity extends AppCompatActivity {
         buttonLeft.setEnabled(true);
         buttonRight.setEnabled(true);
         buttonBack.setEnabled(true);
-
-
-        Toast.makeText(MainActivity.this, "Switched to MANUAL mode", Toast.LENGTH_SHORT).show();
     }
 
     protected void switchScreenToFollowLine() {
-        mode = 2;
-        toolbar.setTitle("Current mode: following the line");
-        buttonSwitchToFollowLineOrManual.setText("Switch to manual mode");
+        currentMode = MODE_FOLLOW_LINE;
+        toolbar.setTitle("Текущий режим: следую за линией");
 
-        buttonSwitchToDrivingOrToArm.setEnabled(true);
-        buttonSwitchToFollowLineOrManual.setEnabled(true);
+        setButtonsVisibility(true, false, true);
 
         buttonUp.setEnabled(false);
         buttonDown.setEnabled(false);
@@ -138,16 +149,13 @@ public class MainActivity extends AppCompatActivity {
         buttonLeft.setEnabled(false);
         buttonRight.setEnabled(false);
         buttonBack.setEnabled(false);
-        Toast.makeText(MainActivity.this, "Switched to FOLLOW LINE mode", Toast.LENGTH_SHORT).show();
     }
 
     protected void switchScreenToObstacle() {
-        mode = 3;
-        toolbar.setTitle("Current mode: going around an obstacle");
-        buttonSwitchToFollowLineOrManual.setText("Switch to manual mode");
+        currentMode = MODE_AROUND_OBSTACLE;
+        toolbar.setTitle("Текущий режим: объезжаю препятствие");
 
-        buttonSwitchToDrivingOrToArm.setEnabled(true);
-        buttonSwitchToFollowLineOrManual.setEnabled(true);
+        setButtonsVisibility(true, false, false);
 
         buttonUp.setEnabled(false);
         buttonDown.setEnabled(false);
@@ -158,9 +166,26 @@ public class MainActivity extends AppCompatActivity {
         buttonLeft.setEnabled(false);
         buttonRight.setEnabled(false);
         buttonBack.setEnabled(false);
-        Toast.makeText(MainActivity.this, "Switched to OBSTACLE mode", Toast.LENGTH_SHORT).show();
     }
 
+    protected void switchScreenToTakePackage() {
+        currentMode = MODE_TAKE_PACKAGE;
+        toolbar.setTitle("Текущий режим: беру коробку");
+
+        setButtonsVisibility(true, true, false);
+
+        buttonUp.setEnabled(false);
+        buttonDown.setEnabled(false);
+        buttonOpen.setEnabled(false);
+        buttonClose.setEnabled(false);
+
+        buttonForward.setEnabled(false);
+        buttonLeft.setEnabled(false);
+        buttonRight.setEnabled(false);
+        buttonBack.setEnabled(false);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,11 +194,14 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
 
         // buttons
-        buttonSwitchToDrivingOrToArm = findViewById(R.id.switchScreen);
-        buttonSwitchToDrivingOrToArm.setEnabled(false);
+        buttonSwitchToFollowLine = findViewById(R.id.followLineMode);
+        buttonSwitchToFollowLine.setEnabled(false);
 
-        buttonSwitchToFollowLineOrManual = findViewById(R.id.switchMode);
-        buttonSwitchToFollowLineOrManual.setEnabled(false);
+        buttonSwitchToTakePackage = findViewById(R.id.takePackageMode);
+        buttonSwitchToTakePackage.setEnabled(false);
+
+        buttonSwitchToManual = findViewById(R.id.manualMode);
+        buttonSwitchToManual.setEnabled(false);
 
         buttonForward = findViewById(R.id.buttonForward);
         buttonForward.setEnabled(false);
@@ -203,7 +231,6 @@ public class MainActivity extends AppCompatActivity {
         final Button buttonConnect = findViewById(R.id.buttonConnect);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         final ProgressBar progressBarConnecting = findViewById(R.id.progressBarConnecting);
-        final TextView textViewArduinoMessages = findViewById(R.id.textViewArduinoMessages);
 
         // If a bluetooth device has been selected from SelectDeviceActivity
         deviceName = getIntent().getStringExtra("deviceName");
@@ -211,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
             // Get the device address to make BT Connection
             String deviceAddress = getIntent().getStringExtra("deviceAddress");
             // Show progress and connection status
-            toolbar.setSubtitle("Connecting to " + deviceName + "...");
+            toolbar.setSubtitle("Пытаюсь соедениться с " + deviceName + "...");
             progressBarConnecting.setVisibility(View.VISIBLE);
             buttonConnect.setEnabled(false);
 
@@ -235,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                     case CONNECTING_STATUS:
                         switch (msg.arg1) {
                             case 1:
-                                toolbar.setSubtitle("Connected to " + deviceName);
+                                toolbar.setSubtitle("Подключено к " + deviceName);
                                 progressBarConnecting.setVisibility(View.GONE);
 
                                 buttonConnect.setEnabled(true);
@@ -243,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 break;
                             case -1:
-                                toolbar.setSubtitle("Device fails to connect");
+                                toolbar.setSubtitle("Не получается подключиться, перезапустите");
                                 progressBarConnecting.setVisibility(View.GONE);
 
                                 buttonForward.setEnabled(false);
@@ -258,8 +285,9 @@ public class MainActivity extends AppCompatActivity {
                                 buttonOpen.setEnabled(false);
                                 buttonClose.setEnabled(false);
 
-                                buttonSwitchToDrivingOrToArm.setEnabled(false);
-                                buttonSwitchToFollowLineOrManual.setEnabled(false);
+                                buttonSwitchToFollowLine.setEnabled(false);
+                                buttonSwitchToTakePackage.setEnabled(false);
+                                buttonSwitchToManual.setEnabled(false);
 
                                 break;
                         }
@@ -268,12 +296,19 @@ public class MainActivity extends AppCompatActivity {
                     case MESSAGE_READ:
                         String arduinoMsg = msg.obj.toString().trim(); // Read message from Arduino
 
-                        if (arduinoMsg.equals("1")) {
-                            switchScreenToManual();
-                        } else if (arduinoMsg.equals("2")) {
-                            switchScreenToFollowLine();
-                        } else if (arduinoMsg.equals("3")) {
-                            switchScreenToObstacle();
+                        switch (Integer.valueOf(arduinoMsg)) {
+                            case MODE_MANUAL:
+                                switchScreenToManual();
+                                break;
+                            case MODE_FOLLOW_LINE:
+                                switchScreenToFollowLine();
+                                break;
+                            case MODE_AROUND_OBSTACLE:
+                                switchScreenToObstacle();
+                                break;
+                            case MODE_TAKE_PACKAGE:
+                                switchScreenToTakePackage();
+                                break;
                         }
 
                         break;
@@ -289,19 +324,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // buttons on click
-        buttonSwitchToDrivingOrToArm.setOnClickListener(v -> {
-            armScreen = !armScreen;
-            switchScreenToManual();
-        });
+        buttonSwitchToTakePackage.setOnClickListener(v -> connectedThread.write(BT_COMMAND_SET_MODE_TAKE_PACKAGE));
 
-        buttonSwitchToFollowLineOrManual.setOnClickListener(v -> {
-            connectedThread.write(BT_COMMAND_SWITCH_MODE);
+        buttonSwitchToTakePackage.setOnClickListener(v -> connectedThread.write(BT_COMMAND_SET_MODE_TAKE_PACKAGE));
 
-//            if (mode == 1) {
-//                switchScreenToFollowLine();
-//            } else if (mode == 2 || mode == 3) {
-//                switchScreenToManual();
-//            }
+        buttonSwitchToFollowLine.setOnClickListener(v -> connectedThread.write(BT_COMMAND_SET_MODE_FOLLOW_LINE));
+
+        buttonSwitchToManual.setOnClickListener(v -> {
+            if (currentMode == MODE_MANUAL) {
+                armScreen = !armScreen;
+                switchScreenToManual();
+            } else {
+                connectedThread.write(BT_COMMAND_SET_MODE_MANUAL);
+            }
         });
 
         buttonForward.setOnTouchListener((v, event) -> {
@@ -388,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
     /* ============================ Thread to Create Bluetooth Connection =================================== */
     public static class CreateConnectThread extends Thread {
 
-        public CreateConnectThread(BluetoothAdapter bluetoothAdapter, String address) {
+        CreateConnectThread(BluetoothAdapter bluetoothAdapter, String address) {
             /*
             Use a temporary object that is later assigned to mmSocket
             because mmSocket is final.
@@ -441,7 +476,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Closes the client socket and causes the thread to finish.
-        public void cancel() {
+        void cancel() {
             try {
                 mmSocket.close();
             } catch (IOException e) {
@@ -456,7 +491,7 @@ public class MainActivity extends AppCompatActivity {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
-        public ConnectedThread(BluetoothSocket socket) {
+        ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -501,6 +536,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /* Call this from the main activity to send data to the remote device */
+        @SuppressWarnings("unused")
         public void write(String input) {
             byte[] bytes = input.getBytes(); //converts entered String into bytes
             try {
@@ -511,7 +547,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        public void write(int input) {
+        void write(int input) {
             try {
                 mmOutStream.write(input);
                 mmOutStream.flush();
@@ -521,6 +557,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /* Call this from the main activity to shutdown the connection */
+        @SuppressWarnings("unused")
         public void cancel() {
             try {
                 mmSocket.close();

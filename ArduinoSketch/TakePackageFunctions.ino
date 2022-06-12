@@ -38,6 +38,7 @@ void takePackage() {
     }
   } else {
     armToDefaultPosition();
+    setMode(MODE_MANUAL, "takePackage");
   }
 }
 
@@ -114,10 +115,15 @@ int tryTakePackage() {
         clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
         
         if (clawDistance < CLAW_DISTANCE_HOLD_MIN || clawDistance > CLAW_DISTANCE_HOLD_MAX) {
-          buzz(500);
-          Serial.println("PACKAGE_LOST " + String(clawDistance));
+          delay(100);
+          clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
 
-          return PACKAGE_LOST;
+          if (clawDistance < CLAW_DISTANCE_HOLD_MIN || clawDistance > CLAW_DISTANCE_HOLD_MAX) {
+            buzz(500);
+            Serial.println("PACKAGE_LOST " + String(clawDistance));
+
+            return PACKAGE_LOST;
+          }
         }
 
         return true;

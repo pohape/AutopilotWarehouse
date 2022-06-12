@@ -59,7 +59,7 @@ int distance = 0;
 
 // infrared distance block >>>
 const int CLAW_DISTANCE_HOLD_MIN = 839;
-const int CLAW_DISTANCE_HOLD_MAX = 905;
+const int CLAW_DISTANCE_HOLD_MAX = 930;
 const int CLAW_DISTANCE_TAKE = 890;
 const int CLAW_DISTANCE_HOVER = 960;
 int clawDistance = 0;
@@ -185,9 +185,6 @@ void setup() {
   BTSerial.begin(9600);
   QRSerial.begin(9600);
   delay(500);
-
-  //takePackage();
-  findAndTakePackage();
 }
 
 void loop() {
@@ -199,8 +196,6 @@ void loop() {
     processMode2();
   } else if (mode == 3) {
     processMode3();
-  } else if (mode == 4) {
-    processMode4();
   }
 }
 
@@ -215,21 +210,13 @@ void buzz(int times) {
 void setMode(int newMode, String caller) {
   Serial.println(caller + ": set mode " + String(newMode));
   
-  if (newMode == 1) {
-    BTSerial.write('1');
-  } else if (newMode == 2) {
-    BTSerial.write('2');
-  } else if (newMode == 3) {
-    BTSerial.write('3');
-  } else if (newMode == 4) {
-    BTSerial.write('4');
-  }
-
-  BTSerial.write('\n');
+  btSetMode(newMode);
   buzz(50);
 
-  if (newMode == 2) {
+  if (newMode == MODE_FOLLOW_LINE) {
     armTurnCenter();
+  } else if (newMode == MODE_TAKE_PACKAGE) {
+    findAndTakePackage();
   }
 
   mode = newMode;

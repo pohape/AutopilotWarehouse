@@ -1,12 +1,15 @@
 <resources>
-    <string name="app_name">Droiduino Bluetooth Connection</string>
-    <string name="connect">Connect</string>
-    <string name="up">UP</string>
-    <string name="forward">FORW</string>
-    <string name="open">OPEN</string>
-    <string name="close">CLOSE</string>
-    <string name="left">LEFT</string>
-    <string name="right">RIGHT</string>
-    <string name="down">DOWN</string>
-    <string name="back">BACK</string>
+    <string name="app_name">Дипломная работа Гевейлер Олеси</string>
+    <string name="connect">Подключиться</string>
+    <string name="up">ВВЕРХ</string>
+    <string name="forward">ВПЕРЕД</string>
+    <string name="open">ОТКРЫТЬ</string>
+    <string name="close">ЗАКРЫТЬ</string>
+    <string name="left">ЛЕВО</string>
+    <string name="right">ПРАВО</string>
+    <string name="down">ВНИЗ</string>
+    <string name="back">НАЗАД</string>
+    <string name="follow_line_mode">Следовать за линией</string>
+    <string name="drive">Управлять колесами</string>
+    <string name="take_package_mode">Взять коробку</string>
 </resources>

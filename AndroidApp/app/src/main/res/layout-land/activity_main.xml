@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:subtitleTextColor="@android:color/background_light"
-        app:title="Bluetooth Connection"
+        app:title="Складской помощник"
         app:titleTextColor="@android:color/background_light" />
 
     <Button
@@ -51,7 +51,7 @@
             android:id="@+id/firstLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="55dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
 
@@ -192,50 +192,44 @@
             android:id="@+id/fourhtLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="0dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+            <Button
+                android:id="@+id/manualMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:text="@string/drive" />
 
-                <Button
-                    android:id="@+id/switchScreen"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:width="200dp"
-                    android:text="Switch to DRIVING" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+            <Button
+                android:id="@+id/followLineMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:text="@string/follow_line_mode" />
 
-                <Button
-                    android:id="@+id/switchMode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:width="300dp"
-                    android:text="Switch to FOLLOW LINE" />
-            </LinearLayout>
+            <Button
+                android:id="@+id/takePackageMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:text="@string/take_package_mode" />
+            <!--            <Button-->
+            <!--                android:id="@+id/manualMode"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginStart="5dp"-->
+            <!--                android:layout_marginEnd="10dp"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:text="Ручной режим" />-->
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/textViewArduinoMessages"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:textAlignment="center"
-            android:textStyle="italic"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
