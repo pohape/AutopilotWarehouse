@@ -58,7 +58,7 @@ int distance = 0;
 // <<< ultrasonic block
 
 // infrared distance block >>>
-const int CLAW_DISTANCE_HOLD = 860;
+const int CLAW_DISTANCE_HOLD = 890;
 const int CLAW_DISTANCE_HOVER = 950;
 int clawDistance = 0;
 // <<< infrared distance block
@@ -100,7 +100,7 @@ const int ARM_TAKE_PACKAGE_POSITIONS_COUNT = 8;
 const int ARM_TAKE_PACKAGE_POSITIONS[ARM_TAKE_PACKAGE_POSITIONS_COUNT][2] = { {15, 110}, {15, 100}, {10, 90}, {0, 90}, {10, 83}, {0, 80}, {0, 75}, {0, 68} };
 
 const int ARM_HOVER_POSITIONS_COUNT = 6;
-const int ARM_HOVER_POSITIONS[ARM_TAKE_PACKAGE_POSITIONS_COUNT][2] = { {30, 100}, {25, 87}, {22, 79}, {16, 71}, {12, 61}, {0, 53} };
+const int ARM_HOVER_POSITIONS[ARM_HOVER_POSITIONS_COUNT][2] = { {26, 100}, {22, 81}, {18, 66}, {5, 53}, {0, 53} };
 // <<< arm block
 
 // tracing block >>>
