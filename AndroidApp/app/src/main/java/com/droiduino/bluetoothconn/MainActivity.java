@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
             mainLayout.setVisibility(View.VISIBLE);
             warningText.setVisibility(View.GONE);
             warningText.setText("");
-        }, 10_000);
+        }, 5_000);
     }
 
     protected void showConnected() {
@@ -342,18 +342,6 @@ public class MainActivity extends AppCompatActivity {
                         if (newMode != 0) {
                             int reason = Integer.valueOf(String.valueOf(arduinoMsg[1]));
 
-                            if (reason == SWITCH_MODE_REASON_FOUND_LINE) {
-                                showWarning("Линия найдена.\nСледую по линии.");
-                            } else if (reason == SWITCH_MODE_REASON_FOUND_OBSTACLE) {
-                                showWarning("Вижу препятствие.\nПытаюсь объехать.");
-                            } else if (reason == SWITCH_MODE_REASON_LINE_ENDED) {
-                                showWarning("Линия закончилась!\nЧто будем делать дальше?");
-                            } else if (reason == SWITCH_MODE_REASON_LINE_LOST) {
-                                showWarning("Потерял линию!\nПомогите!");
-                            } else if (reason == SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED) {
-                                showWarning("Потерял коробку.\nОператор, помоги!");
-                            }
-
                             switch (newMode) {
                                 case MODE_MANUAL:
                                     switchScreenToManual();
@@ -367,6 +355,18 @@ public class MainActivity extends AppCompatActivity {
                                 case MODE_TAKE_PACKAGE:
                                     switchScreenToTakePackage();
                                     break;
+                            }
+
+                            if (reason == SWITCH_MODE_REASON_FOUND_LINE) {
+                                showWarning("Линия найдена.\nСледую по линии.");
+                            } else if (reason == SWITCH_MODE_REASON_FOUND_OBSTACLE) {
+                                showWarning("Вижу препятствие.\nПытаюсь объехать.");
+                            } else if (reason == SWITCH_MODE_REASON_LINE_ENDED) {
+                                showWarning("Линия закончилась!\nЧто будем делать дальше?");
+                            } else if (reason == SWITCH_MODE_REASON_LINE_LOST) {
+                                showWarning("Потерял линию!\nОператор, помоги!");
+                            } else if (reason == SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED) {
+                                showWarning("Потерял коробку.\nОператор, помоги!");
                             }
                         }
 
