@@ -266,6 +266,9 @@ void buzz(int times) {
 }
 
 void setMode(int newMode, int reason) {
+  Serial.println("setMode: " + String(newMode));
+  Serial.println("reason: " + String(reason));
+
   if (reason == SWITCH_MODE_REASON_LINE_LOST) {
     Serial.println("LINE_LOST: set mode " + String(newMode));
   } else if (reason == SWITCH_MODE_REASON_LINE_ENDED) {
@@ -284,12 +287,11 @@ void setMode(int newMode, int reason) {
 
   btSetMode(newMode, reason);
   buzz(50);
+  mode = newMode;
 
   if (newMode == MODE_FOLLOW_LINE) {
     armTurnCenter();
   } else if (newMode == MODE_TAKE_PACKAGE) {
     findAndTakePackage();
   }
-
-  mode = newMode;
 }

@@ -352,6 +352,7 @@ public class MainActivity extends AppCompatActivity {
 
                             switch (newMode) {
                                 case MODE_MANUAL:
+                                    lastBtReceive = 0;
                                     switchScreenToManual();
                                     break;
                                 case MODE_FOLLOW_LINE:
