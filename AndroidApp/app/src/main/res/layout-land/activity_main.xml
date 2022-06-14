@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:subtitleTextColor="@android:color/background_light"
-        app:title="Складской помощник"
+        app:title="Складской помощник (диплом. работа Гевейлер Олеси)"
         app:titleTextColor="@android:color/background_light" />
 
     <Button

@@ -122,6 +122,24 @@ public class MainActivity extends AppCompatActivity {
     protected long lastBtReceive = 0;
     protected Runnable checkBtConnection;
 
+    protected void disableAllJoystickButtons() {
+        buttonUp.setEnabled(false);
+        buttonDown.setEnabled(false);
+        buttonOpen.setEnabled(false);
+        buttonClose.setEnabled(false);
+
+        buttonForward.setEnabled(false);
+        buttonLeft.setEnabled(false);
+        buttonRight.setEnabled(false);
+        buttonBack.setEnabled(false);
+    }
+
+    protected void setVisibilityForModeButtons(boolean manual, boolean followLine, boolean takePackage) {
+        buttonSwitchToManual.setEnabled(manual);
+        buttonSwitchToFollowLine.setEnabled(followLine);
+        buttonSwitchToTakePackage.setEnabled(takePackage);
+    }
+
     protected void setButtonsVisibility(boolean manual, boolean followLine, boolean takePackage) {
         if (manual) {
             buttonSwitchToManual.setText("Ручной режим");
@@ -129,9 +147,7 @@ public class MainActivity extends AppCompatActivity {
             buttonSwitchToManual.setText("Управлять " + (armScreen ? "колесами" : "рукой"));
         }
 
-        buttonSwitchToManual.setEnabled(true);
-        buttonSwitchToFollowLine.setEnabled(followLine);
-        buttonSwitchToTakePackage.setEnabled(takePackage);
+        setVisibilityForModeButtons(true, followLine, takePackage);
 
         mainLayout.setVisibility(View.VISIBLE);
         warningText.setVisibility(View.GONE);
@@ -159,16 +175,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("Текущий режим: следую за линией");
 
         setButtonsVisibility(true, false, true);
-
-        buttonUp.setEnabled(false);
-        buttonDown.setEnabled(false);
-        buttonOpen.setEnabled(false);
-        buttonClose.setEnabled(false);
-
-        buttonForward.setEnabled(false);
-        buttonLeft.setEnabled(false);
-        buttonRight.setEnabled(false);
-        buttonBack.setEnabled(false);
+        disableAllJoystickButtons();
     }
 
     protected void switchScreenToObstacle() {
@@ -176,16 +183,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("Текущий режим: объезжаю препятствие");
 
         setButtonsVisibility(true, false, false);
-
-        buttonUp.setEnabled(false);
-        buttonDown.setEnabled(false);
-        buttonOpen.setEnabled(false);
-        buttonClose.setEnabled(false);
-
-        buttonForward.setEnabled(false);
-        buttonLeft.setEnabled(false);
-        buttonRight.setEnabled(false);
-        buttonBack.setEnabled(false);
+        disableAllJoystickButtons();
     }
 
     protected void switchScreenToTakePackage() {
@@ -193,16 +191,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("Текущий режим: беру коробку");
 
         setButtonsVisibility(true, true, false);
-
-        buttonUp.setEnabled(false);
-        buttonDown.setEnabled(false);
-        buttonOpen.setEnabled(false);
-        buttonClose.setEnabled(false);
-
-        buttonForward.setEnabled(false);
-        buttonLeft.setEnabled(false);
-        buttonRight.setEnabled(false);
-        buttonBack.setEnabled(false);
+        disableAllJoystickButtons();
     }
 
     protected void showMessage(String text) {
@@ -231,28 +220,28 @@ public class MainActivity extends AppCompatActivity {
         switchScreenToManual();
     }
 
-    protected void showLostConnection() {
-        showMessage("Потеряно соединение с\nмашиной! Перезапустите!");
-        toolbar.setSubtitle("Потеряно соединение с машиной");
+    protected void showCouldNotConnect() {
+        showMessage("Не удаётся подключиться!\nПопробуйте еще раз или перезапустите!");
+        toolbar.setSubtitle("Не удаётся подключиться");
         progressBarConnecting.setVisibility(View.GONE);
-
-        buttonUp.setEnabled(false);
-        buttonDown.setEnabled(false);
-        buttonOpen.setEnabled(false);
-        buttonClose.setEnabled(false);
-
-        buttonForward.setEnabled(false);
-        buttonLeft.setEnabled(false);
-        buttonRight.setEnabled(false);
-        buttonBack.setEnabled(false);
-
-        buttonSwitchToTakePackage.setEnabled(false);
-        buttonSwitchToManual.setEnabled(false);
-        buttonSwitchToFollowLine.setEnabled(false);
 
         buttonConnect.setEnabled(true);
         buttonConnect.setText("Подключиться");
 
+        disableAllJoystickButtons();
+        setVisibilityForModeButtons(false, false, false);
+    }
+
+    protected void showLostConnection() {
+        showMessage("Потеряно соединение с машиной!\nПопробуйте еще раз или перезапустите!");
+        toolbar.setSubtitle("Потеряно соединение с машиной");
+        progressBarConnecting.setVisibility(View.GONE);
+
+        buttonConnect.setEnabled(true);
+        buttonConnect.setText("Подключиться");
+
+        disableAllJoystickButtons();
+        setVisibilityForModeButtons(false, false, false);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -310,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
             // Get the device address to make BT Connection
             String deviceAddress = getIntent().getStringExtra("deviceAddress");
             // Show progress and connection status
-            toolbar.setSubtitle("Пытаюсь соедениться с " + deviceName + "...");
+            toolbar.setSubtitle("Пытаюсь соединиться с " + deviceName + "...");
             warningText.setVisibility(View.GONE);
             progressBarConnecting.setVisibility(View.VISIBLE);
             buttonConnect.setEnabled(false);
@@ -338,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
                                 showConnected();
                                 break;
                             case -1:
-                                showLostConnection();
+                                showCouldNotConnect();
 
                                 break;
                         }
