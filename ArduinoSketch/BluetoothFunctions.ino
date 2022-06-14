@@ -44,7 +44,7 @@ void processBluetooth() {
     }
     
     buzz(1);
-  } else if ((btLastCommandTime + 10000) < millis()) {
+  } else if (mode == MODE_MANUAL && (btLastCommandTime + 10000) < millis()) {
     btSerialWrite('0');
     btSerialWrite('\n');
   }

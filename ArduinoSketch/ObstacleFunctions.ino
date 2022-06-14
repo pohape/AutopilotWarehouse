@@ -44,6 +44,8 @@ bool mode3TurnUltrasonicLeftToObstruction() {
 }
 
 void processMode3() {
+  processBluetooth();
+
   rightForwardStart();
   leftForwardStart();
   
@@ -90,6 +92,8 @@ void initMode3() {
   do {
     mode3TurnRightFromObstruction();
   } while (mode3TurnUltrasonicLeftToObstruction());
+  
+  processBluetooth();
 
   addMoveToLastMovesArray(1);
   rightForwardStart();
@@ -101,6 +105,8 @@ void initMode3() {
 
   rightForwardStart();
   leftForwardStart();
+
+  processBluetooth();
 }
 
 void updateDistanceCm() {

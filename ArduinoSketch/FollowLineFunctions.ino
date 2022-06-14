@@ -1,6 +1,8 @@
 // follow line functions >>>
 void addMoveToLastMovesArray(int move) {
   if (lastFollowLineMoves[0] != move) { 
+    processBluetooth();
+
     lastFollowLineMoves[15] = lastFollowLineMoves[14];
     lastFollowLineMoves[14] = lastFollowLineMoves[13];
     lastFollowLineMoves[13] = lastFollowLineMoves[12];
