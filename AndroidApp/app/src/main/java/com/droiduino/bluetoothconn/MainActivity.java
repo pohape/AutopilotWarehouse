@@ -75,10 +75,14 @@ public class MainActivity extends AppCompatActivity {
     private final static int BT_COMMAND_WHEELS_BACK_PRESSED = 23;
     private final static int BT_COMMAND_WHEELS_BACK_RELEASED = 24;
 
+    @SuppressWarnings("unused")
     private final static int BT_COMMAND_WHEELS_LEFT_BACK_PRESSED = 25;
+    @SuppressWarnings("unused")
     private final static int BT_COMMAND_WHEELS_LEFT_BACK_RELEASED = 26;
 
+    @SuppressWarnings("unused")
     private final static int BT_COMMAND_WHEELS_RIGHT_BACK_PRESSED = 27;
+    @SuppressWarnings("unused")
     private final static int BT_COMMAND_WHEELS_RIGHT_BACK_RELEASED = 28;
 
     private final static int BT_COMMAND_SET_MODE_MANUAL = 101;
@@ -94,8 +98,11 @@ public class MainActivity extends AppCompatActivity {
     private final static int SWITCH_MODE_REASON_LINE_ENDED = 2;
     private final static int SWITCH_MODE_REASON_FOUND_LINE = 3;
     private final static int SWITCH_MODE_REASON_FOUND_OBSTACLE = 4;
-    private final static int SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED = 5;
-    private final static int SWITCH_MODE_REASON_BLUETOOTH_COMMAND = 6;
+    private final static int SWITCH_MODE_REASON_PACKAGE_NOT_FOUND = 5;
+    private final static int SWITCH_MODE_REASON_PACKAGE_LOST = 6;
+    private final static int SWITCH_MODE_REASON_HOLD_PACKAGE = 7;
+    @SuppressWarnings("unused")
+    private final static int SWITCH_MODE_REASON_BLUETOOTH_COMMAND = 8;
 
     private int currentMode = MODE_MANUAL;
     private boolean armScreen = true;
@@ -144,7 +151,8 @@ public class MainActivity extends AppCompatActivity {
         if (manual) {
             buttonSwitchToManual.setText("Ручной режим");
         } else {
-            buttonSwitchToManual.setText("Управлять " + (armScreen ? "колесами" : "рукой"));
+            String buttonSwitchToManualText = "Управлять " + (armScreen ? "колесами" : "рукой");
+            buttonSwitchToManual.setText(buttonSwitchToManualText);
         }
 
         setVisibilityForModeButtons(true, followLine, takePackage);
@@ -365,8 +373,12 @@ public class MainActivity extends AppCompatActivity {
                                 showWarning("Линия закончилась!\nЧто будем делать дальше?");
                             } else if (reason == SWITCH_MODE_REASON_LINE_LOST) {
                                 showWarning("Потерял линию!\nОператор, помоги!");
-                            } else if (reason == SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED) {
+                            } else if (reason == SWITCH_MODE_REASON_PACKAGE_LOST) {
                                 showWarning("Потерял коробку.\nОператор, помоги!");
+                            } else if (reason == SWITCH_MODE_REASON_PACKAGE_NOT_FOUND) {
+                                showWarning("Не могу найти коробку.\nОператор, помоги!");
+                            } else if (reason == SWITCH_MODE_REASON_HOLD_PACKAGE) {
+                                showWarning("Держу коробку.\nЧто будем делать дальше?");
                             }
                         }
 

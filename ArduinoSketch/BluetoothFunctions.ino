@@ -21,6 +21,10 @@ void btSetMode(int newMode, int reason) {
     btSerialWrite('5');
   } else if (reason == 6) {
     btSerialWrite('6');
+  } else if (reason == 7) {
+    btSerialWrite('7');
+  } else if (reason == 8) {
+    btSerialWrite('8');
   }
 
   btSerialWrite('\n');

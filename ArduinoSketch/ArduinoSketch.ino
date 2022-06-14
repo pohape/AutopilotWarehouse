@@ -213,8 +213,10 @@ const int SWITCH_MODE_REASON_LINE_LOST = 1;
 const int SWITCH_MODE_REASON_LINE_ENDED = 2;
 const int SWITCH_MODE_REASON_FOUND_LINE = 3;
 const int SWITCH_MODE_REASON_FOUND_OBSTACLE = 4;
-const int SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED = 5;
-const int SWITCH_MODE_REASON_BLUETOOTH_COMMAND = 6;
+const int SWITCH_MODE_REASON_PACKAGE_NOT_FOUND = 5;
+const int SWITCH_MODE_REASON_PACKAGE_LOST = 6;
+const int SWITCH_MODE_REASON_HOLD_PACKAGE = 7;
+const int SWITCH_MODE_REASON_BLUETOOTH_COMMAND = 8;
 
 int mode = 1;
 
@@ -272,8 +274,12 @@ void setMode(int newMode, int reason) {
     Serial.println("FOUND_LINE: set mode " + String(newMode));
   } else if (reason == SWITCH_MODE_REASON_FOUND_OBSTACLE) {
     Serial.println("FOUND_OBSTACLE: set mode " + String(newMode));
-  } else if (reason == SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED) {
-    Serial.println("TAKE_PACKAGE_FAILED: set mode " + String(newMode));
+  } else if (reason == SWITCH_MODE_REASON_PACKAGE_NOT_FOUND) {
+    Serial.println("PACKAGE_NOT_FOUND: set mode " + String(newMode));
+  } else if (reason == SWITCH_MODE_REASON_PACKAGE_LOST) {
+    Serial.println("PACKAGE_LOST: set mode " + String(newMode));
+  } else if (reason == SWITCH_MODE_REASON_HOLD_PACKAGE) {
+    Serial.println("HOLD_PACKAGE: set mode " + String(newMode));
   }
 
   btSetMode(newMode, reason);

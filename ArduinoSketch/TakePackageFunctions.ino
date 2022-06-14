@@ -13,10 +13,10 @@ void findAndTakePackage() {
   // 8. Если коробка не выпала, то разворачиваемся на 360 градусов и включаем режим слежения за линией
 
   if (findObjectAndTurnThere() == PACKAGE_NOT_FOUND_BY_ULTRASONIC) {
-    setMode(MODE_MANUAL, SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED);
+    setMode(MODE_MANUAL, SWITCH_MODE_REASON_PACKAGE_NOT_FOUND);
   } else {
     if (findPackageAndHoverAboveIt() == PACKAGE_NOT_FOUND_BY_INFRARED_HOVER) {
-      setMode(MODE_MANUAL, SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED);
+      setMode(MODE_MANUAL, SWITCH_MODE_REASON_PACKAGE_NOT_FOUND);
     } else {
       takePackage();
     }
@@ -32,13 +32,13 @@ void takePackage() {
     return;
   } else if (result == PACKAGE_LOST) {
     if (findPackageAndHoverAboveIt() == PACKAGE_NOT_FOUND_BY_INFRARED_HOVER) {
-      setMode(MODE_MANUAL, SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED);
+      setMode(MODE_MANUAL, SWITCH_MODE_REASON_PACKAGE_LOST);
     } else {
       takePackage();
     }
   } else {
     armToDefaultPosition();
-    setMode(MODE_MANUAL, SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED);
+    setMode(MODE_MANUAL, SWITCH_MODE_REASON_HOLD_PACKAGE);
   }
 }
 
