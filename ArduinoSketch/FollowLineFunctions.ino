@@ -51,7 +51,7 @@ void followLineCheckAndStop() {
     last = lastFollowLineMoves[i];
   }
 
-  setMode(1, "followLineCheckAndStop");
+  setMode(MODE_MANUAL, SWITCH_MODE_REASON_LINE_ENDED);
 
   lastFollowLineMoves[0] = 0;
   lastFollowLineMoves[1] = 0;
@@ -187,7 +187,7 @@ void findLineBackwards() {
               digitalWrite(PIN_WHEELS_IN2, LOW);
               digitalWrite(PIN_WHEELS_IN3, LOW);
               digitalWrite(PIN_WHEELS_IN4, LOW);
-              setMode(1, String(MAX_BACK_IN_ROW_TO_STOP) + " back in a row");
+              setMode(MODE_MANUAL, SWITCH_MODE_REASON_LINE_LOST);
 
               return;
             }

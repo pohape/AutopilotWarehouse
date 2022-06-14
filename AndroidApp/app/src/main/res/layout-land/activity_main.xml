@@ -42,16 +42,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/warningText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_marginTop="160dp"
+        android:text="Внимание! Внимание!"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimary"
+        android:textSize="30sp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/mainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <LinearLayout
             android:id="@+id/firstLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="55dp"
+            android:layout_marginTop="60dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
 
@@ -192,7 +205,7 @@
             android:id="@+id/fourhtLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="10dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
 
@@ -222,14 +235,6 @@
                 android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:text="@string/take_package_mode" />
-            <!--            <Button-->
-            <!--                android:id="@+id/manualMode"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_marginStart="5dp"-->
-            <!--                android:layout_marginEnd="10dp"-->
-            <!--                android:layout_weight="1"-->
-            <!--                android:text="Ручной режим" />-->
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

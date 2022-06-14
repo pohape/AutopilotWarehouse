@@ -1,67 +1,34 @@
-const int BT_COMMAND_ARM_FORWARD_PRESSED = 1;
-const int BT_COMMAND_ARM_FORWARD_RELEASED = 2;
-
-const int BT_COMMAND_ARM_BACK_PRESSED = 3;
-const int BT_COMMAND_ARM_BACK_RELEASED = 4;
-
-const int BT_COMMAND_ARM_LEFT_PRESSED = 5;
-const int BT_COMMAND_ARM_LEFT_RELEASED = 6;
-
-const int BT_COMMAND_ARM_RIGHT_PRESSED = 7;
-const int BT_COMMAND_ARM_RIGHT_RELEASED = 8;
-
-const int BT_COMMAND_ARM_UP_PRESSED = 9;
-const int BT_COMMAND_ARM_UP_RELEASED = 10;
-
-const int BT_COMMAND_ARM_DOWN_PRESSED = 11;
-const int BT_COMMAND_ARM_DOWN_RELEASED = 12;
-
-const int BT_COMMAND_ARM_OPEN_CLAW_PRESSED = 13;
-const int BT_COMMAND_ARM_OPEN_CLAW_RELEASED = 14;
-
-const int BT_COMMAND_ARM_CLOSE_CLAW_PRESSED = 15;
-const int BT_COMMAND_ARM_CLOSE_CLAW_RELEASED = 16;
-
-const int BT_COMMAND_WHEELS_FORWARD_PRESSED = 17;
-const int BT_COMMAND_WHEELS_FORWARD_RELEASED = 18;
-
-const int BT_COMMAND_WHEELS_LEFT_FORWARD_PRESSED = 19;
-const int BT_COMMAND_WHEELS_LEFT_FORWARD_RELEASED = 20;
-
-const int BT_COMMAND_WHEELS_RIGHT_FORWARD_PRESSED = 21;
-const int BT_COMMAND_WHEELS_RIGHT_FORWARD_RELEASED = 22;
-
-const int BT_COMMAND_WHEELS_BACK_PRESSED = 23;
-const int BT_COMMAND_WHEELS_BACK_RELEASED = 24;
-
-const int BT_COMMAND_WHEELS_LEFT_BACK_PRESSED = 25;
-const int BT_COMMAND_WHEELS_LEFT_BACK_RELEASED = 26;
-
-const int BT_COMMAND_WHEELS_RIGHT_BACK_PRESSED = 27;
-const int BT_COMMAND_WHEELS_RIGHT_BACK_RELEASED = 28;
-
-const int BT_COMMAND_SET_MODE_MANUAL = 101;
-const int BT_COMMAND_SET_MODE_FOLLOW_LINE = 102;
-const int BT_COMMAND_SET_MODE_TAKE_PACKAGE = 104;
-
-int btLastCommand = 0;
-
-void btSetMode(int newMode) {
-   if (newMode == 1) {
-    BTSerial.write('1');
+void btSetMode(int newMode, int reason) {
+  if (newMode == 1) {
+    btSerialWrite('1');
   } else if (newMode == 2) {
-    BTSerial.write('2');
+    btSerialWrite('2');
   } else if (newMode == 3) {
-    BTSerial.write('3');
+    btSerialWrite('3');
   } else if (newMode == 4) {
-    BTSerial.write('4');
+    btSerialWrite('4');
   }
 
-  BTSerial.write('\n');
+  if (reason == 1) {
+    btSerialWrite('1');
+  } else if (reason == 2) {
+    btSerialWrite('2');
+  } else if (reason == 3) {
+    btSerialWrite('3');
+  } else if (reason == 4) {
+    btSerialWrite('4');
+  } else if (reason == 5) {
+    btSerialWrite('5');
+  } else if (reason == 6) {
+    btSerialWrite('6');
+  }
+
+  btSerialWrite('\n');
 }
 
-void setManualWithError(int errorConstant) {
-  setMode(MODE_MANUAL, "setManualWithError");
+void btSerialWrite(char data) {
+  btLastCommandTime = millis();
+  BTSerial.write(data);
 }
 
 void processBluetooth() {
@@ -69,20 +36,18 @@ void processBluetooth() {
     btLastCommand = BTSerial.read();
 
     if (btLastCommand == BT_COMMAND_SET_MODE_MANUAL) {
-      setMode(MODE_MANUAL, "Bluetooth command");
+      setMode(MODE_MANUAL, SWITCH_MODE_REASON_BLUETOOTH_COMMAND);
     } else if (btLastCommand == BT_COMMAND_SET_MODE_FOLLOW_LINE) {
-      setMode(MODE_FOLLOW_LINE, "Bluetooth command");
+      setMode(MODE_FOLLOW_LINE, SWITCH_MODE_REASON_BLUETOOTH_COMMAND);
     } else if (btLastCommand == BT_COMMAND_SET_MODE_TAKE_PACKAGE) {
-      setMode(MODE_TAKE_PACKAGE, "Bluetooth command");
+      setMode(MODE_TAKE_PACKAGE, SWITCH_MODE_REASON_BLUETOOTH_COMMAND);
     }
-
-    //clawDistance = analogRead(PIN_INFRARED_CLAW_DISTANCE);
-    //Serial.println(String(servoPositions.armLeft) + " - " + String(servoPositions.armRight) + ": " + clawDistance);
     
     buzz(1);
+  } else if ((btLastCommandTime + 10000) < millis()) {
+    btSerialWrite('0');
+    btSerialWrite('\n');
   }
-
-  //Serial.println(btLastCommand);
 
   if (mode == 1) {
     if (btLastCommand == BT_COMMAND_ARM_LEFT_PRESSED) {

@@ -13,7 +13,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -88,10 +90,19 @@ public class MainActivity extends AppCompatActivity {
     private final static int MODE_AROUND_OBSTACLE = 3;
     private final static int MODE_TAKE_PACKAGE = 4;
 
+    private final static int SWITCH_MODE_REASON_LINE_LOST = 1;
+    private final static int SWITCH_MODE_REASON_LINE_ENDED = 2;
+    private final static int SWITCH_MODE_REASON_FOUND_LINE = 3;
+    private final static int SWITCH_MODE_REASON_FOUND_OBSTACLE = 4;
+    private final static int SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED = 5;
+    private final static int SWITCH_MODE_REASON_BLUETOOTH_COMMAND = 6;
+
     private int currentMode = MODE_MANUAL;
     private boolean armScreen = true;
 
     protected Toolbar toolbar;
+    protected LinearLayout mainLayout;
+    protected TextView warningText;
 
     protected Button buttonSwitchToFollowLine;
     protected Button buttonSwitchToTakePackage;
@@ -105,6 +116,12 @@ public class MainActivity extends AppCompatActivity {
     protected Button buttonOpen;
     protected Button buttonClose;
 
+    protected Button buttonConnect;
+    protected ProgressBar progressBarConnecting;
+
+    protected long lastBtReceive = 0;
+    protected Runnable checkBtConnection;
+
     protected void setButtonsVisibility(boolean manual, boolean followLine, boolean takePackage) {
         if (manual) {
             buttonSwitchToManual.setText("Ручной режим");
@@ -115,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
         buttonSwitchToManual.setEnabled(true);
         buttonSwitchToFollowLine.setEnabled(followLine);
         buttonSwitchToTakePackage.setEnabled(takePackage);
+
+        mainLayout.setVisibility(View.VISIBLE);
+        warningText.setVisibility(View.GONE);
     }
 
     protected void switchScreenToManual() {
@@ -185,13 +205,68 @@ public class MainActivity extends AppCompatActivity {
         buttonBack.setEnabled(false);
     }
 
+    protected void showMessage(String text) {
+        mainLayout.setVisibility(View.GONE);
+        warningText.setVisibility(View.VISIBLE);
+        warningText.setText(text);
+    }
+
+    protected void showWarning(String text) {
+        showMessage(text);
+
+        handler.postDelayed(() -> {
+            mainLayout.setVisibility(View.VISIBLE);
+            warningText.setVisibility(View.GONE);
+            warningText.setText("");
+        }, 10_000);
+    }
+
+    protected void showConnected() {
+        toolbar.setSubtitle("Подключено к " + deviceName);
+        progressBarConnecting.setVisibility(View.GONE);
+
+        buttonConnect.setEnabled(true);
+        buttonConnect.setText("Переподключиться");
+
+        switchScreenToManual();
+    }
+
+    protected void showLostConnection() {
+        showMessage("Потеряно соединение с\nмашиной! Перезапустите!");
+        toolbar.setSubtitle("Потеряно соединение с машиной");
+        progressBarConnecting.setVisibility(View.GONE);
+
+        buttonUp.setEnabled(false);
+        buttonDown.setEnabled(false);
+        buttonOpen.setEnabled(false);
+        buttonClose.setEnabled(false);
+
+        buttonForward.setEnabled(false);
+        buttonLeft.setEnabled(false);
+        buttonRight.setEnabled(false);
+        buttonBack.setEnabled(false);
+
+        buttonSwitchToTakePackage.setEnabled(false);
+        buttonSwitchToManual.setEnabled(false);
+        buttonSwitchToFollowLine.setEnabled(false);
+
+        buttonConnect.setEnabled(true);
+        buttonConnect.setText("Подключиться");
+
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // UI Initialization
+        buttonConnect = findViewById(R.id.buttonConnect);
+        progressBarConnecting = findViewById(R.id.progressBarConnecting);
         toolbar = findViewById(R.id.toolbar);
+        mainLayout = findViewById(R.id.mainLayout);
+        warningText = findViewById(R.id.warningText);
 
         // buttons
         buttonSwitchToFollowLine = findViewById(R.id.followLineMode);
@@ -227,10 +302,7 @@ public class MainActivity extends AppCompatActivity {
         buttonClose = findViewById(R.id.buttonClose);
         buttonClose.setEnabled(false);
 
-        // UI Initialization
-        final Button buttonConnect = findViewById(R.id.buttonConnect);
-        final Toolbar toolbar = findViewById(R.id.toolbar);
-        final ProgressBar progressBarConnecting = findViewById(R.id.progressBarConnecting);
+        showMessage("Добро пожаловать!\nПодключите машину по Bluetooth.");
 
         // If a bluetooth device has been selected from SelectDeviceActivity
         deviceName = getIntent().getStringExtra("deviceName");
@@ -239,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
             String deviceAddress = getIntent().getStringExtra("deviceAddress");
             // Show progress and connection status
             toolbar.setSubtitle("Пытаюсь соедениться с " + deviceName + "...");
+            warningText.setVisibility(View.GONE);
             progressBarConnecting.setVisibility(View.VISIBLE);
             buttonConnect.setEnabled(false);
 
@@ -262,53 +335,50 @@ public class MainActivity extends AppCompatActivity {
                     case CONNECTING_STATUS:
                         switch (msg.arg1) {
                             case 1:
-                                toolbar.setSubtitle("Подключено к " + deviceName);
-                                progressBarConnecting.setVisibility(View.GONE);
-
-                                buttonConnect.setEnabled(true);
-                                switchScreenToManual();
-
+                                showConnected();
                                 break;
                             case -1:
-                                toolbar.setSubtitle("Не получается подключиться, перезапустите");
-                                progressBarConnecting.setVisibility(View.GONE);
-
-                                buttonForward.setEnabled(false);
-                                buttonBack.setEnabled(false);
-
-                                buttonRight.setEnabled(false);
-                                buttonLeft.setEnabled(false);
-
-                                buttonUp.setEnabled(false);
-                                buttonDown.setEnabled(false);
-
-                                buttonOpen.setEnabled(false);
-                                buttonClose.setEnabled(false);
-
-                                buttonSwitchToFollowLine.setEnabled(false);
-                                buttonSwitchToTakePackage.setEnabled(false);
-                                buttonSwitchToManual.setEnabled(false);
+                                showLostConnection();
 
                                 break;
                         }
                         break;
 
                     case MESSAGE_READ:
-                        String arduinoMsg = msg.obj.toString().trim(); // Read message from Arduino
+                        lastBtReceive = System.currentTimeMillis();
 
-                        switch (Integer.valueOf(arduinoMsg)) {
-                            case MODE_MANUAL:
-                                switchScreenToManual();
-                                break;
-                            case MODE_FOLLOW_LINE:
-                                switchScreenToFollowLine();
-                                break;
-                            case MODE_AROUND_OBSTACLE:
-                                switchScreenToObstacle();
-                                break;
-                            case MODE_TAKE_PACKAGE:
-                                switchScreenToTakePackage();
-                                break;
+                        char[] arduinoMsg = msg.obj.toString().trim().toCharArray(); // Read message from Arduino
+                        int newMode = Integer.valueOf(String.valueOf(arduinoMsg[0]));
+
+                        if (newMode != 0) {
+                            int reason = Integer.valueOf(String.valueOf(arduinoMsg[1]));
+
+                            if (reason == SWITCH_MODE_REASON_FOUND_LINE) {
+                                showWarning("Линия найдена.\nСледую по линии.");
+                            } else if (reason == SWITCH_MODE_REASON_FOUND_OBSTACLE) {
+                                showWarning("Вижу препятствие.\nПытаюсь объехать.");
+                            } else if (reason == SWITCH_MODE_REASON_LINE_ENDED) {
+                                showWarning("Линия закончилась!\nЧто будем делать дальше?");
+                            } else if (reason == SWITCH_MODE_REASON_LINE_LOST) {
+                                showWarning("Потерял линию!\nПомогите!");
+                            } else if (reason == SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED) {
+                                showWarning("Потерял коробку.\nОператор, помоги!");
+                            }
+
+                            switch (newMode) {
+                                case MODE_MANUAL:
+                                    switchScreenToManual();
+                                    break;
+                                case MODE_FOLLOW_LINE:
+                                    switchScreenToFollowLine();
+                                    break;
+                                case MODE_AROUND_OBSTACLE:
+                                    switchScreenToObstacle();
+                                    break;
+                                case MODE_TAKE_PACKAGE:
+                                    switchScreenToTakePackage();
+                                    break;
+                            }
                         }
 
                         break;
@@ -322,6 +392,19 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, SelectDeviceActivity.class);
             startActivity(intent);
         });
+
+        checkBtConnection = new Runnable() {
+            @Override
+            public void run() {
+                if (lastBtReceive != 0 && (lastBtReceive + 15_000) < System.currentTimeMillis()) {
+                    showLostConnection();
+                }
+
+                handler.postDelayed(this, 10_000);
+            }
+        };
+
+        handler.postDelayed(checkBtConnection, 10_000);
 
         // buttons on click
         buttonSwitchToTakePackage.setOnClickListener(v -> connectedThread.write(BT_COMMAND_SET_MODE_TAKE_PACKAGE));

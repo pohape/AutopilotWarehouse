@@ -43,6 +43,55 @@ const int PIN_BUZZER = 2;
 // bluetooth block >>>
 String btResponce = ""; // Stores response of the HC-06 Bluetooth device
 SoftwareSerial BTSerial(PIN_BLUETOOTH_RX, PIN_BLUETOOTH_TX); // RX, TX
+
+const int BT_COMMAND_ARM_FORWARD_PRESSED = 1;
+const int BT_COMMAND_ARM_FORWARD_RELEASED = 2;
+
+const int BT_COMMAND_ARM_BACK_PRESSED = 3;
+const int BT_COMMAND_ARM_BACK_RELEASED = 4;
+
+const int BT_COMMAND_ARM_LEFT_PRESSED = 5;
+const int BT_COMMAND_ARM_LEFT_RELEASED = 6;
+
+const int BT_COMMAND_ARM_RIGHT_PRESSED = 7;
+const int BT_COMMAND_ARM_RIGHT_RELEASED = 8;
+
+const int BT_COMMAND_ARM_UP_PRESSED = 9;
+const int BT_COMMAND_ARM_UP_RELEASED = 10;
+
+const int BT_COMMAND_ARM_DOWN_PRESSED = 11;
+const int BT_COMMAND_ARM_DOWN_RELEASED = 12;
+
+const int BT_COMMAND_ARM_OPEN_CLAW_PRESSED = 13;
+const int BT_COMMAND_ARM_OPEN_CLAW_RELEASED = 14;
+
+const int BT_COMMAND_ARM_CLOSE_CLAW_PRESSED = 15;
+const int BT_COMMAND_ARM_CLOSE_CLAW_RELEASED = 16;
+
+const int BT_COMMAND_WHEELS_FORWARD_PRESSED = 17;
+const int BT_COMMAND_WHEELS_FORWARD_RELEASED = 18;
+
+const int BT_COMMAND_WHEELS_LEFT_FORWARD_PRESSED = 19;
+const int BT_COMMAND_WHEELS_LEFT_FORWARD_RELEASED = 20;
+
+const int BT_COMMAND_WHEELS_RIGHT_FORWARD_PRESSED = 21;
+const int BT_COMMAND_WHEELS_RIGHT_FORWARD_RELEASED = 22;
+
+const int BT_COMMAND_WHEELS_BACK_PRESSED = 23;
+const int BT_COMMAND_WHEELS_BACK_RELEASED = 24;
+
+const int BT_COMMAND_WHEELS_LEFT_BACK_PRESSED = 25;
+const int BT_COMMAND_WHEELS_LEFT_BACK_RELEASED = 26;
+
+const int BT_COMMAND_WHEELS_RIGHT_BACK_PRESSED = 27;
+const int BT_COMMAND_WHEELS_RIGHT_BACK_RELEASED = 28;
+
+const int BT_COMMAND_SET_MODE_MANUAL = 101;
+const int BT_COMMAND_SET_MODE_FOLLOW_LINE = 102;
+const int BT_COMMAND_SET_MODE_TAKE_PACKAGE = 104;
+
+int btLastCommand = 0;
+unsigned long btLastCommandTime = 0;
 // <<< bluetooth block
 
 // QR-code scanner block >>>
@@ -160,6 +209,13 @@ const int MODE_FOLLOW_LINE = 2;
 const int MODE_AROUND_OBSTACLE = 3;
 const int MODE_TAKE_PACKAGE = 4;
 
+const int SWITCH_MODE_REASON_LINE_LOST = 1;
+const int SWITCH_MODE_REASON_LINE_ENDED = 2;
+const int SWITCH_MODE_REASON_FOUND_LINE = 3;
+const int SWITCH_MODE_REASON_FOUND_OBSTACLE = 4;
+const int SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED = 5;
+const int SWITCH_MODE_REASON_BLUETOOTH_COMMAND = 6;
+
 int mode = 1;
 
 void setup() {
@@ -207,10 +263,20 @@ void buzz(int times) {
   }
 }
 
-void setMode(int newMode, String caller) {
-  Serial.println(caller + ": set mode " + String(newMode));
-  
-  btSetMode(newMode);
+void setMode(int newMode, int reason) {
+  if (reason == SWITCH_MODE_REASON_LINE_LOST) {
+    Serial.println("LINE_LOST: set mode " + String(newMode));
+  } else if (reason == SWITCH_MODE_REASON_LINE_ENDED) {
+    Serial.println("LINE_ENDED: set mode " + String(newMode));
+  } else if (reason == SWITCH_MODE_REASON_FOUND_LINE) {
+    Serial.println("FOUND_LINE: set mode " + String(newMode));
+  } else if (reason == SWITCH_MODE_REASON_FOUND_OBSTACLE) {
+    Serial.println("FOUND_OBSTACLE: set mode " + String(newMode));
+  } else if (reason == SWITCH_MODE_REASON_TAKE_PACKAGE_FAILED) {
+    Serial.println("TAKE_PACKAGE_FAILED: set mode " + String(newMode));
+  }
+
+  btSetMode(newMode, reason);
   buzz(50);
 
   if (newMode == MODE_FOLLOW_LINE) {

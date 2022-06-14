@@ -64,13 +64,13 @@ void processMode3() {
     delay(700);
     bothStop();
 
-    setMode(2, "Process mode 3, found a line");
+    setMode(MODE_FOLLOW_LINE, SWITCH_MODE_REASON_FOUND_LINE);
   }
 }
 
 void initMode3() {
   bothStop();
-  setMode(3, "Init mode 3");
+  setMode(MODE_AROUND_OBSTACLE, SWITCH_MODE_REASON_FOUND_OBSTACLE);
   
   analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
   analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
