@@ -291,6 +291,7 @@ void setMode(int newMode, int reason) {
 
   if (newMode == MODE_FOLLOW_LINE) {
     armTurnCenter();
+    armToDefaultPosition();
   } else if (newMode == MODE_TAKE_PACKAGE) {
     findAndTakePackage();
   }
