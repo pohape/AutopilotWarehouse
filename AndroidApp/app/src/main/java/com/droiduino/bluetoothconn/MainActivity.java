@@ -398,8 +398,15 @@ public class MainActivity extends AppCompatActivity {
         checkBtConnection = new Runnable() {
             @Override
             public void run() {
-                if (lastBtReceive != 0 && (lastBtReceive + 15_000) < System.currentTimeMillis()) {
+                boolean mObstacle = currentMode == MODE_AROUND_OBSTACLE;
+                boolean mFollowLine = currentMode == MODE_FOLLOW_LINE;
+                boolean mTakePackage = currentMode == MODE_TAKE_PACKAGE;
+                boolean lastBtReceiveExpired = (lastBtReceive + 15_000) > System.currentTimeMillis();
+
+                if (!mObstacle && !mFollowLine && !mTakePackage && lastBtReceive != 0 && !lastBtReceiveExpired) {
                     showLostConnection();
+                } else {
+                    toolbar.setSubtitle("Подключено к " + deviceName);
                 }
 
                 handler.postDelayed(this, 10_000);
