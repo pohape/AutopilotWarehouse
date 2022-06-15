@@ -4,7 +4,8 @@ void mode3TurnRightFromObstruction() {
   
   do {
     digitalWrite(PIN_WHEELS_IN1, HIGH);
-    delay(250);
+    delay(240);
+    processBluetooth();
     digitalWrite(PIN_WHEELS_IN1, LOW);
     
     updateDistanceCm();
@@ -14,19 +15,22 @@ void mode3TurnRightFromObstruction() {
     } else {
       Serial.println("2. I DON'T SEE IT " + String(distance));
     }
-  } while (distance < DISTANCE_WARNING);
-  
-  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
-  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
-  
-  Serial.println("mode3TurnRightFromObstruction done " + String(distance));
-  delay(100);
+  } while (distance < DISTANCE_WARNING && mode == MODE_AROUND_OBSTACLE);
+
+  if (mode == MODE_AROUND_OBSTACLE) {
+    analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+    analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+    
+    Serial.println("mode3TurnRightFromObstruction done " + String(distance));
+    delay(100);
+  }
 }
 
 bool mode3TurnUltrasonicLeftToObstruction() {
   do {
     armTurnLeft();
     updateDistanceCm();
+    processBluetooth();
 
     if (distance < DISTANCE_WARNING) {
       Serial.println("1. I SEE IT " + String(distance));
@@ -35,17 +39,19 @@ bool mode3TurnUltrasonicLeftToObstruction() {
     else {
       Serial.println("1. I DON'T SEE IT " + String(distance));
     }
-  } while (servoPositions.armMain < ARM_POSITION_MAIN_MAX);
+  } while (servoPositions.armMain < ARM_POSITION_MAIN_MAX && mode == MODE_AROUND_OBSTACLE);
 
   Serial.println("mode3TurnUltrasonicLeftToObstruction done " + String(distance));
-  delay(100);
+  processBluetooth();
+
+  if (mode == MODE_AROUND_OBSTACLE) {
+    delay(90);
+  }
   
   return false;
 }
 
 void processMode3() {
-  processBluetooth();
-
   rightForwardStart();
   leftForwardStart();
   
@@ -63,10 +69,17 @@ void processMode3() {
     leftForwardStart();
     rightForwardStart();
 
-    delay(700);
-    bothStop();
+    processBluetooth();
 
-    setMode(MODE_FOLLOW_LINE, SWITCH_MODE_REASON_FOUND_LINE);
+    if (mode == MODE_AROUND_OBSTACLE) {
+      delay(680);
+      processBluetooth();
+      bothStop();
+  
+      if (mode == MODE_AROUND_OBSTACLE) {
+        setMode(MODE_FOLLOW_LINE, SWITCH_MODE_REASON_FOUND_LINE);
+      }
+    }
   }
 }
 
@@ -82,31 +95,44 @@ void initMode3() {
   digitalWrite(PIN_WHEELS_IN3, LOW);
   digitalWrite(PIN_WHEELS_IN4, HIGH);
 
-  delay(300);
-
-  digitalWrite(PIN_WHEELS_IN1, LOW);
-  digitalWrite(PIN_WHEELS_IN2, LOW);
-  digitalWrite(PIN_WHEELS_IN3, LOW);
-  digitalWrite(PIN_WHEELS_IN4, LOW);
-
-  do {
-    mode3TurnRightFromObstruction();
-  } while (mode3TurnUltrasonicLeftToObstruction());
-  
   processBluetooth();
 
-  addMoveToLastMovesArray(1);
-  rightForwardStart();
-  leftForwardStart();
-  delay(500);
+  if (mode == MODE_AROUND_OBSTACLE) {
+    delay(280);
+    processBluetooth();
 
-  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_INSIDE);
-  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_OUTSIDE);
-
-  rightForwardStart();
-  leftForwardStart();
-
-  processBluetooth();
+    if (mode == MODE_AROUND_OBSTACLE) {
+      digitalWrite(PIN_WHEELS_IN1, LOW);
+      digitalWrite(PIN_WHEELS_IN2, LOW);
+      digitalWrite(PIN_WHEELS_IN3, LOW);
+      digitalWrite(PIN_WHEELS_IN4, LOW);
+    
+      do {
+        mode3TurnRightFromObstruction();
+      } while (mode3TurnUltrasonicLeftToObstruction() && mode == MODE_AROUND_OBSTACLE);
+    
+      if (mode == MODE_AROUND_OBSTACLE) {
+        addMoveToLastMovesArray(1);
+        rightForwardStart();
+        leftForwardStart();
+      
+        processBluetooth();
+    
+        if (mode == MODE_AROUND_OBSTACLE) {
+          delay(480);
+          processBluetooth();
+    
+          if (mode == MODE_AROUND_OBSTACLE) {
+            analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_INSIDE);
+            analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_OUTSIDE);
+          
+            rightForwardStart();
+            leftForwardStart();
+          }
+        }
+      }
+    }
+  }
 }
 
 void updateDistanceCm() {
