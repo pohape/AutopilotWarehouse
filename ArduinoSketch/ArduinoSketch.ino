@@ -168,6 +168,8 @@ const int ARM_HOVER_POSITIONS[ARM_HOVER_POSITIONS_COUNT][2] = {{30, 90}, {28, 80
 // 8 - back
 // 9 - back right
 int lastFollowLineMoves[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+int allHighInRowCount = 0;
+const int ALL_HIGH_IN_ROW_COUNT_TO_STOP = 12;
 const int MAX_BACK_IN_ROW_TO_STOP = 1000;
 // <<< tracing block
 

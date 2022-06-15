@@ -78,8 +78,24 @@ void processMode2() {
   // проехать вперед долю секунды
 
   int center = digitalRead(PIN_TRACING_CENTER);
+  int right = digitalRead(PIN_TRACING_RIGHT);
+  int left = digitalRead(PIN_TRACING_LEFT);
 
   if (center == HIGH) {
+    if (left == HIGH && right == HIGH) {
+      allHighInRowCount++;
+
+      if (allHighInRowCount >= ALL_HIGH_IN_ROW_COUNT_TO_STOP) {
+        bothStop();
+        allHighInRowCount = 0;
+        setMode(MODE_MANUAL, SWITCH_MODE_REASON_LINE_ENDED);
+        
+        return;
+      }
+    } else {
+      allHighInRowCount = 0;
+    }
+    
     updateDistanceCm();
     
     if (distance < DISTANCE_WARNING) {
@@ -91,9 +107,6 @@ void processMode2() {
   } else {
     Serial.println("Lost center, both stop");
     bothStop();
-
-    int right = digitalRead(PIN_TRACING_RIGHT);
-    int left = digitalRead(PIN_TRACING_LEFT);
 
     if (right == HIGH && left == LOW) {
       Serial.println("Left BLACK, right NO, call leftForwardStart()");
@@ -123,14 +136,6 @@ void processMode2() {
       Serial.println("Both NO, drive back");
       addMoveToLastMovesArray(8);
       findLineBackwards();
-    } else {
-      // TODO: process this case
-      Serial.println("Both BLACK and center is NO, do nothing");
-      Serial.println("Left " + String(left));
-      Serial.println("Center " + String(center));
-      Serial.println("Right " + String(right));
-      
-      return;
     }
   }
 
