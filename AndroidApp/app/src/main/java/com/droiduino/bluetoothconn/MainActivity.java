@@ -88,11 +88,13 @@ public class MainActivity extends AppCompatActivity {
     private final static int BT_COMMAND_SET_MODE_MANUAL = 101;
     private final static int BT_COMMAND_SET_MODE_FOLLOW_LINE = 102;
     private final static int BT_COMMAND_SET_MODE_TAKE_PACKAGE = 104;
+    private final static int BT_COMMAND_SET_MODE_LEAVE_PACKAGE = 105;
 
     private final static int MODE_MANUAL = 1;
     private final static int MODE_FOLLOW_LINE = 2;
     private final static int MODE_AROUND_OBSTACLE = 3;
     private final static int MODE_TAKE_PACKAGE = 4;
+    private final static int MODE_LEAVE_PACKAGE = 5;
 
     private final static int SWITCH_MODE_REASON_LINE_LOST = 1;
     private final static int SWITCH_MODE_REASON_LINE_ENDED = 2;
@@ -101,8 +103,9 @@ public class MainActivity extends AppCompatActivity {
     private final static int SWITCH_MODE_REASON_PACKAGE_NOT_FOUND = 5;
     private final static int SWITCH_MODE_REASON_PACKAGE_LOST = 6;
     private final static int SWITCH_MODE_REASON_HOLD_PACKAGE = 7;
+    private final static int SWITCH_MODE_REASON_RELEASED_PACKAGE = 8;
     @SuppressWarnings("unused")
-    private final static int SWITCH_MODE_REASON_BLUETOOTH_COMMAND = 8;
+    private final static int SWITCH_MODE_REASON_BLUETOOTH_COMMAND = 9;
 
     private int currentMode = MODE_MANUAL;
     private boolean armScreen = true;
@@ -113,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected Button buttonSwitchToFollowLine;
     protected Button buttonSwitchToTakePackage;
+    protected Button buttonSwitchToLeavePackage;
     protected Button buttonSwitchToManual;
     protected Button buttonForward;
     protected Button buttonBack;
@@ -141,13 +145,14 @@ public class MainActivity extends AppCompatActivity {
         buttonBack.setEnabled(false);
     }
 
-    protected void setVisibilityForModeButtons(boolean manual, boolean followLine, boolean takePackage) {
+    protected void setVisibilityForModeButtons(boolean manual, boolean followLine, boolean takePackage, boolean leavePackage) {
         buttonSwitchToManual.setEnabled(manual);
         buttonSwitchToFollowLine.setEnabled(followLine);
         buttonSwitchToTakePackage.setEnabled(takePackage);
+        buttonSwitchToLeavePackage.setEnabled(leavePackage);
     }
 
-    protected void setButtonsVisibility(boolean manual, boolean followLine, boolean takePackage) {
+    protected void setButtonsVisibility(boolean manual, boolean followLine, boolean takePackage, boolean leavePackage) {
         if (manual) {
             buttonSwitchToManual.setText("Ручной режим");
         } else {
@@ -155,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             buttonSwitchToManual.setText(buttonSwitchToManualText);
         }
 
-        setVisibilityForModeButtons(true, followLine, takePackage);
+        setVisibilityForModeButtons(true, followLine, takePackage, leavePackage);
 
         mainLayout.setVisibility(View.VISIBLE);
         warningText.setVisibility(View.GONE);
@@ -165,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         currentMode = MODE_MANUAL;
 
         toolbar.setTitle("Текущий режим: ручное управление " + (armScreen ? "рукой" : "колесами"));
-        setButtonsVisibility(false, true, true);
+        setButtonsVisibility(false, true, true, true);
 
         buttonUp.setEnabled(armScreen);
         buttonDown.setEnabled(armScreen);
@@ -182,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         currentMode = MODE_FOLLOW_LINE;
         toolbar.setTitle("Текущий режим: следую за линией");
 
-        setButtonsVisibility(true, false, true);
+        setButtonsVisibility(true, false, false, false);
         disableAllJoystickButtons();
     }
 
@@ -190,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         currentMode = MODE_AROUND_OBSTACLE;
         toolbar.setTitle("Текущий режим: объезжаю препятствие");
 
-        setButtonsVisibility(true, false, false);
+        setButtonsVisibility(true, false, false, false);
         disableAllJoystickButtons();
     }
 
@@ -198,7 +203,15 @@ public class MainActivity extends AppCompatActivity {
         currentMode = MODE_TAKE_PACKAGE;
         toolbar.setTitle("Текущий режим: беру коробку");
 
-        setButtonsVisibility(true, true, false);
+        setButtonsVisibility(true, false, false, false);
+        disableAllJoystickButtons();
+    }
+
+    protected void switchScreenLeavePackage() {
+        currentMode = MODE_TAKE_PACKAGE;
+        toolbar.setTitle("Текущий режим: выгружаю коробку");
+
+        setButtonsVisibility(true, false, false, false);
         disableAllJoystickButtons();
     }
 
@@ -237,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
         buttonConnect.setText("Подключиться");
 
         disableAllJoystickButtons();
-        setVisibilityForModeButtons(false, false, false);
+        setVisibilityForModeButtons(false, false, false, false);
     }
 
     protected void showLostConnection() {
@@ -249,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
         buttonConnect.setText("Подключиться");
 
         disableAllJoystickButtons();
-        setVisibilityForModeButtons(false, false, false);
+        setVisibilityForModeButtons(false, false, false, false);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -271,6 +284,9 @@ public class MainActivity extends AppCompatActivity {
 
         buttonSwitchToTakePackage = findViewById(R.id.takePackageMode);
         buttonSwitchToTakePackage.setEnabled(false);
+
+        buttonSwitchToLeavePackage = findViewById(R.id.leavePackageMode);
+        buttonSwitchToLeavePackage.setEnabled(false);
 
         buttonSwitchToManual = findViewById(R.id.manualMode);
         buttonSwitchToManual.setEnabled(false);
@@ -348,6 +364,7 @@ public class MainActivity extends AppCompatActivity {
                         int newMode = Integer.valueOf(String.valueOf(arduinoMsg[0]));
 
                         if (newMode != 0) {
+                            Log.i("Bluetooth_app", String.valueOf(arduinoMsg[1]));
                             int reason = Integer.valueOf(String.valueOf(arduinoMsg[1]));
 
                             switch (newMode) {
@@ -363,6 +380,9 @@ public class MainActivity extends AppCompatActivity {
                                     break;
                                 case MODE_TAKE_PACKAGE:
                                     switchScreenToTakePackage();
+                                    break;
+                                case MODE_LEAVE_PACKAGE:
+                                    switchScreenLeavePackage();
                                     break;
                             }
 
@@ -380,6 +400,8 @@ public class MainActivity extends AppCompatActivity {
                                 showWarning("Не могу найти коробку.\nОператор, помоги!");
                             } else if (reason == SWITCH_MODE_REASON_HOLD_PACKAGE) {
                                 showWarning("Держу коробку.\nЧто будем делать дальше?");
+                            } else if (reason == SWITCH_MODE_REASON_RELEASED_PACKAGE) {
+                                showWarning("Выгрузили коробку.\nЧто будем делать дальше?");
                             }
                         }
 
@@ -418,7 +440,7 @@ public class MainActivity extends AppCompatActivity {
         // buttons on click
         buttonSwitchToTakePackage.setOnClickListener(v -> connectedThread.write(BT_COMMAND_SET_MODE_TAKE_PACKAGE));
 
-        buttonSwitchToTakePackage.setOnClickListener(v -> connectedThread.write(BT_COMMAND_SET_MODE_TAKE_PACKAGE));
+        buttonSwitchToLeavePackage.setOnClickListener(v -> connectedThread.write(BT_COMMAND_SET_MODE_LEAVE_PACKAGE));
 
         buttonSwitchToFollowLine.setOnClickListener(v -> connectedThread.write(BT_COMMAND_SET_MODE_FOLLOW_LINE));
 

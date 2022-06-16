@@ -12,4 +12,5 @@
     <string name="follow_line_mode">Следовать за линией</string>
     <string name="drive">Управлять колесами</string>
     <string name="take_package_mode">Взять коробку</string>
+    <string name="leave_package_mode">Выгрузить коробку</string>
 </resources>

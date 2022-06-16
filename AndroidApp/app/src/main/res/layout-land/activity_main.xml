@@ -235,6 +235,15 @@
                 android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:text="@string/take_package_mode" />
+
+            <Button
+                android:id="@+id/leavePackageMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:text="@string/leave_package_mode" />
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
