@@ -7,6 +7,8 @@ void btSetMode(int newMode, int reason) {
     btSerialWrite('3');
   } else if (newMode == 4) {
     btSerialWrite('4');
+  } else if (newMode == 5) {
+    btSerialWrite('5');
   }
 
   if (reason == 1) {
@@ -25,6 +27,8 @@ void btSetMode(int newMode, int reason) {
     btSerialWrite('7');
   } else if (reason == 8) {
     btSerialWrite('8');
+  } else if (reason == 9) {
+    btSerialWrite('9');
   }
 
   btSerialWrite('\n');
@@ -45,6 +49,8 @@ void processBluetooth() {
       setMode(MODE_FOLLOW_LINE, SWITCH_MODE_REASON_BLUETOOTH_COMMAND);
     } else if (btLastCommand == BT_COMMAND_SET_MODE_TAKE_PACKAGE) {
       setMode(MODE_TAKE_PACKAGE, SWITCH_MODE_REASON_BLUETOOTH_COMMAND);
+    } else if (btLastCommand == BT_COMMAND_SET_MODE_LEAVE_PACKAGE) {
+      setMode(MODE_LEAVE_PACKAGE, SWITCH_MODE_REASON_BLUETOOTH_COMMAND);
     }
     
     buzz(1);
@@ -67,7 +73,7 @@ void processBluetooth() {
     } else if (btLastCommand == BT_COMMAND_ARM_DOWN_PRESSED) {
       armDown();
     } else if (btLastCommand == BT_COMMAND_ARM_OPEN_CLAW_PRESSED) {
-      openClaw();
+      openClawWide();
     } else if (btLastCommand == BT_COMMAND_ARM_CLOSE_CLAW_PRESSED) {
       closeClaw();
     } else if (btLastCommand == BT_COMMAND_ARM_CLOSE_CLAW_PRESSED) {

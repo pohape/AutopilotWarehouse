@@ -103,9 +103,9 @@ public class MainActivity extends AppCompatActivity {
     private final static int SWITCH_MODE_REASON_PACKAGE_NOT_FOUND = 5;
     private final static int SWITCH_MODE_REASON_PACKAGE_LOST = 6;
     private final static int SWITCH_MODE_REASON_HOLD_PACKAGE = 7;
-    private final static int SWITCH_MODE_REASON_RELEASED_PACKAGE = 8;
     @SuppressWarnings("unused")
-    private final static int SWITCH_MODE_REASON_BLUETOOTH_COMMAND = 9;
+    private final static int SWITCH_MODE_REASON_BLUETOOTH_COMMAND = 8;
+    private final static int SWITCH_MODE_REASON_RELEASED_PACKAGE = 9;
 
     private int currentMode = MODE_MANUAL;
     private boolean armScreen = true;
@@ -364,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
                         int newMode = Integer.valueOf(String.valueOf(arduinoMsg[0]));
 
                         if (newMode != 0) {
-                            Log.i("Bluetooth_app", String.valueOf(arduinoMsg[1]));
+                            Log.i("Bluetooth_app", String.valueOf(arduinoMsg[0]));
                             int reason = Integer.valueOf(String.valueOf(arduinoMsg[1]));
 
                             switch (newMode) {

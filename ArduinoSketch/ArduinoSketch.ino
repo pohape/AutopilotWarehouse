@@ -89,6 +89,7 @@ const int BT_COMMAND_WHEELS_RIGHT_BACK_RELEASED = 28;
 const int BT_COMMAND_SET_MODE_MANUAL = 101;
 const int BT_COMMAND_SET_MODE_FOLLOW_LINE = 102;
 const int BT_COMMAND_SET_MODE_TAKE_PACKAGE = 104;
+const int BT_COMMAND_SET_MODE_LEAVE_PACKAGE = 105;
 
 int btLastCommand = 0;
 unsigned long btLastCommandTime = 0;
@@ -108,7 +109,7 @@ int distance = 0;
 
 // infrared distance block >>>
 const int CLAW_DISTANCE_HOLD_MIN = 839;
-const int CLAW_DISTANCE_HOLD_MAX = 930;
+const int CLAW_DISTANCE_HOLD_MAX = 940;
 const int CLAW_DISTANCE_TAKE = 890;
 const int CLAW_DISTANCE_HOVER = 960;
 int clawDistance = 0;
@@ -136,6 +137,7 @@ const int ARM_POSITION_LEFT_MAX = 120;
 
 const int CLAW_POSITION_DEFAULT = 0; // 0 - закрыто, 50 - открыто
 const int CLAW_POSITION_MIN = 0;
+const int CLAW_POSITION_RELEASE = 20;
 const int CLAW_POSITION_MAX = 80;
 
 const int PACKAGE_NOT_FOUND_BY_ULTRASONIC = 1;
@@ -157,6 +159,9 @@ const int ARM_TAKE_PACKAGE_POSITIONS[ARM_TAKE_PACKAGE_POSITIONS_COUNT][2] = { {1
 
 const int ARM_HOVER_POSITIONS_COUNT = 6;
 const int ARM_HOVER_POSITIONS[ARM_HOVER_POSITIONS_COUNT][2] = {{30, 90}, {28, 80}, {19, 58}, {7, 54}, {19, 58}, {28, 80} };
+const int ARM_LEAVE_PACKAGE_TOP_POSITIONS[6][2] = { {80, 10}, {70, 10}, {60, 10}, {50, 10}, {40, 10}, {30, 15} };
+//const int ARM_LEAVE_PACKAGE_TOP_POSITIONS[6][2] = { {97, 0}, {87, 0}, {77, 0}, {67, 0}, {47, 0}, {42, 16} };
+//const int ARM_LEAVE_PACKAGE_BOTTOM_POSITIONS[4][2] = { {40, 74}, {32, 49}, {15, 39}, {0, 33} };
 // <<< arm block
 
 // tracing block >>>
@@ -210,6 +215,7 @@ const int MODE_MANUAL = 1;
 const int MODE_FOLLOW_LINE = 2;
 const int MODE_AROUND_OBSTACLE = 3;
 const int MODE_TAKE_PACKAGE = 4;
+const int MODE_LEAVE_PACKAGE = 5;
 
 const int SWITCH_MODE_REASON_LINE_LOST = 1;
 const int SWITCH_MODE_REASON_LINE_ENDED = 2;
@@ -219,6 +225,7 @@ const int SWITCH_MODE_REASON_PACKAGE_NOT_FOUND = 5;
 const int SWITCH_MODE_REASON_PACKAGE_LOST = 6;
 const int SWITCH_MODE_REASON_HOLD_PACKAGE = 7;
 const int SWITCH_MODE_REASON_BLUETOOTH_COMMAND = 8;
+const int SWITCH_MODE_REASON_RELEASED_PACKAGE = 9;
 
 int mode = 1;
 
@@ -296,5 +303,7 @@ void setMode(int newMode, int reason) {
     armToDefaultPosition();
   } else if (newMode == MODE_TAKE_PACKAGE) {
     findAndTakePackage();
+  } else if (newMode == MODE_LEAVE_PACKAGE) {
+    findShelfAndLeavePackage();
   }
 }

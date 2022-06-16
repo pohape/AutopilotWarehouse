@@ -45,7 +45,7 @@ void takePackage() {
 int tryTakePackage() {
   armToPosition(55, 80, 10);
   armToPosition(36, 100, 10);
-  openClaw();
+  openClawWide();
 
   for (int armPositionKey = 0; armPositionKey < ARM_TAKE_PACKAGE_POSITIONS_COUNT; armPositionKey++) {
     int left = ARM_TAKE_PACKAGE_POSITIONS[armPositionKey][0];
@@ -140,7 +140,7 @@ int tryTakePackage() {
 }
 
 int findPackageAndHoverAboveIt() {
-  openClaw();
+  openClawWide();
 
   int const MAIN_POSITIONS_COUNT = 7;
   int mainPositions[MAIN_POSITIONS_COUNT] = {servoPositions.armMain - 15, servoPositions.armMain - 10, servoPositions.armMain - 5, servoPositions.armMain, servoPositions.armMain + 5, servoPositions.armMain + 10, servoPositions.armMain + 15};
@@ -306,6 +306,8 @@ int findObjectAndTurnThere() {
   int degreePackageCenter = findObject();
 
   if (degreePackageCenter == PACKAGE_NOT_FOUND_BY_ULTRASONIC) {
+    Serial.println("PACKAGE_NOT_FOUND_BY_ULTRASONIC");
+    
     return PACKAGE_NOT_FOUND_BY_ULTRASONIC;
   }
   

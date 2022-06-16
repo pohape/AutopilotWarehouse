@@ -177,8 +177,18 @@ void armTurnCenter() {
   }
 }
 
-void openClaw() {
+void openClawWide() {
   while (servoPositions.armClaw < CLAW_POSITION_MAX) {
+    servoPositions.armClaw++;
+    armServoClawRotateToPositionWithoutEeprom();
+    delay(10);
+  }
+  
+  EEPROM.put(0, servoPositions);
+}
+
+void openClawRelease() {
+  while (servoPositions.armClaw < CLAW_POSITION_RELEASE) {
     servoPositions.armClaw++;
     armServoClawRotateToPositionWithoutEeprom();
     delay(10);
@@ -215,19 +225,6 @@ bool armConditionsCheck(int left, int right) {
     
     return false;
   }
-//  else if (right < 10 && left > 110) {
-//    armConditionsCheckWarning("left > 110 && right < 10");
-//    
-//    return false;
-//  } else if (right <= 40 && left > 85) {
-//    armConditionsCheckWarning("left > 85 && right < 40");
-//    
-//    return false;
-//  } else if (right == 0 && left < 60) {
-//    armConditionsCheckWarning("left < 60 && right == 0");
-//    
-//    return false;
-//  }
 
   return true;
 }
