@@ -38,6 +38,7 @@ void takePackage() {
     }
   } else {
     armToDefaultPosition();
+    holdingPackage = true;
     setMode(MODE_MANUAL, SWITCH_MODE_REASON_HOLD_PACKAGE);
   }
 }

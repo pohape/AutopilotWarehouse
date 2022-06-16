@@ -60,7 +60,10 @@ void processBluetooth() {
   }
 
   if (mode == 1) {
-    if (btLastCommand == BT_COMMAND_ARM_LEFT_PRESSED) {
+    if (btLastCommand == BT_COMMAND_TURN_AROUND) {
+      btLastCommand = 0;
+      wheelsTurnAround();
+    } else if (btLastCommand == BT_COMMAND_ARM_LEFT_PRESSED) {
       armTurnLeft();
     } else if (btLastCommand == BT_COMMAND_ARM_RIGHT_PRESSED) {
       armTurnRight();

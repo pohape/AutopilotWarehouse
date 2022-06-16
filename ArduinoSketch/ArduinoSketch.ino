@@ -86,6 +86,8 @@ const int BT_COMMAND_WHEELS_LEFT_BACK_RELEASED = 26;
 const int BT_COMMAND_WHEELS_RIGHT_BACK_PRESSED = 27;
 const int BT_COMMAND_WHEELS_RIGHT_BACK_RELEASED = 28;
 
+const int BT_COMMAND_TURN_AROUND = 29;
+
 const int BT_COMMAND_SET_MODE_MANUAL = 101;
 const int BT_COMMAND_SET_MODE_FOLLOW_LINE = 102;
 const int BT_COMMAND_SET_MODE_TAKE_PACKAGE = 104;
@@ -162,6 +164,8 @@ const int ARM_HOVER_POSITIONS[ARM_HOVER_POSITIONS_COUNT][2] = {{30, 90}, {28, 80
 const int ARM_LEAVE_PACKAGE_TOP_POSITIONS[6][2] = { {80, 10}, {70, 10}, {60, 10}, {50, 10}, {40, 10}, {30, 15} };
 //const int ARM_LEAVE_PACKAGE_TOP_POSITIONS[6][2] = { {97, 0}, {87, 0}, {77, 0}, {67, 0}, {47, 0}, {42, 16} };
 //const int ARM_LEAVE_PACKAGE_BOTTOM_POSITIONS[4][2] = { {40, 74}, {32, 49}, {15, 39}, {0, 33} };
+
+bool holdingPackage = false;
 // <<< arm block
 
 // tracing block >>>
@@ -172,6 +176,7 @@ const int ARM_LEAVE_PACKAGE_TOP_POSITIONS[6][2] = { {80, 10}, {70, 10}, {60, 10}
 // 7 - back left
 // 8 - back
 // 9 - back right
+int followLineStarted = 0;
 int lastFollowLineMoves[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 int allHighInRowCount = 0;
 const int ALL_HIGH_IN_ROW_COUNT_TO_STOP = 12;
@@ -184,6 +189,7 @@ const int WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_INSIDE = 45;
 const int WHEELS_SPEED_TO_GO_AROUND_OBSTACLE_OUTSIDE = 110;
 const int WHEELS_SPEED_TO_GO_BACK = 60;
 const int WHEELS_SPEED_TO_TURN = 120;
+const int WHEELS_SPEED_TURN_AROUND = 110;
 
 const int ONE_WHEEL_TURN_DELAY = 50;
 const int SEARCH_LINE_BACK_DELAY = 40;
@@ -299,6 +305,7 @@ void setMode(int newMode, int reason) {
   mode = newMode;
 
   if (newMode == MODE_FOLLOW_LINE) {
+    followLineStarted = millis();
     armTurnCenter();
     armToDefaultPosition();
   } else if (newMode == MODE_TAKE_PACKAGE) {

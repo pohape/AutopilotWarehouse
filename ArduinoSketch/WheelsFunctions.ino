@@ -25,6 +25,33 @@ void manageStateOfWheels() {
   }
 }
 
+void wheelsTurnAround() {
+  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_TURN_AROUND);
+  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_TURN_AROUND);
+
+  digitalWrite(PIN_WHEELS_IN1, HIGH);
+  digitalWrite(PIN_WHEELS_IN2, LOW);
+  digitalWrite(PIN_WHEELS_IN3, LOW);
+  digitalWrite(PIN_WHEELS_IN4, HIGH);
+
+  delay(1250);
+
+  digitalWrite(PIN_WHEELS_IN1, HIGH);
+  digitalWrite(PIN_WHEELS_IN2, LOW);
+  digitalWrite(PIN_WHEELS_IN3, HIGH);
+  digitalWrite(PIN_WHEELS_IN4, LOW);
+
+  analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);
+  analogWrite(PIN_WHEELS_ENB, WHEELS_SPEED_DEFAULT);
+
+  delay(300);
+
+  digitalWrite(PIN_WHEELS_IN1, LOW);
+  digitalWrite(PIN_WHEELS_IN2, LOW);
+  digitalWrite(PIN_WHEELS_IN3, LOW);
+  digitalWrite(PIN_WHEELS_IN4, LOW);
+}
+
 void bothForwardStart() {
   if (!rightCurrentlyMovingForward || !leftCurrentlyMovingForward) {
     analogWrite(PIN_WHEELS_ENA, WHEELS_SPEED_DEFAULT);

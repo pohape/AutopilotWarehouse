@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private final static int BT_COMMAND_WHEELS_RIGHT_BACK_PRESSED = 27;
     @SuppressWarnings("unused")
     private final static int BT_COMMAND_WHEELS_RIGHT_BACK_RELEASED = 28;
+    private final static int BT_COMMAND_TURN_AROUND = 29;
 
     private final static int BT_COMMAND_SET_MODE_MANUAL = 101;
     private final static int BT_COMMAND_SET_MODE_FOLLOW_LINE = 102;
@@ -118,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
     protected Button buttonSwitchToTakePackage;
     protected Button buttonSwitchToLeavePackage;
     protected Button buttonSwitchToManual;
+
+    protected Button buttonTurnAround;
     protected Button buttonForward;
     protected Button buttonBack;
     protected Button buttonLeft;
@@ -139,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
         buttonOpen.setEnabled(false);
         buttonClose.setEnabled(false);
 
+        buttonTurnAround.setEnabled(false);
         buttonForward.setEnabled(false);
         buttonLeft.setEnabled(false);
         buttonRight.setEnabled(false);
@@ -168,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void switchScreenToManual() {
         currentMode = MODE_MANUAL;
+        lastBtReceive = 0;
 
         toolbar.setTitle("Текущий режим: ручное управление " + (armScreen ? "рукой" : "колесами"));
         setButtonsVisibility(false, true, true, true);
@@ -177,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
         buttonOpen.setEnabled(armScreen);
         buttonClose.setEnabled(armScreen);
 
+        buttonTurnAround.setEnabled(true);
         buttonForward.setEnabled(true);
         buttonLeft.setEnabled(true);
         buttonRight.setEnabled(true);
@@ -228,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             mainLayout.setVisibility(View.VISIBLE);
             warningText.setVisibility(View.GONE);
             warningText.setText("");
-        }, 5_000);
+        }, 1_000);
     }
 
     protected void showConnected() {
@@ -293,6 +299,9 @@ public class MainActivity extends AppCompatActivity {
 
         buttonForward = findViewById(R.id.buttonForward);
         buttonForward.setEnabled(false);
+
+        buttonTurnAround = findViewById(R.id.buttonTurnAround);
+        buttonTurnAround.setEnabled(false);
 
         buttonBack = findViewById(R.id.buttonBack);
         buttonBack.setEnabled(false);
@@ -423,19 +432,19 @@ public class MainActivity extends AppCompatActivity {
                 boolean mObstacle = currentMode == MODE_AROUND_OBSTACLE;
                 boolean mFollowLine = currentMode == MODE_FOLLOW_LINE;
                 boolean mTakePackage = currentMode == MODE_TAKE_PACKAGE;
-                boolean lastBtReceiveExpired = (lastBtReceive + 15_000) > System.currentTimeMillis();
+                boolean lastBtReceiveExpired = (lastBtReceive + 20_000) > System.currentTimeMillis();
 
                 if (!mObstacle && !mFollowLine && !mTakePackage && lastBtReceive != 0 && !lastBtReceiveExpired) {
                     showLostConnection();
-                } else {
-                    toolbar.setSubtitle("Подключено к " + deviceName);
+                } else if (deviceName != null) {
+                    showConnected();
                 }
 
-                handler.postDelayed(this, 10_000);
+                handler.postDelayed(this, 15_000);
             }
         };
 
-        handler.postDelayed(checkBtConnection, 10_000);
+        handler.postDelayed(checkBtConnection, 15_000);
 
         // buttons on click
         buttonSwitchToTakePackage.setOnClickListener(v -> connectedThread.write(BT_COMMAND_SET_MODE_TAKE_PACKAGE));
@@ -452,6 +461,8 @@ public class MainActivity extends AppCompatActivity {
                 connectedThread.write(BT_COMMAND_SET_MODE_MANUAL);
             }
         });
+
+        buttonTurnAround.setOnClickListener(v -> connectedThread.write(BT_COMMAND_TURN_AROUND));
 
         buttonForward.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {

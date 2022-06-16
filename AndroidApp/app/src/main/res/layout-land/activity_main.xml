@@ -172,33 +172,34 @@
             android:baselineAligned="false"
             android:orientation="horizontal">
 
-            <LinearLayout
+            <Button
+                android:id="@+id/buttonDown"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="130dp"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:width="100dp"
+                android:text="@string/down" />
 
-                <Button
-                    android:id="@+id/buttonDown"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:width="100dp"
-                    android:text="@string/down" />
-            </LinearLayout>
-
-            <LinearLayout
+            <Button
+                android:id="@+id/buttonTurnAround"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginEnd="60dp"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:text="@string/turnAround" />
 
-                <Button
-                    android:id="@+id/buttonBack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:width="100dp"
-                    android:text="@string/back" />
-            </LinearLayout>
+            <Button
+                android:id="@+id/buttonBack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="130dp"
+                android:layout_weight="1"
+                android:width="100dp"
+                android:text="@string/back" />
         </LinearLayout>
 
         <LinearLayout

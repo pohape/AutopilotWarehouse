@@ -183,6 +183,8 @@ void openClawWide() {
     armServoClawRotateToPositionWithoutEeprom();
     delay(10);
   }
+
+  holdingPackage = false;
   
   EEPROM.put(0, servoPositions);
 }
@@ -193,6 +195,8 @@ void openClawRelease() {
     armServoClawRotateToPositionWithoutEeprom();
     delay(10);
   }
+
+  holdingPackage = false;
   
   EEPROM.put(0, servoPositions);
 }

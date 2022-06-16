@@ -95,8 +95,13 @@ void processMode2() {
     } else {
       allHighInRowCount = 0;
     }
-    
-    updateDistanceCm();
+
+    if ((followLineStarted + 5000) < millis()) {
+      updateDistanceCm();
+    } else {
+      distance = 100;
+      Serial.println("distance 100");
+    }
     
     if (distance < DISTANCE_WARNING) {
       initMode3();
