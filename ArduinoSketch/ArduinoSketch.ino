@@ -107,6 +107,7 @@ const int DISTANCE_WARNING = 25;
 const int MIN_DISTANCE_TO_PACKAGE = 10;
 const int MAX_DISTANCE_TO_PACKAGE = 18;
 int distance = 0;
+int obstacles = 0;
 // <<< ultrasonic block
 
 // infrared distance block >>>
@@ -161,7 +162,7 @@ const int ARM_TAKE_PACKAGE_POSITIONS[ARM_TAKE_PACKAGE_POSITIONS_COUNT][2] = { {1
 
 const int ARM_HOVER_POSITIONS_COUNT = 6;
 const int ARM_HOVER_POSITIONS[ARM_HOVER_POSITIONS_COUNT][2] = {{30, 90}, {28, 80}, {19, 58}, {7, 54}, {19, 58}, {28, 80} };
-const int ARM_LEAVE_PACKAGE_TOP_POSITIONS[6][2] = { {80, 10}, {70, 10}, {60, 10}, {50, 10}, {40, 10}, {30, 15} };
+const int ARM_LEAVE_PACKAGE_TOP_POSITIONS[6][2] = { {87, 13}, {70, 18}, {60, 20}, {50, 22}, {40, 20}, {30, 20} };
 //const int ARM_LEAVE_PACKAGE_TOP_POSITIONS[6][2] = { {97, 0}, {87, 0}, {77, 0}, {67, 0}, {47, 0}, {42, 16} };
 //const int ARM_LEAVE_PACKAGE_BOTTOM_POSITIONS[4][2] = { {40, 74}, {32, 49}, {15, 39}, {0, 33} };
 
@@ -176,7 +177,7 @@ bool holdingPackage = false;
 // 7 - back left
 // 8 - back
 // 9 - back right
-int followLineStarted = 0;
+unsigned long followLineStarted = 0;
 int lastFollowLineMoves[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 int allHighInRowCount = 0;
 const int ALL_HIGH_IN_ROW_COUNT_TO_STOP = 12;
@@ -312,5 +313,8 @@ void setMode(int newMode, int reason) {
     findAndTakePackage();
   } else if (newMode == MODE_LEAVE_PACKAGE) {
     findShelfAndLeavePackage();
+  } else if (newMode == MODE_MANUAL) {
+    followLineStarted = 0;
+    obstacles = 0;
   }
 }

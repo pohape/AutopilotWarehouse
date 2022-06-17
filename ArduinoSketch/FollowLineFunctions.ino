@@ -96,7 +96,7 @@ void processMode2() {
       allHighInRowCount = 0;
     }
 
-    if ((followLineStarted + 5000) < millis()) {
+    if (obstacles == 0 && (followLineStarted + 5000) < millis()) {
       updateDistanceCm();
     } else {
       distance = 100;
@@ -104,6 +104,7 @@ void processMode2() {
     }
     
     if (distance < DISTANCE_WARNING) {
+      obstacles++;
       initMode3();
     } else {
       addMoveToLastMovesArray(2);
